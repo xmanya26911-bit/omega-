@@ -336,6 +336,8 @@ async function init() {
     if (at) {
       localStorage.setItem('omega_gtoken', at);
       history.replaceState(null, '', '/chatinterface');
+      // Fetch user info and init Drive
+      handleOAuthToken(at);
     }
   }
   // Try local state first (in case Drive fails)
