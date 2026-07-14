@@ -7,7 +7,6 @@
 
   // ─── State ───
   const STATE = {
-    password: '',
     isStreaming: false,
     abortController: null,
     conversations: JSON.parse(localStorage.getItem('omega_conversations') || '[]'),
@@ -20,11 +19,6 @@
 
   // ─── DOM refs ───
   const $ = id => document.getElementById(id);
-  const gate = $('password-gate');
-  const chat = $('chat-ui');
-  const passwordInput = $('password-input');
-  const passwordSubmit = $('password-submit');
-  const passwordError = $('password-error');
   const messagesEl = $('messages');
   const input = $('message-input');
   const sendBtn = $('send-btn');
@@ -40,53 +34,8 @@
   const newChatBtn = $('new-chat-btn');
   const container = $('messages-container');
 
-  // ─── Password Gate ───
-  passwordInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter') submitPassword();
-  });
-  passwordSubmit.addEventListener('click', submitPassword);
-
-  function submitPassword() {
-    const pw = passwordInput.value.trim();
-    if (!pw) return;
-    // Offline check: password validation via /api/chat with empty message
-    checkPassword(pw);
-  }
-
-  async function checkPassword(pw) {
-    passwordError.textContent = 'Authenticating...';
-    passwordError.style.color = 'var(--accent)';
-    try {
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: pw, message: '__auth_check__' }),
-      });
-      if (res.ok) {
-        STATE.password = pw;
-        localStorage.setItem('omega_password', pw);
-        gate.classList.add('hidden');
-        chat.classList.remove('hidden');
-        initChat();
-      } else {
-        const text = await res.text();
-        let msg = 'Invalid access key';
-        try { const d = JSON.parse(text); msg = d.error || msg; } catch(e) { msg = text.slice(0,100) || msg; }
-        passwordError.textContent = msg;
-        passwordError.style.color = '#ff6b6b';
-      }
-    } catch (err) {
-      // Offline fallback: accept the password locally
-      STATE.password = pw;
-      localStorage.setItem('omega_password', pw);
-      gate.classList.add('hidden');
-      chat.classList.remove('hidden');
-      initChat();
-    }
-  }
-
   // ─── Init ───
-  function initChat() {
+  function init() {
     applyTheme(STATE.theme);
     apiKeyInput.value = STATE.apiKey;
     modelSelect.value = STATE.model;
@@ -172,7 +121,6 @@
         signal: STATE.abortController.signal,
         body: JSON.stringify({
           message: text,
-          password: STATE.password,
           apiKey: STATE.apiKey || undefined,
           model: STATE.model,
           conversationHistory: history,
@@ -439,5 +387,8 @@
     div.textContent = text;
     return div.innerHTML;
   }
+
+  // ═══ Start ═══
+  init();
 
 })();
