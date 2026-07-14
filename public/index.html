@@ -336,6 +336,7 @@ async function init() {
     if (at) {
       localStorage.setItem('omega_gtoken', at);
       history.replaceState(null, '', '/chatinterface');
+      console.log('[OAUTH] Token found in hash, calling handleOAuthToken');
       // Fetch user info and init Drive
       handleOAuthToken(at);
     }
@@ -491,18 +492,25 @@ function renderGSignIn() {
 }
 
 function handleOAuthToken(accessToken) {
+  console.log('[OAUTH] handleOAuthToken called, token length:', accessToken.length);
   STATE.accessToken = accessToken;
   // Fetch user info with the token
   fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
     headers: { Authorization: 'Bearer ' + accessToken }
-  }).then(r => r.json()).then(user => {
+  }).then(r => {
+    console.log('[OAUTH] userinfo response:', r.status);
+    return r.json();
+  }).then(user => {
+    console.log('[OAUTH] user info received:', user.name);
     STATE.auth = user;
     localStorage.setItem('omega_gtoken', accessToken);
     localStorage.setItem('omega_user', JSON.stringify(user));
     showUser();
     hideLogin();
+    console.log('[OAUTH] calling initDrive');
     initDrive();
   }).catch(e => {
+    console.error('[OAUTH] Failed to get user info:', e.message);
     showToast('Failed to get user info: ' + e.message, 'error');
   });
 }
@@ -549,15 +557,21 @@ function hideLogin() {
 
 // ═══════════════════════════════════════════ DRIVE API ═══════════════
 async function initDrive() {
+  console.log('[DRIVE] initDrive starting');
   STATE.driveReady = false;
   try {
+    console.log('[DRIVE] creating/getting folder');
     const folderId = await driveGetOrCreateFolder();
+    console.log('[DRIVE] folder ID:', folderId);
     STATE.driveFiles.folderId = folderId;
     STATE.driveReady = true;
+    console.log('[DRIVE] connected successfully');
     showToast('Drive connected', 'success');
     // Load data from Drive
     await loadDriveData();
+    console.log('[DRIVE] data loaded');
   } catch(e) {
+    console.error('[DRIVE] initDrive failed:', e.message);
     showToast('Drive init failed, using local storage: ' + e.message, 'error');
   }
 }
@@ -573,8 +587,10 @@ async function driveGetOrCreateFolder() {
   const query = encodeURIComponent("name='OmegaCloudData' and mimeType='application/vnd.google-apps.folder' and trashed=false");
   let r = await fetch(`https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name)`, { headers: driveHeaders() });
   let data = await r.json();
+  console.log('[DRIVE] search folder response:', r.status, data);
   if (data.files && data.files.length > 0) return data.files[0].id;
   // Create folder
+  console.log('[DRIVE] folder not found, creating');
   r = await fetch('https://www.googleapis.com/drive/v3/files', {
     method: 'POST',
     headers: driveHeaders(),
@@ -584,6 +600,7 @@ async function driveGetOrCreateFolder() {
     })
   });
   data = await r.json();
+  console.log('[DRIVE] create folder response:', r.status, data);
   return data.id;
 }
 
