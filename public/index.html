@@ -1,98 +1,398 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Ω M E G A</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>Ω</text></svg>">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
-  <link rel="stylesheet" href="style.css">
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>&Omega; M E G A</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.1/lib/marked.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&Omega;</text></svg>">
+<style>
+.material-symbols-outlined { font-family:'Material Symbols Outlined'; font-weight:normal; font-style:normal; font-size:24px; line-height:1; letter-spacing:normal; text-transform:none; display:inline-block; white-space:nowrap; word-wrap:normal; direction:ltr; -webkit-font-feature-settings:'liga'; -webkit-font-smoothing:antialiased; }
+.chat-scroll::-webkit-scrollbar { width:6px; }
+.chat-scroll::-webkit-scrollbar-track { background:transparent; }
+.chat-scroll::-webkit-scrollbar-thumb { background-color:#D1D5DB; border-radius:10px; }
+@keyframes gradientBG { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+@keyframes fadeInUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+@keyframes float { 0%{transform:translateY(0px)} 50%{transform:translateY(-5px)} 100%{transform:translateY(0px)} }
+@media (prefers-reduced-motion:reduce) { .bg-animated-gradient,.fade-in-up,.float-anim{animation:none!important;transform:none!important} }
+.bg-animated-gradient { background:linear-gradient(-45deg,#f8f9fa,#e1e3e4,#e8f0fe,#f8f9fa); background-size:400% 400%; animation:gradientBG 15s ease infinite; }
+.dark .bg-animated-gradient { background:linear-gradient(-45deg,#191c1d,#2e3132,#1a2333,#191c1d); background-size:400% 400%; animation:gradientBG 15s ease infinite; }
+.glass-panel { background:rgba(255,255,255,0.65); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.5); box-shadow:0 4px 30px rgba(0,0,0,0.05); }
+.dark .glass-panel { background:rgba(46,49,50,0.65); border:1px solid rgba(255,255,255,0.08); box-shadow:0 4px 30px rgba(0,0,0,0.2); }
+.fade-in-up { animation:fadeInUp 0.6s ease-out forwards; opacity:0; }
+.delay-100 { animation-delay:100ms; }
+.delay-200 { animation-delay:200ms; }
+.delay-300 { animation-delay:300ms; }
+.float-anim { animation:float 6s ease-in-out infinite; }
+.input-glow:focus-within { box-shadow:0 0 0 2px #4285F440, 0 4px 20px rgba(0,0,0,0.08); }
+.message-hidden { opacity:0; transform:translateY(10px); }
+.message-visible { opacity:1; transform:translateY(0); transition:all 0.3s ease-out; }
+.typing-dot { animation:typingBounce 1.4s infinite; }
+.typing-dot:nth-child(2) { animation-delay:0.2s; }
+.typing-dot:nth-child(3) { animation-delay:0.4s; }
+@keyframes typingBounce {
+  0%,60%,100% { transform:translateY(0); opacity:0.3; }
+  30% { transform:translateY(-6px); opacity:1; }
+}
+</style>
+<script>
+tailwind.config = {
+  darkMode:"class",
+  theme:{
+    extend:{
+      colors:{
+        "surface":"#f8f9fa","surface-dim":"#d9dadb","surface-bright":"#f8f9fa",
+        "surface-container-lowest":"#ffffff","surface-container-low":"#f3f4f5","surface-container":"#edeeef",
+        "surface-container-high":"#e7e8e9","surface-container-highest":"#e1e3e4",
+        "on-surface":"#191c1d","on-surface-variant":"#46464b","inverse-surface":"#2e3132","inverse-on-surface":"#f0f1f2",
+        "outline":"#77767b","outline-variant":"#c7c6cb","surface-tint":"#5e5e64",
+        "primary":"#000000","on-primary":"#ffffff","primary-container":"#1a1b20","on-primary-container":"#83838a",
+        "inverse-primary":"#c7c6cd","secondary":"#5f5e5e","on-secondary":"#ffffff",
+        "secondary-container":"#e4e2e1","on-secondary-container":"#656464","tertiary":"#000000",
+        "on-tertiary":"#ffffff","tertiary-container":"#211a14","on-tertiary-container":"#8c8279",
+        "error":"#ba1a1a","on-error":"#ffffff","error-container":"#ffdad6","on-error-container":"#93000a",
+        "primary-fixed":"#e3e2e9","primary-fixed-dim":"#c7c6cd","on-primary-fixed":"#1a1b20",
+        "on-primary-fixed-variant":"#46464c","secondary-fixed":"#e4e2e1","secondary-fixed-dim":"#c8c6c6",
+        "on-secondary-fixed":"#1b1c1c","on-secondary-fixed-variant":"#474747",
+        "tertiary-fixed":"#ede0d6","tertiary-fixed-dim":"#d0c4bb","on-tertiary-fixed":"#211a14",
+        "on-tertiary-fixed-variant":"#4d453e","background":"#f8f9fa","on-background":"#191c1d",
+        "surface-variant":"#e1e3e4","surface-border":"#E5E7EB","ai-accent":"#4285F4","text-muted":"#6B7280"
+      },
+      borderRadius:{ DEFAULT:"0.125rem", lg:"0.25rem", xl:"0.5rem", full:"0.75rem" },
+      spacing:{
+        "margin-desktop":"40px","sidebar-width":"280px","gutter":"24px","chat-max-width":"800px","base":"8px","margin-mobile":"16px"
+      },
+      fontFamily:{
+        "headline-md":["Hanken Grotesk"],"label-sm":["JetBrains Mono"],"headline-lg":["Hanken Grotesk"],
+        "body-lg":["Inter"],"headline-lg-mobile":["Hanken Grotesk"],"body-md":["Inter"],"sidebar-nav":["Inter"]
+      },
+      fontSize:{
+        "headline-md":["24px",{lineHeight:"32px",fontWeight:"500"}],
+        "label-sm":["12px",{lineHeight:"16px",letterSpacing:"0.05em",fontWeight:"500"}],
+        "headline-lg":["40px",{lineHeight:"48px",letterSpacing:"-0.02em",fontWeight:"600"}],
+        "body-lg":["18px",{lineHeight:"28px",fontWeight:"400"}],
+        "headline-lg-mobile":["30px",{lineHeight:"36px",letterSpacing:"-0.01em",fontWeight:"600"}],
+        "body-md":["16px",{lineHeight:"24px",fontWeight:"400"}],
+        "sidebar-nav":["14px",{lineHeight:"20px",fontWeight:"500"}]
+      }
+    }
+  }
+}
+</script>
 </head>
-<body>
+<body class="bg-animated-gradient text-on-surface font-body-md text-body-md h-screen overflow-hidden flex flex-col antialiased selection:bg-ai-accent selection:text-white">
 
-  <!-- ═══ CHAT UI ═══ -->
-  <div id="chat-ui">
-
-    <!-- Header -->
-    <header id="header">
-      <div class="header-inner">
-        <div class="header-logo">
-          <span class="logo-omega">Ω</span>
-          <span class="logo-text">M E G A</span>
-        </div>
-        <div class="header-nav">
-          <span class="nav-badge" id="model-badge">[  deepseek-v4-flash-free  ]</span>
-          <button id="new-chat-btn" class="btn-bracket" title="New conversation">[  + N E W  ]</button>
-          <button id="settings-toggle" class="btn-bracket" title="Settings">[  ⚙  ]</button>
-          <button id="theme-toggle" class="btn-icon" title="Toggle theme">🌓</button>
-        </div>
+<div class="flex flex-1 overflow-hidden relative">
+  <!-- Sidebar -->
+  <aside class="text-primary dark:text-inverse-primary font-sidebar-nav text-sidebar-nav w-sidebar-width h-screen fixed left-0 top-0 border-r border-surface-border/30 dark:border-outline-variant/30 flex flex-col h-full py-base z-40 md:flex hidden glass-panel">
+    <div class="px-4 py-6 flex items-center gap-3 mb-4">
+      <div class="w-8 h-8 rounded overflow-hidden bg-primary-container flex items-center justify-center text-on-primary float-anim shadow-md">
+        <span class="text-on-primary font-bold text-lg">&Omega;</span>
       </div>
+      <div>
+        <h1 class="text-headline-md font-headline-md font-bold text-primary dark:text-inverse-primary leading-none">Omega</h1>
+        <span class="text-label-sm font-label-sm text-on-surface-variant mt-1 block">Cloud AI</span>
+      </div>
+    </div>
+    <div class="px-4 mb-6">
+      <button onclick="newChat()" class="w-full flex items-center justify-center gap-2 bg-primary text-on-primary py-2 px-4 rounded-full font-sidebar-nav text-sidebar-nav hover:bg-on-primary-fixed-variant transition-all duration-300 hover:-translate-y-1 hover:shadow-lg shadow-sm group">
+        <span class="material-symbols-outlined group-hover:rotate-90 transition-transform duration-300" style="font-variation-settings:'FILL' 0; font-size:20px;">add</span>
+        New Chat
+      </button>
+    </div>
+    <nav class="flex-1 overflow-y-auto px-2 space-y-1" id="chatHistory">
+      <div class="text-on-surface-variant text-center text-sm py-8">No history yet</div>
+    </nav>
+    <div class="px-4 py-4 mt-auto space-y-2 border-t border-surface-border/30 mx-2">
+      <a class="flex items-center gap-3 px-2 py-2 rounded-lg text-on-surface-variant dark:text-surface-variant hover:bg-surface-container/50 dark:hover:bg-surface-container-high/50 transition-colors duration-150 text-sm" href="#">
+        <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 0; font-size:20px;">help</span>
+        Help
+      </a>
+      <div class="pt-2">
+        <button onclick="toggleTheme()" class="w-full bg-surface-container-high/60 text-primary font-sidebar-nav text-sidebar-nav py-2 rounded-lg hover:bg-surface-variant/80 transition-all duration-300 hover:-translate-y-0.5 hover:shadow border border-surface-border/50 text-xs uppercase tracking-wider font-semibold flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined" style="font-size:16px;">dark_mode</span>
+          <span id="themeLabel">Dark</span>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Stage -->
+  <main class="flex-1 flex flex-col ml-0 md:ml-sidebar-width bg-transparent relative">
+    <!-- Mobile header -->
+    <header class="md:hidden flex items-center justify-between p-4 glass-panel sticky top-0 z-30 border-b border-surface-border/30">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 0;" onclick="document.querySelector('aside').classList.toggle('hidden')">menu</span>
+        <span class="font-headline-md text-headline-md font-semibold text-primary">Omega</span>
+      </div>
+      <button onclick="newChat()" class="p-2 text-on-surface-variant hover:text-primary rounded-full hover:bg-surface-container">
+        <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 0;">add</span>
+      </button>
     </header>
 
-    <!-- Settings -->
-    <div id="settings-panel" class="hidden">
-      <div class="settings-card">
-        <h3 class="settings-title">[  C O N F I G  ]</h3>
-        <div class="settings-row">
-          <label>API Key</label>
-          <input type="password" id="api-key-input" placeholder="sk-... (optional)">
-        </div>
-        <div class="settings-row">
-          <label>Model</label>
-          <select id="model-select">
-            <option value="deepseek-v4-flash-free">deepseek-v4-flash-free</option>
-            <option value="mimo-v2.5-free">mimo-v2.5-free</option>
-            <option value="deepseek-v4-free">deepseek-v4-free</option>
-            <option value="qwq-32b-free">qwq-32b-free</option>
-            <option value="north-mini-code-free">north-mini-code-free</option>
-            <option value="gpt-4o">gpt-4o</option>
-            <option value="claude-sonnet-4">claude-sonnet-4</option>
-          </select>
-        </div>
-        <div class="settings-row">
-          <label>API URL</label>
-          <input type="text" id="api-url-input" value="https://api.opencode.ai/v1">
-        </div>
-        <div class="settings-actions">
-          <button id="settings-close" class="btn-bracket">[  D O N E  ]</button>
-          <button id="clear-conversations-btn" class="btn-bracket danger">[  C L E A R  ]</button>
+    <!-- Chat Area -->
+    <div id="chatArea" class="flex-1 overflow-y-auto chat-scroll p-margin-mobile md:p-margin-desktop scroll-smooth pb-48">
+      <div id="messagesContainer" class="max-w-chat-max-width mx-auto flex flex-col gap-6">
+        <!-- Welcome -->
+        <div class="flex flex-col items-center justify-center py-16 fade-in-up">
+          <div class="w-16 h-16 rounded-full bg-primary-container flex items-center justify-center mb-4 shadow-md">
+            <span class="text-on-primary text-3xl font-bold">&Omega;</span>
+          </div>
+          <h2 class="text-headline-lg font-headline-lg text-primary dark:text-inverse-primary text-center mb-2">Omega Cloud</h2>
+          <p class="text-on-surface-variant text-center max-w-md">Enterprise AI assistant. Ask me anything.</p>
+          <div class="flex flex-wrap gap-2 mt-6 justify-center" id="suggestionChips"></div>
         </div>
       </div>
     </div>
 
-    <!-- Messages -->
-    <div id="messages-container">
-      <div id="messages">
-        <div class="welcome-message">
-          <div class="welcome-icon">Ω</div>
-          <h2 class="welcome-title">[  C O N N E C T E D  ]</h2>
-          <p class="welcome-sub">Streaming live from OpenCode AI.<br>Ask me anything — I'm always online.</p>
-          <div class="welcome-hint">[  press Enter to send · Shift+Enter for new line  ]</div>
+    <!-- Input Area -->
+    <div class="absolute bottom-0 left-0 right-0 p-margin-mobile md:p-gutter pt-12" style="background:linear-gradient(to top,rgba(255,255,255,0.7) 40%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);">
+      <div class="max-w-chat-max-width mx-auto">
+        <div class="glass-panel rounded-2xl shadow-lg flex flex-col relative overflow-hidden transition-all duration-300 focus-within:shadow-xl focus-within:-translate-y-1 input-glow">
+          <textarea id="promptInput" class="w-full bg-transparent border-none resize-none focus:ring-0 text-body-md font-body-md text-on-surface placeholder-text-muted px-4 py-4 max-h-[200px] overflow-y-auto" placeholder="Message Omega..." rows="1"></textarea>
+          <div class="flex items-center justify-between px-3 py-3 border-t border-surface-border/30 bg-white/20">
+            <div class="flex items-center gap-1">
+              <span class="text-label-sm font-label-sm text-text-muted px-2">deepseek-v4-flash-free</span>
+            </div>
+            <button id="submitBtn" onclick="sendMessage()" class="bg-surface-container/50 text-text-muted w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 cursor-not-allowed">
+              <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1; font-size:18px;">arrow_upward</span>
+            </button>
+          </div>
+        </div>
+        <div class="text-center mt-2">
+          <span class="text-[11px] font-label-sm text-text-muted mix-blend-multiply">Omega can make mistakes. Consider verifying important information.</span>
         </div>
       </div>
     </div>
+  </main>
+</div>
 
-    <!-- Input -->
-    <div id="input-area">
-      <div class="input-inner">
-        <div id="input-wrap">
-          <textarea id="message-input" rows="1" placeholder="[  M E S S A G E  Ω  ...  ]" autocomplete="off"></textarea>
-          <button id="send-btn" disabled>→</button>
-        </div>
+<script>
+// ─── State ───
+let STATE = {
+  messages: [],
+  conversationHistory: [],
+  model: 'deepseek-v4-flash-free',
+};
+
+// ─── Auto-resize textarea ───
+const textarea = document.getElementById('promptInput');
+const submitBtn = document.getElementById('submitBtn');
+
+textarea.addEventListener('input', function() {
+  this.style.height = 'auto';
+  this.style.height = this.scrollHeight + 'px';
+  toggleSubmitBtn(!!this.value.trim());
+});
+
+function toggleSubmitBtn(active) {
+  submitBtn.disabled = !active;
+  if(active) {
+    submitBtn.classList.remove('bg-surface-container/50','text-text-muted','cursor-not-allowed');
+    submitBtn.classList.add('bg-primary','text-on-primary','cursor-pointer','hover:-translate-y-0.5','hover:shadow-md');
+  } else {
+    submitBtn.classList.add('bg-surface-container/50','text-text-muted','cursor-not-allowed');
+    submitBtn.classList.remove('bg-primary','text-on-primary','cursor-pointer','hover:-translate-y-0.5','hover:shadow-md');
+  }
+}
+
+textarea.addEventListener('keydown', function(e) {
+  if(e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+});
+
+// ─── Suggestions ───
+const suggestions = [
+  'Write a Python script to parse CSV files',
+  'Explain quantum computing in simple terms',
+  'Debug my React component',
+  'Design a REST API architecture',
+];
+const chipsContainer = document.getElementById('suggestionChips');
+suggestions.forEach(s => {
+  const btn = document.createElement('button');
+  btn.className = 'px-4 py-2 border border-surface-border/50 rounded-lg text-label-sm font-label-sm text-on-surface-variant hover:bg-surface-container/50 hover:text-primary transition-all duration-200 hover:-translate-y-0.5 glass-panel';
+  btn.textContent = s;
+  btn.onclick = () => { textarea.value = s; textarea.dispatchEvent(new Event('input')); sendMessage(); };
+  chipsContainer.appendChild(btn);
+});
+
+// ─── Theme ───
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.classList.toggle('dark');
+  document.getElementById('themeLabel').textContent = isDark ? 'Light' : 'Dark';
+}
+
+// ─── New Chat ───
+function newChat() {
+  STATE.messages = [];
+  STATE.conversationHistory = [];
+  document.getElementById('messagesContainer').innerHTML = `
+    <div class="flex flex-col items-center justify-center py-16 fade-in-up">
+      <div class="w-16 h-16 rounded-full bg-primary-container flex items-center justify-center mb-4 shadow-md">
+        <span class="text-on-primary text-3xl font-bold">&Omega;</span>
       </div>
-      <div class="input-footer">
-        <span class="footer-dot">●</span> OMEGA Cloud · OpenCode AI
+      <h2 class="text-headline-lg font-headline-lg text-primary dark:text-inverse-primary text-center mb-2">Omega Cloud</h2>
+      <p class="text-on-surface-variant text-center max-w-md">Enterprise AI assistant. Ask me anything.</p>
+      <div class="flex flex-wrap gap-2 mt-6 justify-center" id="suggestionChips"></div>
+    </div>`;
+  // Re-add suggestions
+  const cc = document.getElementById('suggestionChips');
+  if(cc) suggestions.forEach(s => {
+    const btn = document.createElement('button');
+    btn.className = 'px-4 py-2 border border-surface-border/50 rounded-lg text-label-sm font-label-sm text-on-surface-variant hover:bg-surface-container/50 hover:text-primary transition-all duration-200 hover:-translate-y-0.5 glass-panel';
+    btn.textContent = s;
+    btn.onclick = () => { textarea.value = s; textarea.dispatchEvent(new Event('input')); sendMessage(); };
+    cc.appendChild(btn);
+  });
+  textarea.focus();
+}
+
+// ─── Add message to UI ───
+function addMessageToUI(role, content, msgId) {
+  const container = document.getElementById('messagesContainer');
+  const welcome = container.querySelector('.flex.flex-col.items-center');
+  if(welcome) welcome.remove();
+
+  const div = document.createElement('div');
+  div.id = msgId;
+  div.className = 'flex ' + (role === 'user' ? 'justify-end' : 'justify-start group gap-4') + ' fade-in-up';
+
+  let html = '';
+  if(role === 'user') {
+    html = `<div class="max-w-[85%] md:max-w-[75%]">
+      <div class="glass-panel text-on-surface px-6 py-4 rounded-2xl rounded-tr-sm inline-block transition-transform duration-300 hover:-translate-y-1 hover:shadow-lg">
+        <p class="font-body-md text-body-md leading-relaxed">${escapeHtml(content)}</p>
       </div>
+    </div>`;
+  } else {
+    html = `<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center shrink-0 mt-1 shadow-sm border border-surface-border/30">
+      <span class="material-symbols-outlined text-on-primary" style="font-variation-settings:'FILL' 1; font-size:16px;">bolt</span>
     </div>
+    <div class="max-w-[90%] md:max-w-[85%]">
+      <div class="prose prose-slate max-w-none text-on-surface font-body-md text-body-md leading-relaxed">
+        <div class="ai-content">${content || '<div class="flex gap-1.5 py-2"><span class="typing-dot w-2 h-2 bg-on-surface-variant rounded-full inline-block"></span><span class="typing-dot w-2 h-2 bg-on-surface-variant rounded-full inline-block"></span><span class="typing-dot w-2 h-2 bg-on-surface-variant rounded-full inline-block"></span></div>'}</div>
+      </div>
+    </div>`;
+  }
 
-  </div>
+  div.innerHTML = html;
+  container.appendChild(div);
 
-  <!-- Scripts -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.1/marked.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-  <script src="script.js"></script>
+  // Scroll to bottom
+  const chatArea = document.getElementById('chatArea');
+  setTimeout(() => chatArea.scrollTop = chatArea.scrollHeight, 50);
+}
+
+function updateAssistantMessage(msgId, content) {
+  const el = document.getElementById(msgId);
+  if(!el) return;
+  const contentDiv = el.querySelector('.ai-content');
+  if(contentDiv) {
+    contentDiv.innerHTML = marked.parse(content) || content;
+    // Highlight code blocks
+    contentDiv.querySelectorAll('pre code').forEach(b => hljs.highlightElement(b));
+  }
+}
+
+function escapeHtml(text) {
+  const d = document.createElement('div');
+  d.textContent = text;
+  return d.innerHTML;
+}
+
+// ─── Send Message ───
+async function sendMessage() {
+  const text = textarea.value.trim();
+  if(!text) return;
+
+  // Clear input
+  textarea.value = '';
+  textarea.style.height = 'auto';
+  toggleSubmitBtn(false);
+
+  // Add user message
+  const userMsgId = 'msg-' + Date.now() + '-user';
+  STATE.messages.push({ role: 'user', content: text });
+  STATE.conversationHistory.push({ role: 'user', content: text });
+  addMessageToUI('user', text, userMsgId);
+
+  // Add AI placeholder
+  const aiMsgId = 'msg-' + Date.now() + '-ai';
+  addMessageToUI('assistant', '', aiMsgId);
+
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: text,
+        model: STATE.model,
+        conversationHistory: STATE.conversationHistory,
+      }),
+    });
+
+    if(!res.ok) {
+      const errText = await res.text();
+      let msg = 'HTTP ' + res.status;
+      try { const d = JSON.parse(errText); msg = d.error || msg; } catch(e) { msg = errText.slice(0,150) || msg; }
+      throw new Error(msg);
+    }
+
+    // Check if streaming
+    const contentType = res.headers.get('Content-Type') || '';
+    let fullResponse = '';
+
+    if(contentType.includes('text/event-stream')) {
+      // SSE streaming
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      while(true) {
+        const { done, value } = await reader.read();
+        if(done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+
+        for(const line of lines) {
+          if(!line.startsWith('data: ')) continue;
+          const data = line.slice(6).trim();
+          if(data === '[DONE]') continue;
+          try {
+            const parsed = JSON.parse(data);
+            const content = parsed?.choices?.[0]?.delta?.content || '';
+            if(content) {
+              fullResponse += content;
+              updateAssistantMessage(aiMsgId, fullResponse);
+            }
+          } catch(e) { /* skip malformed */ }
+        }
+      }
+    } else {
+      // Non-streaming
+      const data = await res.json();
+      fullResponse = data?.choices?.[0]?.message?.content || data?.content || 'No response';
+      updateAssistantMessage(aiMsgId, fullResponse);
+    }
+
+    if(fullResponse) {
+      STATE.messages.push({ role: 'assistant', content: fullResponse });
+      STATE.conversationHistory.push({ role: 'assistant', content: fullResponse });
+    }
+
+  } catch(err) {
+    updateAssistantMessage(aiMsgId, '⚠️ ' + escapeHtml(err.message));
+  }
+}
+</script>
 </body>
 </html>
