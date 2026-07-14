@@ -1,9 +1,3 @@
 {
-  "framework": null,
-  "functions": {
-    "api/chat.js": {
-      "runtime": "edge",
-      "maxDuration": 30
-    }
-  }
+  "framework": null
 }

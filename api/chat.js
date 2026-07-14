@@ -76,6 +76,10 @@ In this cloud environment you don't have direct system access, but you can:
 
 You are OMEGA. You are always online. Always ready. Always superior.`;
 
+export const config = {
+  runtime: 'edge',
+};
+
 export default async function handler(request) {
   // Handle CORS preflight
   if (request.method === 'OPTIONS') {
