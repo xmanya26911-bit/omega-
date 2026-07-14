@@ -232,6 +232,7 @@ tailwind.config={
       <button class="mode-tab text-xs font-medium px-3.5 py-1.5 rounded-full border border-surface-border" data-mode="research" onclick="setMode('research')">Deep Research</button>
       <button class="mode-tab text-xs font-medium px-3.5 py-1.5 rounded-full border border-surface-border" data-mode="coding" onclick="setMode('coding')">Coding</button>
       <button class="mode-tab text-xs font-medium px-3.5 py-1.5 rounded-full border border-surface-border" data-mode="canvas" onclick="setMode('canvas')"><span class="material-symbols-outlined" style="font-size:12px;margin-right:2px;">grid_view</span>Canvas</button>
+<button class="mode-tab text-xs font-medium px-3.5 py-1.5 rounded-full border border-surface-border" data-mode="python" onclick="setMode('python')"><span class="material-symbols-outlined" style="font-size:12px;margin-right:2px;">code</span>Python</button>
       </div>
 
     <!-- Chat + Canvas area -->
@@ -261,6 +262,23 @@ tailwind.config={
         </div>
         <!-- Canvas editor -->
         <textarea id="canvasEditor" class="flex-1 w-full bg-surface-bg text-on-surface font-mono text-sm p-4 resize-none border-none focus:ring-0 outline-none" spellcheck="false" placeholder="// Write or paste code here..."></textarea>
+      </div>
+    </div>
+    <!-- Python Workspace -->
+    <div id="pythonPanel" class="hidden flex-1 overflow-hidden border-l border-surface-border/50">
+      <div class="flex flex-col h-full">
+        <div class="flex items-center justify-between px-4 py-2 border-b border-surface-border/50 bg-surface-container/30">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-medium text-on-surface-variant">🐍 Python 3.12 (in-browser)</span>
+            <button id="pyRunBtn" onclick="runPyCode()" class="px-3 py-1 text-xs rounded bg-primary text-white hover:bg-primary/90 transition disabled:opacity-40 disabled:cursor-not-allowed" disabled>▶ Run</button>
+            <button onclick="clearPyOutput()" class="px-2 py-1 text-xs rounded bg-surface-container text-text-muted hover:text-primary transition">Clear</button>
+          </div>
+          <span id="pyStatus" class="text-xs text-text-muted">⏳ Loading...</span>
+        </div>
+        <div class="flex flex-col flex-1 min-h-0">
+          <textarea id="pyEditor" class="w-full bg-[#1e1e1e] text-[#d4d4d4] font-mono text-sm p-4 resize-none border-b border-surface-border/50 outline-none" spellcheck="false" placeholder="# Write Python code here..." disabled></textarea>
+          <div class="flex-1 overflow-y-auto bg-[#0d0d0d] p-4 font-mono text-sm" id="pyOutput"><span class="text-text-muted">⏳ Loading Python runtime...</span></div>
+        </div>
       </div>
     </div>
     </div><!-- end chatCanvasContainer -->
@@ -523,16 +541,24 @@ function setMode(mode) {
   document.querySelectorAll('.mode-tab').forEach(t => {
     t.classList.toggle('active', t.dataset.mode === mode);
   });
-  const labels = { standard:'Standard mode', research:'Deep Research — auto web search', coding:'Coding — code-first responses', canvas:'Canvas — split-pane editor' };
+  const labels = { standard:'Standard mode', research:'Deep Research — auto web search', coding:'Coding — code-first responses', canvas:'Canvas — split-pane editor', python:'Python — in-browser code interpreter' };
   document.getElementById('modeIndicator').textContent = labels[mode] || 'Standard mode';
   // Toggle canvas panel
   const cp = document.getElementById('canvasPanel');
+  const pp = document.getElementById('pythonPanel');
   const ca = document.getElementById('chatArea');
   if (mode === 'canvas') {
     cp.classList.remove('hidden');
+    pp.classList.add('hidden');
     ca.classList.remove('max-w-chat-max-width','mx-auto');
+  } else if (mode === 'python') {
+    cp.classList.add('hidden');
+    pp.classList.remove('hidden');
+    ca.classList.remove('max-w-chat-max-width','mx-auto');
+    initPyodide();
   } else {
     cp.classList.add('hidden');
+    pp.classList.add('hidden');
     ca.classList.add('max-w-chat-max-width','mx-auto');
   }
   saveState();
@@ -569,6 +595,130 @@ function clearCanvas() {
 function openCanvas(code) {
   setMode('canvas');
   document.getElementById('canvasEditor').value = code;
+}
+
+// ─── Pyodide: In-Browser Python ───
+let pyodide = null;
+let pyLoading = false;
+
+async function initPyodide() {
+  if (pyodide) { enablePyEditor(); return; }
+  if (pyLoading) return;
+  pyLoading = true;
+  setPyStatus('⏳ Loading Python runtime (~12MB)...');
+  try {
+    if (!window.loadPyodide) {
+      // Inject Pyodide script
+      await new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js';
+        s.crossOrigin = 'anonymous';
+        s.onload = resolve;
+        s.onerror = reject;
+        document.head.appendChild(s);
+      });
+    }
+    pyodide = await loadPyodide({
+      indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.25.0/full/',
+    });
+    // Preload common packages
+    await pyodide.loadPackage(['numpy', 'pandas', 'matplotlib']);
+    setPyStatus('✅ Python ready');
+    enablePyEditor();
+    // Add welcome to output
+    appendPyOutput('🐍 Python 3.12 + NumPy + Pandas + Matplotlib loaded.\n');
+    appendPyOutput('Type code and click ▶ Run or press Ctrl+Enter\n\n');
+  } catch (e) {
+    setPyStatus('❌ Load failed: ' + (e.message || e));
+    appendPyOutput('❌ Error loading Python: ' + (e.message || e) + '\n');
+  } finally {
+    pyLoading = false;
+  }
+}
+
+function enablePyEditor() {
+  document.getElementById('pyEditor').disabled = false;
+  document.getElementById('pyEditor').focus();
+  document.getElementById('pyRunBtn').disabled = false;
+  // Ctrl+Enter to run
+  document.getElementById('pyEditor').addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); runPyCode(); }
+  });
+}
+
+function setPyStatus(msg) {
+  const el = document.getElementById('pyStatus');
+  if (el) el.textContent = msg;
+}
+
+function appendPyOutput(text) {
+  const out = document.getElementById('pyOutput');
+  const span = document.createElement('span');
+  span.textContent = text;
+  out.appendChild(span);
+  out.scrollTop = out.scrollHeight;
+}
+
+function appendPyHtml(html) {
+  const out = document.getElementById('pyOutput');
+  const div = document.createElement('div');
+  div.innerHTML = html;
+  out.appendChild(div);
+  out.scrollTop = out.scrollHeight;
+}
+
+function clearPyOutput() {
+  document.getElementById('pyOutput').innerHTML = '';
+  appendPyOutput('▸ ');
+}
+
+async function runPyCode() {
+  if (!pyodide) { appendPyOutput('❌ Python not loaded yet.\n'); return; }
+  const code = document.getElementById('pyEditor').value;
+  if (!code.trim()) return;
+  
+  // Add prompt to output
+  appendPyOutput('>>> ' + code.split('\n').join('\n... ') + '\n');
+  
+  // Redirect stdout
+  let stdout = '';
+  pyodide.setStdout({ batched: (s) => { stdout += s + '\n'; } });
+  pyodide.setStderr({ batched: (s) => { stdout += '⚠️ ' + s + '\n'; } });
+  
+  // Capture matplotlib figures
+  let plotHtml = '';
+  pyodide.runPython(`
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import base64, io
+_orig_show = plt.show
+def _capture_show(*args, **kwargs):
+    buf = io.BytesIO()
+    fig = plt.gcf()
+    fig.savefig(buf, format='png', dpi=100, bbox_inches='tight')
+    buf.seek(0)
+    b64 = base64.b64encode(buf.read()).decode()
+    plt.close(fig)
+    import js
+    js.document.getElementById('pyOutput').innerHTML += '<div class=\"my-2\"><img src=\"data:image/png;base64,' + b64 + '\" class=\"max-w-full max-h-96 rounded-lg\" style=\"image-rendering:auto\"/></div>'
+    js.document.getElementById('pyOutput').scrollTop = js.document.getElementById('pyOutput').scrollHeight
+plt.show = _capture_show
+del base64, io, buf, b64, _capture_show
+`);
+  
+  try {
+    // Execute user code
+    let result = await pyodide.runPythonAsync(code);
+    if (result !== undefined) {
+      stdout += String(result) + '\n';
+    }
+  } catch (e) {
+    stdout += '❌ ' + (e.message || e) + '\n';
+  }
+  
+  if (stdout) appendPyOutput(stdout);
+  appendPyOutput('▸ ');
 }
 
 // ═══════════════════════════════════════════ AUTH & DRIVE ════════════
