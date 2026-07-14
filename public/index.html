@@ -386,7 +386,7 @@ async function generateImage(prompt) {
   div.id = msgId;
   div.className = 'flex justify-start gap-4 fade-in-up';
   div.innerHTML = `<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center shrink-0 mt-1 shadow-sm border border-surface-border/30"><span class="material-symbols-outlined text-on-primary" style="font-size:16px;">palette</span></div>
-    <div class="max-w-[90%]"><div class="glass-panel rounded-xl p-4"><p class="text-sm text-text-muted mb-2">Generating: "${escHtml(prompt)}"...</p><div class="spinner w-8 h-8 border-2 border-ai-accent border-t-transparent rounded-full mx-auto"></div></div></div>`;
+    <div class="max-w-[90%]"><div class="glass-panel rounded-xl p-4"><p class="text-sm text-text-muted mb-2">Generating: "${escHtml(prompt)}"</p><div class="flex gap-1.5 py-2 justify-start"><span class="typing-dot w-3 h-3 bg-on-surface-variant rounded-full inline-block"></span><span class="typing-dot w-3 h-3 bg-on-surface-variant rounded-full inline-block"></span><span class="typing-dot w-3 h-3 bg-on-surface-variant rounded-full inline-block"></span></div></div></div>`;
   container.appendChild(div);
   scrollToBottom();
   try {
