@@ -485,7 +485,8 @@ function renderGSignIn() {
       + '&redirect_uri=' + encodeURIComponent('https://omega-nine-weld.vercel.app')
       + '&response_type=token'
       + '&scope=' + encodeURIComponent('https://www.googleapis.com/auth/drive.file')
-      + '&include_granted_scopes=true';
+      + '&include_granted_scopes=true'
+      + '&prompt=consent';
     window.location.href = u;
   };
   w.appendChild(btn);
@@ -588,6 +589,7 @@ async function driveGetOrCreateFolder() {
   let r = await fetch(`https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name)`, { headers: driveHeaders() });
   let data = await r.json();
   console.log('[DRIVE] search folder response:', r.status, data);
+  if (!r.ok) throw new Error('Drive API ' + r.status + ': ' + JSON.stringify(data));
   if (data.files && data.files.length > 0) return data.files[0].id;
   // Create folder
   console.log('[DRIVE] folder not found, creating');
@@ -601,6 +603,7 @@ async function driveGetOrCreateFolder() {
   });
   data = await r.json();
   console.log('[DRIVE] create folder response:', r.status, data);
+  if (!r.ok) throw new Error('Drive API ' + r.status + ': ' + JSON.stringify(data));
   return data.id;
 }
 
