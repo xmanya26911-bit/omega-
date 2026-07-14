@@ -231,13 +231,39 @@ tailwind.config={
       <button class="mode-tab active text-xs font-medium px-3.5 py-1.5 rounded-full border border-surface-border" data-mode="standard" onclick="setMode('standard')">Standard</button>
       <button class="mode-tab text-xs font-medium px-3.5 py-1.5 rounded-full border border-surface-border" data-mode="research" onclick="setMode('research')">Deep Research</button>
       <button class="mode-tab text-xs font-medium px-3.5 py-1.5 rounded-full border border-surface-border" data-mode="coding" onclick="setMode('coding')">Coding</button>
-    </div>
+      <button class="mode-tab text-xs font-medium px-3.5 py-1.5 rounded-full border border-surface-border" data-mode="canvas" onclick="setMode('canvas')"><span class="material-symbols-outlined" style="font-size:12px;margin-right:2px;">grid_view</span>Canvas</button>
+      </div>
 
+    <!-- Chat + Canvas area -->
+    <div id="chatCanvasContainer" class="flex flex-1 overflow-hidden">
     <!-- Chat Area -->
     <div id="chatArea" class="flex-1 overflow-y-auto chat-scroll p-margin-mobile md:p-margin-desktop scroll-smooth pb-48">
       <div id="messagesContainer" class="max-w-chat-max-width mx-auto flex flex-col gap-6" role="log" aria-live="polite" aria-label="Chat messages"></div>
-      <button class="scroll-bottom-btn" onclick="scrollToBottom()" title="Scroll to bottom"><span class="material-symbols-outlined" style="font-size:18px;">expand_more</span></button>
+      <button id="scrollBottomBtn" class="scroll-bottom-btn visible" onclick="scrollToBottom()"><span class="material-symbols-outlined" style="font-size:18px;">expand_more</span></button>
     </div>
+
+    <!-- Canvas Workspace -->
+    <div id="canvasPanel" class="hidden flex-1 overflow-hidden border-l border-surface-border/50">
+      <div class="flex flex-col h-full">
+        <!-- Canvas toolbar -->
+        <div class="flex items-center justify-between px-4 py-2 border-b border-surface-border/50 bg-surface-container/30">
+          <div class="flex items-center gap-2">
+            <select id="canvasLang" class="text-xs bg-transparent border border-surface-border/50 rounded px-2 py-1 text-on-surface-variant">
+              <option value="javascript">JavaScript</option><option value="python">Python</option><option value="html">HTML</option><option value="css">CSS</option><option value="markdown">Markdown</option><option value="json">JSON</option><option value="text">Plain Text</option>
+            </select>
+            <button onclick="sendCanvasToChat()" class="text-xs px-2 py-1 rounded bg-primary-container text-primary hover:bg-primary-container/80 transition" title="Send to AI">Send to Chat</button>
+            <button onclick="applyAIEdit()" class="text-xs px-2 py-1 rounded bg-primary text-white hover:bg-primary/90 transition" title="Ask AI to edit this code">AI Edit</button>
+          </div>
+          <div class="flex items-center gap-1">
+            <button onclick="copyCanvas()" class="p-1.5 rounded text-text-muted hover:text-primary hover:bg-surface-container/50 transition" title="Copy"><span class="material-symbols-outlined" style="font-size:16px;">content_copy</span></button>
+            <button onclick="clearCanvas()" class="p-1.5 rounded text-text-muted hover:text-primary hover:bg-surface-container/50 transition" title="Clear"><span class="material-symbols-outlined" style="font-size:16px;">delete</span></button>
+          </div>
+        </div>
+        <!-- Canvas editor -->
+        <textarea id="canvasEditor" class="flex-1 w-full bg-surface-bg text-on-surface font-mono text-sm p-4 resize-none border-none focus:ring-0 outline-none" spellcheck="false" placeholder="// Write or paste code here..."></textarea>
+      </div>
+    </div>
+    </div><!-- end chatCanvasContainer -->
     <div id="statusBar" class="max-w-chat-max-width mx-auto hidden" style="position:fixed;bottom:140px;left:50%;transform:translateX(-50%);z-index:15;display:none;align-items:center;gap:6px;padding:4px 12px;background:rgba(255,255,255,.8);backdrop-filter:blur(8px);border-radius:12px;border:1px solid #e5e7eb;font-size:12px;color:#6b7280">
       <span class="typing-dot w-1.5 h-1.5 bg-ai-accent rounded-full inline-block"></span>
       <span class="typing-dot w-1.5 h-1.5 bg-ai-accent rounded-full inline-block" style="animation-delay:0.2s"></span>
@@ -497,9 +523,52 @@ function setMode(mode) {
   document.querySelectorAll('.mode-tab').forEach(t => {
     t.classList.toggle('active', t.dataset.mode === mode);
   });
-  const labels = { standard:'Standard mode', research:'Deep Research — auto web search', coding:'Coding — code-first responses' };
+  const labels = { standard:'Standard mode', research:'Deep Research — auto web search', coding:'Coding — code-first responses', canvas:'Canvas — split-pane editor' };
   document.getElementById('modeIndicator').textContent = labels[mode] || 'Standard mode';
+  // Toggle canvas panel
+  const cp = document.getElementById('canvasPanel');
+  const ca = document.getElementById('chatArea');
+  if (mode === 'canvas') {
+    cp.classList.remove('hidden');
+    ca.classList.remove('max-w-chat-max-width','mx-auto');
+  } else {
+    cp.classList.add('hidden');
+    ca.classList.add('max-w-chat-max-width','mx-auto');
+  }
   saveState();
+}
+
+// ─── Canvas Functions ───
+function sendCanvasToChat() {
+  const code = document.getElementById('canvasEditor').value;
+  if (!code.trim()) return;
+  document.getElementById('promptInput').value = `\`\`\`\n${code}\n\`\`\`\n\nPlease review this code:`;
+  document.getElementById('promptInput').dispatchEvent(new Event('input'));
+  // Switch to coding mode
+  setMode('coding');
+}
+function applyAIEdit() {
+  const code = document.getElementById('canvasEditor').value;
+  if (!code.trim()) return;
+  document.getElementById('promptInput').value = `Please edit/improve this code:\n\n\`\`\`\n${code}\n\`\`\`\n\nAfter editing, output ONLY the final code in a code block.`;
+  document.getElementById('promptInput').dispatchEvent(new Event('input'));
+  setMode('coding');
+  setTimeout(() => sendMessage(), 100);
+}
+function copyCanvas() {
+  const code = document.getElementById('canvasEditor').value;
+  navigator.clipboard.writeText(code).then(() => {
+    const btn = event.target.closest('button');
+    btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;">check</span>';
+    setTimeout(() => { btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;">content_copy</span>'; }, 1500);
+  }).catch(() => {});
+}
+function clearCanvas() {
+  document.getElementById('canvasEditor').value = '';
+}
+function openCanvas(code) {
+  setMode('canvas');
+  document.getElementById('canvasEditor').value = code;
 }
 
 // ═══════════════════════════════════════════ AUTH & DRIVE ════════════
@@ -951,7 +1020,6 @@ function toggleMemory() {
 // Detect memory commands in messages
 function detectMemoryActions(text) {
   const lower = text.toLowerCase();
-  // "remember that X is Y" or "remember X is Y" or "my X is Y"
   const patterns = [
     /remember\s+(?:that\s+)?(?:my\s+)?(.+?)\s+(?:is|are|was|were)\s+(.+)/i,
     /remember\s+(?:that\s+)?(.+?)\s*[:=-]\s*(.+)/i,
@@ -963,6 +1031,51 @@ function detectMemoryActions(text) {
     if (m) return { key: m[1].trim(), value: m[2].trim() };
   }
   return null;
+}
+
+// ─── Conversation Memory (Auto-summarization) ───
+const MEMORY_KEYS = new Set(); // prevent dupes in current session
+async function autoExtractMemories() {
+  if (!STATE.memoryEnabled || STATE.currentMessages.length < 3) return;
+  try {
+    const recent = STATE.currentMessages.slice(-6).map(m => `${m.role}: ${m.content.slice(0,200)}`).join('\n');
+    const res = await fetch('/api/chat', {
+      method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+STATE.accessToken},
+      body: JSON.stringify({
+        message: `Extract key facts about the user from this conversation. Return ONLY a JSON array of {key, value} objects. No other text.\n\n${recent}`,
+        model: STATE.currentModel,
+      }),
+    });
+    if (!res.ok) return;
+    let text = '';
+    const ct = res.headers.get('Content-Type') || '';
+    if (ct.includes('text/event-stream')) {
+      const reader = res.body.getReader(); const dec = new TextDecoder(); let buf = '';
+      while (true) { const {done, value} = await reader.read(); if (done) break;
+        buf += dec.decode(value, {stream:true}); const ls = buf.split('\n');
+        buf = ls.pop() || '';
+        for (const l of ls) { if (!l.startsWith('data: ')) continue;
+          const d = l.slice(6).trim();
+          if (d === '[DONE]') continue;
+          try { const p = JSON.parse(d); text += p?.choices?.[0]?.delta?.content || ''; } catch(e) {}
+        }
+      }
+    } else { const d = await res.json(); text = d?.choices?.[0]?.message?.content || ''; }
+    const json = text.match(/\[.*\]/s);
+    if (!json) return;
+    const facts = JSON.parse(json[0]);
+    if (!Array.isArray(facts)) return;
+    for (const f of facts) {
+      if (f.key && f.value && !MEMORY_KEYS.has(f.key)) {
+        MEMORY_KEYS.add(f.key);
+        // Check if already exists
+        if (!STATE.memories.some(m => m.key === f.key)) {
+          STATE.memories.push({ key: f.key, value: f.value, ts: Date.now() });
+        }
+      }
+    }
+    if (facts.length > 0) { saveMemories(); renderMemoryTags(); }
+  } catch(e) { /* silent */ }
 }
 
 // ═══════════════════════════════════════════ VOICE ══════════════════
@@ -1050,9 +1163,21 @@ function appendImageToChat(data) {
 
 // ═══════════════════════════════════════════ IMAGE GEN ══════════════
 function openImageGen() {
-  const prompt = prompt('Describe the image you want to generate:');
-  if (!prompt || !prompt.trim()) return;
-  generateImage(prompt.trim());
+  // Show inline image gen input
+  const container = document.getElementById('messagesContainer');
+  const welcome = container.querySelector('.flex.flex-col.items-center');
+  if (welcome) welcome.remove();
+  const div = document.createElement('div');
+  div.id = 'img-input-' + Date.now();
+  div.className = 'flex justify-start gap-4 fade-in-up';
+  div.innerHTML = `<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center shrink-0 mt-1 shadow-sm border border-surface-border/30"><span class="material-symbols-outlined text-on-primary" style="font-size:16px;">palette</span></div>
+    <div class="max-w-[90%]"><div class="glass-panel rounded-xl p-4"><p class="text-sm text-text-muted mb-2">Describe the image you want to generate:</p>
+    <div class="flex gap-2"><input id="imgPromptInput" class="flex-1 bg-surface-bg border border-surface-border/50 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-ai-accent" placeholder="A futuristic city..."/>
+    <button onclick="const p=document.getElementById('imgPromptInput').value.trim();if(p){this.closest('.glass-panel').closest('.flex').remove();generateImage(p);}" class="px-4 py-2 rounded-lg bg-primary text-white text-sm hover:bg-primary/90 transition">Generate</button></div>
+    <button onclick="this.closest('.glass-panel').closest('.flex').remove()" class="text-xs text-text-muted mt-2 hover:text-primary transition">Cancel</button></div></div>`;
+  container.appendChild(div);
+  scrollToBottom();
+  setTimeout(() => document.getElementById('imgPromptInput')?.focus(), 100);
 }
 async function generateImage(prompt) {
   const msgId = 'img-gen-' + Date.now();
@@ -1068,7 +1193,7 @@ async function generateImage(prompt) {
   scrollToBottom();
   try {
     const res = await fetch('/api/generate-image', {
-      method: 'POST', headers: {'Content-Type':'application/json'},
+      method: 'POST', headers: {'Content-Type':'application/json','Authorization':'Bearer '+STATE.accessToken},
       body: JSON.stringify({ prompt, width: 1024, height: 1024 }),
     });
     if (!res.ok) throw new Error('Generation failed');
@@ -1498,7 +1623,7 @@ async function sendMessage() {
     showStatus('Searching...');
     const results = await webSearch(text);
     if (results && results.length) {
-      searchContext = '\n\nWeb Search Results:\n' + results.map((r,i) => `[${i+1}] ${r.title}\n${r.snippet}\nSource: ${r.url}`).join('\n\n');
+      searchContext = '\n\n📚 **Web Search Results:**\n' + results.map((r,i) => `[${i+1}] **${r.title}**\n${r.snippet.slice(0,300)}\n🔗 [${r.source}](${r.url})`).join('\n\n');
       showStatus('Analyzing results...');
     }
   }
@@ -1572,6 +1697,8 @@ async function sendMessage() {
         sess.updated = new Date().toISOString();
         saveState();
         if (!sess.title && STATE.currentMessages.length >= 2) autoTitle();
+        // Auto-extract memories after exchange
+        if (STATE.memoryEnabled && STATE.currentMessages.length % 3 === 0) setTimeout(autoExtractMemories, 2000);
       }
     } else {
       // Empty response fallback
