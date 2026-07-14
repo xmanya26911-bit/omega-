@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Omega - Signing in...</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#0f172a;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center}
+  .card{background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1);border-radius:24px;padding:40px;max-width:400px;width:90%}
+  .logo{width:56px;height:56px;border-radius:16px;background:#4285F4;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;color:#fff;font-weight:700}
+  h1{font-size:20px;margin-bottom:8px;color:#e2e8f0}
+  p{font-size:14px;color:#94a3b8;margin-bottom:20px}
+  .spinner{width:32px;height:32px;border:3px solid rgba(255,255,255,0.1);border-top-color:#4285F4;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .success{color:#22c55e;font-size:40px;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">&Omega;</div>
+  <h1>Signing you in...</h1>
+  <div class="spinner" id="spinner"></div>
+  <p id="status">Completing authentication</p>
+</div>
+<script>
+(function() {
+  try {
+    // Extract access_token from URL fragment
+    var hash = window.location.hash.substring(1);
+    var params = new URLSearchParams(hash);
+    var token = params.get('access_token');
+    var error = params.get('error');
+
+    if (error) {
+      document.getElementById('spinner').style.display = 'none';
+      document.getElementById('status').textContent = 'Authentication failed: ' + error;
+      if (window.opener) {
+        window.opener.postMessage({ type: 'oauth-result', error: error }, '*');
+      }
+      return;
+    }
+
+    if (token && window.opener) {
+      // Send token to the main page
+      window.opener.postMessage({ type: 'oauth-result', access_token: token }, '*');
+      document.getElementById('spinner').style.display = 'none';
+      document.querySelector('.card').innerHTML =
+        '<div class="success">&#10003;</div>' +
+        '<h1>Signed in!</h1>' +
+        '<p>You can close this window and return to Omega.</p>';
+      // Close after 2 seconds
+      setTimeout(function() { window.close(); }, 2000);
+    } else if (!window.opener) {
+      document.getElementById('status').textContent = 'Opened directly. Please close and try signing in from Omega Cloud.';
+      document.getElementById('spinner').style.display = 'none';
+    }
+  } catch(e) {
+    document.getElementById('status').textContent = 'Error: ' + e.message;
+  }
+})();
+</script>
+</body>
+</html>
