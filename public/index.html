@@ -473,13 +473,13 @@ function renderGSignIn() {
   btn.onclick = () => {
     const params = new URLSearchParams({
       client_id: CLIENT_ID,
-      redirect_uri: REDIRECT_URI,
+      redirect_uri: 'postmessage',
       response_type: 'token',
       scope: SCOPES,
       include_granted_scopes: 'true',
       state: 'omega_' + Date.now(),
     });
-    const win = window.open('https://accounts.google.com/o/oauth2/v2/auth?' + params.toString(), 'google-oauth', 'width=600,height=700');
+    const win = window.open('https://accounts.google.com/o/oauth2/v2/auth?' + params.toString() + '&origin=' + encodeURIComponent(window.location.origin), 'google-oauth', 'width=600,height=700');
   };
   w.innerHTML = '';
   w.appendChild(btn);
