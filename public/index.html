@@ -828,7 +828,7 @@ function renderGSignIn() {
     const challenge = await generateCodeChallenge(verifier);
     sessionStorage.setItem('pkce_verifier', verifier);
     var u = 'https://accounts.google.com/o/oauth2/v2/auth'
-      + '&client_id=' + encodeURIComponent(CLIENT_ID)
+      + '?client_id=' + encodeURIComponent(CLIENT_ID)
       + '&redirect_uri=' + encodeURIComponent(window.location.origin)
       + '&response_type=code'
       + '&scope=' + encodeURIComponent('https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email')
