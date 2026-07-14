@@ -470,7 +470,7 @@ function renderGSignIn() {
   btn.onclick = function() {
     var params = new URLSearchParams({
       client_id: CLIENT_ID,
-      redirect_uri: window.location.origin,
+      redirect_uri: window.location.origin + '/',
       response_type: 'token',
       scope: SCOPES,
       include_granted_scopes: 'true',
