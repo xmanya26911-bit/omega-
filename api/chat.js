@@ -104,13 +104,6 @@ export default async function handler(request) {
     const body = await request.json();
     const { message, apiKey, model, conversationHistory } = body;
 
-    // ─── Build messages array ───
-    const messages = [
-      { role: 'system', content: OMEGA_SYSTEM_PROMPT },
-      ...(conversationHistory || []).slice(-20),
-      { role: 'user', content: message },
-    ];
-
     // ─── Call OpenCode AI API ───
     const openCodeKey = apiKey || process.env.OPENCODE_API_KEY || '';
     const openCodeModel = model || 'deepseek-v4-flash-free';
@@ -128,7 +121,11 @@ export default async function handler(request) {
       headers,
       body: JSON.stringify({
         model: openCodeModel,
-        messages: [{ role: 'system', content: OMEGA_SYSTEM_PROMPT }, ...conversationHistory, { role: 'user', content: text }],
+        messages: [
+          { role: 'system', content: OMEGA_SYSTEM_PROMPT },
+          ...(conversationHistory || []).slice(-20),
+          { role: 'user', content: message },
+        ],
         stream: true,
         max_tokens: 8192,
       }),
