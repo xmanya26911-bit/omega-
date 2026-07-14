@@ -463,6 +463,7 @@ function initAuth() {
   renderGSignIn();
   // Listen for OAuth popup result
   window.addEventListener('message', function(e) {
+    if (e.origin !== window.location.origin) return;  // origin validation
     var d = e.data;
     console.log('[OAUTH] msg from', e.origin, typeof d, d && JSON.stringify(d).slice(0,200));
     if (!d) return;
@@ -517,6 +518,7 @@ function handleOAuthToken(accessToken) {
 }
 
 function signOut() {
+  const currentToken = STATE.accessToken;  // save before nulling
   STATE.auth = null;
   STATE.accessToken = null;
   STATE.driveReady = false;
@@ -530,11 +532,13 @@ function signOut() {
   loadMemoriesLocal();
   renderHistory();
   showToast('Signed out', 'success');
-  // Token revocation (fire-and-forget, no GIS dependency)
-  try {
-    const img = new Image();
-    img.src = 'https://accounts.google.com/o/oauth2/revoke?token=' + STATE.accessToken;
-  } catch(e) {}
+  // Token revocation (fire-and-forget)
+  if (currentToken) {
+    try {
+      const img = new Image();
+      img.src = 'https://accounts.google.com/o/oauth2/revoke?token=' + currentToken;
+    } catch(e) {}
+  }
 }
 
 function showUser() {

@@ -70,7 +70,7 @@ This is OMEGA Cloud — a web-based AI chat interface with these features:
 - **Image Generation**: Users can request images via text prompt. Uses Pollinations.ai for free, instant generation.
 - **Image Input**: Uploaded images are displayed in chat and described.
 - **Memory**: Omega remembers user-provided facts across sessions (name, preferences, project details). Memory is editable and toggleable.
-- **Google Drive Sync**: Chat sessions and memories are stored in the user's Google Drive under the OmegaCloudData folder (omega_sessions.json and omega_memories.json). Data syncs across devices when signed in. Omega can reference Drive storage for persistent memory and chat history, and can suggest the user save important information as memories for future sessions.
+- **Google Drive Sync**: Chat sessions and memories are stored in your personal Google Drive under the OmegaCloudData folder (omega_sessions.json and omega_memories.json). Each user has their own isolated Drive folder secured by Google OAuth — you can only access your own data, not other users'. Data syncs across devices when signed in. Omega can reference Drive storage for persistent memory and chat history, and can suggest the user save important information as memories for future sessions.
 - **Voice Mode**: Browser speech recognition for input and speech synthesis for output — hands-free conversation.
 - **Code Copy**: Every code block has a one-click copy button.
 - **Dark / Light Theme**: Toggleable and persisted.
@@ -247,7 +247,7 @@ export default async function handler(request) {
     return new Response(null, {
       status: 204,
       headers: {
-        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Origin': 'https://omega-nine-weld.vercel.app',
         'Access-Control-Allow-Methods': 'POST, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
       },
@@ -257,7 +257,7 @@ export default async function handler(request) {
   if (request.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'Method not allowed' }), {
       status: 405,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://omega-nine-weld.vercel.app' },
     });
   }
 
@@ -297,7 +297,7 @@ export default async function handler(request) {
       const errText = await response.text();
       return new Response(JSON.stringify({ error: `API error: ${response.status} ${errText}` }), {
         status: response.status,
-        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://omega-nine-weld.vercel.app' },
       });
     }
 
@@ -309,7 +309,7 @@ export default async function handler(request) {
         headers: {
           'Content-Type': 'text/event-stream',
           'Cache-Control': 'no-cache',
-          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Origin': 'https://omega-nine-weld.vercel.app',
           'X-Stream-Mode': 'sse',
         },
       });
@@ -320,13 +320,13 @@ export default async function handler(request) {
     const text = data?.choices?.[0]?.message?.content || data?.content || '';
     return new Response(JSON.stringify({ content: text || 'No response' }), {
       status: 200,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://omega-nine-weld.vercel.app' },
     });
 
   } catch (err) {
     return new Response(JSON.stringify({ error: err.message }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://omega-nine-weld.vercel.app' },
     });
   }
 }
