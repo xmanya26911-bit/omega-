@@ -1401,7 +1401,6 @@ async function sendMessage() {
         'What are the pros and cons?',
       ];
       showFollowUps(suggestions.map(s => `<button onclick="useFollowUp('${escHtml(s)}')" class="follow-up px-3 py-1.5 text-xs rounded-lg border border-surface-border bg-white/50 dark:bg-gray-800/50 text-text-muted hover:text-primary transition-all">${escHtml(s)}</button>`).join(''));
-    }
   } catch(err) {
     if (err.name === 'AbortError') {
       updateAssistantMessage(aiMsgId, (fullResp || '') + '\n\n*[Stopped]*');
