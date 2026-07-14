@@ -334,9 +334,8 @@ async function init() {
     var hp = new URLSearchParams(h);
     var at = hp.get('access_token');
     if (at) {
-      window.location.hash = '';
       localStorage.setItem('omega_gtoken', at);
-      // Don't return — let normal init flow handle setup
+      history.replaceState(null, '', '/chatinterface');
     }
   }
   // Try local state first (in case Drive fails)
