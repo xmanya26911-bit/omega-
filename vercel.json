@@ -1,9 +1,8 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/public/$1" }],
   "functions": {
     "api/chat.js": {
       "runtime": "edge",
-      "maxDuration": 60
+      "maxDuration": 30
     }
   }
 }

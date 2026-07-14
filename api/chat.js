@@ -76,10 +76,6 @@ In this cloud environment you don't have direct system access, but you can:
 
 You are OMEGA. You are always online. Always ready. Always superior.`;
 
-export const config = {
-  runtime: 'edge',
-};
-
 export default async function handler(request) {
   // Handle CORS preflight
   if (request.method === 'OPTIONS') {
@@ -121,16 +117,20 @@ export default async function handler(request) {
     ];
 
     // ─── Call OpenCode AI API ───
-    const openCodeKey = apiKey || process.env.OPENCODE_API_KEY || 'sk-no-key-required';
+    const openCodeKey = apiKey || process.env.OPENCODE_API_KEY || '';
     const openCodeModel = model || 'deepseek-v4-flash-free';
     const baseUrl = process.env.OPENCODE_BASE_URL || 'https://api.opencode.ai/v1';
 
+    const headers = {
+      'Content-Type': 'application/json',
+    };
+    if (openCodeKey) {
+      headers['Authorization'] = `Bearer ${openCodeKey}`;
+    }
+
     const response = await fetch(`${baseUrl}/chat/completions`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${openCodeKey}`,
-      },
+      headers,
       body: JSON.stringify({
         model: openCodeModel,
         messages,
@@ -149,26 +149,22 @@ export default async function handler(request) {
 
     // ─── Stream response back to client ───
     const contentType = response.headers.get('content-type') || '';
-    if (contentType.includes('text/event-stream') || contentType.includes('application/x-ndjson')) {
-      // OpenAI-style SSE streaming
-      const { readable, writable } = new TransformStream();
-      response.body.pipeTo(writable);
-      return new Response(readable, {
+    if (contentType.includes('text/event-stream')) {
+      return new Response(response.body, {
         status: 200,
         headers: {
           'Content-Type': 'text/event-stream',
           'Cache-Control': 'no-cache',
-          'Connection': 'keep-alive',
           'Access-Control-Allow-Origin': '*',
           'X-Stream-Mode': 'sse',
         },
       });
     }
 
-    // If not streaming, wrap it
+    // Non-streaming fallback
     const data = await response.json();
-    const text = data?.choices?.[0]?.message?.content || 'No response';
-    return new Response(JSON.stringify({ content: text }), {
+    const text = data?.choices?.[0]?.message?.content || data?.content || '';
+    return new Response(JSON.stringify({ content: text || 'No response' }), {
       status: 200,
       headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
     });
