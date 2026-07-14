@@ -473,21 +473,52 @@ function initAuth() {
 function renderGSignIn() {
   const w = document.getElementById('gSignInWrapper');
   if (!w) return;
-  const btn = document.createElement('button');
-  btn.className = 'flex items-center justify-center gap-3 w-full px-6 py-3 rounded-xl bg-white text-gray-800 font-semibold text-sm hover:bg-gray-50 transition-all duration-200 shadow-lg hover:shadow-xl border border-gray-200';
-  btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/><path fill="#FF3D00" d="m6.306 14.691 6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/></svg>Sign in with Google';
-  btn.onclick = function() {
-    var url = 'https://accounts.google.com/o/oauth2/v2/auth'
-      + '?client_id=' + encodeURIComponent(CLIENT_ID)
-      + '&redirect_uri=' + encodeURIComponent(window.location.origin + '/')
-      + '&response_type=token'
-      + '&scope=' + encodeURIComponent(SCOPES)
-      + '&include_granted_scopes=true'
-      + '&state=omega_' + Date.now();
-    window.location.href = url;
+  // Try loading GIS library dynamically
+  var gsiScript = document.createElement('script');
+  gsiScript.src = 'https://accounts.google.com/gsi/client';
+  gsiScript.onload = function() {
+    // GIS loaded — use it
+    w.innerHTML = '';
+    var btn = document.createElement('div');
+    btn.id = 'gsi-btn';
+    w.appendChild(btn);
+    google.accounts.id.initialize({
+      client_id: CLIENT_ID,
+      callback: function(resp) {
+        if (resp.credential) {
+          // ID token from One Tap - not what we need
+          // For Drive access we need oauth2 token client
+        }
+      },
+    });
+    // Use TokenClient for Drive scopes
+    var tc = google.accounts.oauth2.initTokenClient({
+      client_id: CLIENT_ID,
+      scope: SCOPES,
+      callback: function(resp) {
+        if (resp.access_token) { handleOAuthToken(resp.access_token); }
+      },
+    });
+    // Render a custom button
+    var customBtn = document.createElement('button');
+    customBtn.className = 'flex items-center justify-center gap-3 w-full px-6 py-3 rounded-xl bg-white text-gray-800 font-semibold text-sm hover:bg-gray-50 transition-all duration-200 shadow-lg hover:shadow-xl border border-gray-200';
+    customBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/><path fill="#FF3D00" d="m6.306 14.691 6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/></svg>Sign in with Google';
+    customBtn.onclick = function() { tc.request(); };
+    w.appendChild(customBtn);
   };
-  w.innerHTML = '';
-  w.appendChild(btn);
+  gsiScript.onerror = function() {
+    // GIS blocked — show fallback: direct redirect
+    // Use oauth-callback.html as redirect URI (needs to be in console!)
+    w.innerHTML = '';
+    var btn = document.createElement('button');
+    btn.className = 'flex items-center justify-center gap-3 w-full px-6 py-3 rounded-xl bg-white text-gray-800 font-semibold text-sm hover:bg-gray-50 transition-all duration-200 shadow-lg hover:shadow-xl border border-gray-200';
+    btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/><path fill="#FF3D00" d="m6.306 14.691 6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/></svg>Sign in with Google';
+    btn.onclick = function() {
+      window.location.href = 'https://accounts.google.com/o/oauth2/v2/auth?client_id=' + encodeURIComponent(CLIENT_ID) + '&redirect_uri=' + encodeURIComponent(window.location.origin + '/oauth-callback.html') + '&response_type=token&scope=' + encodeURIComponent(SCOPES) + '&include_granted_scopes=true&state=omega_' + Date.now();
+    };
+    w.appendChild(btn);
+  };
+  document.head.appendChild(gsiScript);
 }
 
 function handleOAuthToken(accessToken) {

@@ -41,19 +41,18 @@
       return;
     }
 
-    if (token && window.opener) {
-      // Send token to the main page
-      window.opener.postMessage({ type: 'oauth-result', access_token: token }, '*');
-      document.getElementById('spinner').style.display = 'none';
-      document.querySelector('.card').innerHTML =
-        '<div class="success">&#10003;</div>' +
-        '<h1>Signed in!</h1>' +
-        '<p>You can close this window and return to Omega.</p>';
-      // Close after 2 seconds
-      setTimeout(function() { window.close(); }, 2000);
-    } else if (!window.opener) {
-      document.getElementById('status').textContent = 'Opened directly. Please close and try signing in from Omega Cloud.';
-      document.getElementById('spinner').style.display = 'none';
+    if (token) {
+      if (window.opener) {
+        window.opener.postMessage({ type: 'oauth-result', access_token: token }, '*');
+        document.getElementById('spinner').style.display = 'none';
+        document.querySelector('.card').innerHTML =
+          '<div class="success">&#10003;</div>' +
+          '<h1>Signed in!</h1>' +
+          '<p>You can close this window.</p>';
+        setTimeout(function() { window.close(); }, 1500);
+      } else {
+        window.location.href = '/#' + new URLSearchParams({ access_token: token }).toString();
+      }
     }
   } catch(e) {
     document.getElementById('status').textContent = 'Error: ' + e.message;
