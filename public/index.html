@@ -335,8 +335,8 @@ async function init() {
     var at = hp.get('access_token');
     if (at) {
       window.location.hash = '';
-      handleOAuthToken(at);
-      return;
+      localStorage.setItem('omega_gtoken', at);
+      // Don't return — let normal init flow handle setup
     }
   }
   // Try local state first (in case Drive fails)
