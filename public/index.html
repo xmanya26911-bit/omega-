@@ -1387,6 +1387,12 @@ async function sendMessage() {
         saveState();
         if (!sess.title && STATE.currentMessages.length >= 2) autoTitle();
       }
+    } else {
+      // Empty response fallback
+      fullResp = '_No response from model. Try a different model or check the input._';
+      updateAssistantMessage(aiMsgId, fullResp);
+      STATE.conversationHistory.push({ role:'assistant', content: fullResp });
+    }
       // Show follow-up suggestions
       const suggestions = [
         'Tell me more about that',
