@@ -160,7 +160,8 @@
               if (data === '[DONE]') continue;
               try {
                 const parsed = JSON.parse(data);
-                const content = parsed?.choices?.[0]?.delta?.content || '';
+                const delta = parsed?.choices?.[0]?.delta || {};
+                const content = delta?.content || delta?.reasoning_content || '';
                 if (content) {
                   fullResponse += content;
                   updateAssistantMessage(msgId, fullResponse);
@@ -174,7 +175,8 @@
       } else {
         // Non-streaming response
         const data = await res.json();
-        fullResponse = data?.choices?.[0]?.message?.content || data?.content || 'No response';
+        const msg = data?.choices?.[0]?.message || {};
+        fullResponse = msg?.content || msg?.reasoning_content || data?.content || 'No response';
         updateAssistantMessage(msgId, fullResponse);
       }
 
