@@ -1,0 +1,13 @@
+{
+  "name": "omega-cloud",
+  "version": "1.0.0",
+  "description": "OMEGA Cloud — ChatGPT-style chat frontend with OpenCode AI backend",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "vercel": "^37.0.0"
+  }
+}
