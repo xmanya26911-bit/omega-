@@ -128,7 +128,7 @@ export default async function handler(request) {
       headers,
       body: JSON.stringify({
         model: openCodeModel,
-        messages,
+        messages: [{ role: 'system', content: OMEGA_SYSTEM_PROMPT }, ...conversationHistory, { role: 'user', content: text }],
         stream: true,
         max_tokens: 8192,
       }),
