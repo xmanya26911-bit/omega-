@@ -389,36 +389,33 @@ async function init() {
       var verifier = sessionStorage.getItem('pkce_verifier');
       sessionStorage.removeItem('pkce_verifier');
       if (verifier) {
-        (async () => {
-          try {
-            const res = await fetch('/api/auth', {
-              method: 'POST', headers: {'Content-Type':'application/json'},
-              body: JSON.stringify({ code, code_verifier: verifier, redirect_uri: window.location.origin }),
-            });
-            if (res.ok) {
-              const data = await res.json();
-              STATE.accessToken = data.access_token;
-              if (data.refresh_token) storeRefreshToken(data.refresh_token);
-              history.replaceState(null, '', '/chatinterface');
-              // Fetch user info and init Drive
-              const u = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', { headers: { Authorization: 'Bearer ' + STATE.accessToken } });
-              if (u.ok) {
-                const user = await u.json();
-                STATE.auth = user;
-                localStorage.setItem('omega_user', JSON.stringify(user));
-                showUser(); hideLogin();
-                initDrive();
-              }
-            } else {
-              const e = await res.json();
-              console.error('[OAUTH] PKCE exchange failed:', e.error);
-              history.replaceState(null, '', '/chatinterface');
-            }
-          } catch(e) {
-            console.error('[OAUTH] PKCE error:', e.message);
+        try {
+          const res = await fetch('/api/auth', {
+            method: 'POST', headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({ code, code_verifier: verifier, redirect_uri: window.location.origin }),
+          });
+          if (res.ok) {
+            const data = await res.json();
+            STATE.accessToken = data.access_token;
+            if (data.refresh_token) storeRefreshToken(data.refresh_token);
+            history.replaceState(null, '', '/chatinterface');
+            const u = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', { headers: { Authorization: 'Bearer ' + STATE.accessToken } });
+            if (u.ok) {
+              const user = await u.json();
+              STATE.auth = user;
+              localStorage.setItem('omega_user', JSON.stringify(user));
+              showUser(); hideLogin();
+              await initDrive();
+            } else { history.replaceState(null, '', '/chatinterface'); }
+          } else {
+            const e = await res.json();
+            console.error('[OAUTH] PKCE exchange failed:', e.error);
             history.replaceState(null, '', '/chatinterface');
           }
-        })();
+        } catch(e) {
+          console.error('[OAUTH] PKCE error:', e.message);
+          history.replaceState(null, '', '/chatinterface');
+        }
       }
     }
   } else if (window.location.hash && window.location.hash.indexOf('access_token=') >= 0) {
