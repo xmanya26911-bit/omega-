@@ -1,0 +1,8 @@
+# Ignore any stray files Vercel might pick up
+*.py
+*.bat
+*.ps1
+*.txt
+*.md
+!README.md
+requirements.txt
