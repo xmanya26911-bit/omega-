@@ -435,7 +435,7 @@ function setMode(mode) {
 // ═══════════════════════════════════════════ AUTH & DRIVE ════════════
 const CLIENT_ID = '855819039877-5f4a8biid8hkf8j2hhd1jk3bj9ng2f5f.apps.googleusercontent.com';
 const SCOPES = 'https://www.googleapis.com/auth/drive.file';
-const REDIRECT_URI = window.location.origin + '/oauth-callback.html';
+const REDIRECT_URI = 'postmessage';
 
 function initAuth() {
   // Check existing Drive auth from localStorage
@@ -449,10 +449,17 @@ function initAuth() {
     initDrive();
   }
   renderGSignIn();
-  // Listen for OAuth callback messages
+  // Listen for OAuth result (from postmessage redirect or custom callback)
   window.addEventListener('message', function(e) {
-    if (e.data && e.data.type === 'oauth-result' && e.data.access_token) {
-      handleOAuthToken(e.data.access_token);
+    var d = e.data;
+    // Our callback page format
+    if (d && d.type === 'oauth-result' && d.access_token) {
+      handleOAuthToken(d.access_token);
+      return;
+    }
+    // Google's native postmessage redirect format
+    if (d && (d.access_token || (d.response && d.response.access_token))) {
+      handleOAuthToken(d.access_token || d.response.access_token);
     }
   });
 }
