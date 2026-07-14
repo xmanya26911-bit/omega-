@@ -447,20 +447,50 @@ function setMode(mode) {
 
 // ═══════════════════════════════════════════ AUTH & DRIVE ════════════
 const CLIENT_ID = '855819039877-5f4a8biid8hkf8j2hhd1jk3bj9ng2f5f.apps.googleusercontent.com';
-const SCOPES = 'https://www.googleapis.com/auth/drive.file';
+const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email';
 
 function initAuth() {
   // Check existing Drive auth from localStorage
   const token = localStorage.getItem('omega_gtoken');
   const userInfo = localStorage.getItem('omega_user');
   if (token && userInfo) {
-    STATE.accessToken = token;
-    STATE.auth = JSON.parse(userInfo);
-    showUser();
-    hideLogin();
-    initDrive();
+    try {
+      const parsed = JSON.parse(userInfo);
+      // Validate cached token is still alive
+      fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: { Authorization: 'Bearer ' + token }
+      }).then(r => {
+        if (r.ok) {
+          r.json().then(usr => {
+            STATE.auth = usr;
+            STATE.accessToken = token;
+            localStorage.setItem('omega_user', JSON.stringify(usr));
+            showUser();
+            hideLogin();
+            initDrive();
+          });
+        } else {
+          // Token expired — clear cache, force re-auth
+          console.log('[AUTH] cached token expired, clearing');
+          localStorage.removeItem('omega_gtoken');
+          localStorage.removeItem('omega_user');
+          renderGSignIn();
+        }
+      }).catch(() => {
+        // Network error: use cached data anyway
+        STATE.accessToken = token;
+        STATE.auth = parsed;
+        showUser();
+        hideLogin();
+        initDrive();
+      });
+    } catch(e) {
+      localStorage.removeItem('omega_user');
+      renderGSignIn();
+    }
+  } else {
+    renderGSignIn();
   }
-  renderGSignIn();
   // Listen for OAuth popup result
   window.addEventListener('message', function(e) {
     if (e.origin !== window.location.origin) return;  // origin validation
@@ -485,7 +515,7 @@ function renderGSignIn() {
       + '?client_id=' + encodeURIComponent('855819039877-5f4a8biid8hkf8j2hhd1jk3bj9ng2f5f.apps.googleusercontent.com')
       + '&redirect_uri=' + encodeURIComponent('https://omega-nine-weld.vercel.app')
       + '&response_type=token'
-      + '&scope=' + encodeURIComponent('https://www.googleapis.com/auth/drive.file')
+      + '&scope=' + encodeURIComponent('https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email')
       + '&include_granted_scopes=true'
       + '&prompt=consent';
     window.location.href = u;
@@ -589,14 +619,16 @@ function driveHeaders() {
 }
 
 async function driveGetOrCreateFolder() {
-  const userEmail = (STATE.auth && STATE.auth.email) || 'default';
-  const folderName = 'OmegaCloudData_' + userEmail.replace(/[@.]/g, '_');
-  // Try old folder name first (migration)
-  const oldQuery = encodeURIComponent("name='OmegaCloudData' and mimeType='application/vnd.google-apps.folder' and trashed=false");
+  const userEmail = STATE.auth && STATE.auth.email;
+  const userId = STATE.auth && STATE.auth.sub;
+  const folderName = userEmail 
+    ? 'OmegaCloudData_' + userEmail.replace(/[@.]/g, '_')
+    : (userId ? 'OmegaCloudData_' + userId : 'OmegaCloudData_' + (STATE.accessToken ? STATE.accessToken.slice(-8) : 'default'));
+  console.log('[DRIVE] using folder:', folderName, 'for user:', userEmail || userId || 'unknown');
   const newQuery = encodeURIComponent("name='" + folderName + "' and mimeType='application/vnd.google-apps.folder' and trashed=false");
   let r = await fetch(`https://www.googleapis.com/drive/v3/files?q=${newQuery}&fields=files(id,name)`, { headers: driveHeaders() });
   let data = await r.json();
-  console.log('[DRIVE] search folder (' + folderName + ') response:', r.status, data);
+  console.log('[DRIVE] search folder response:', r.status, data);
   if (!r.ok) throw new Error('Drive API ' + r.status + ': ' + JSON.stringify(data));
   if (data.files && data.files.length > 0) return data.files[0].id;
   // Create folder
