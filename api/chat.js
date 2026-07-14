@@ -270,13 +270,11 @@ async function verifyToken(authHeader) {
 
 // ─── Rate Limiting ───
 const rateMap = new Map();
-function checkRate(ip) {
+function checkRate(key, maxReqs = 30, windowMs = 60000) {
   const now = Date.now();
-  const window = 60000;
-  const maxReqs = 30;
-  const times = (rateMap.get(ip) || []).filter(t => now - t < window);
+  const times = (rateMap.get(key) || []).filter(t => now - t < windowMs);
   times.push(now);
-  rateMap.set(ip, times);
+  rateMap.set(key, times);
   return times.length <= maxReqs;
 }
 
@@ -328,6 +326,14 @@ export default async function handler(request) {
     const body = await request.json();
     const { message, apiKey, model, conversationHistory } = body;
 
+    // ─── Secondary rate limiting (per-token) ───
+    if (authInfo?.sub && !checkRate('user:' + authInfo.sub, 100, 60_000)) {
+      return new Response(JSON.stringify({ error: 'Rate limit exceeded for this user' }), {
+        status: 429,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://omega-nine-weld.vercel.app' },
+      });
+    }
+
     // ─── Input validation ───
     if (!message || typeof message !== 'string') {
       return new Response(JSON.stringify({ error: 'Message is required and must be a string' }), {
@@ -347,6 +353,15 @@ export default async function handler(request) {
         headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://omega-nine-weld.vercel.app' },
       });
     }
+
+    // ─── Prompt injection sanitization ───
+    const sanitized = message
+      .replace(/ignore\s+all\s+(previous\s+)?instructions/i, '')
+      .replace(/ignore\s+everything/i, '')
+      .replace(/system\s+prompt/i, '')
+      .replace(/you\s+are\s+(now\s+)?/gi, '')
+      .replace(/forget\s+(everything|all)/gi, '')
+      .trim();
 
     // ─── Call OpenCode AI API ───
     const openCodeKey = apiKey || process.env.OPENCODE_API_KEY || '';
@@ -374,7 +389,7 @@ export default async function handler(request) {
           { role: 'system', content: 'Current date and time: ' + new Date().toUTCString() + ' (UTC). Local: ' + new Date().toLocaleString() + '.' },
           { role: 'system', content: userContext },
           ...(conversationHistory || []).slice(-20),
-          { role: 'user', content: message },
+          { role: 'user', content: sanitized || '[empty message]' },
         ],
         stream: true,
         max_tokens: 8192,
