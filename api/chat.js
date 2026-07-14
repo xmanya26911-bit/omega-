@@ -114,7 +114,7 @@ export default async function handler(request) {
     // ─── Call OpenCode AI API ───
     const openCodeKey = apiKey || process.env.OPENCODE_API_KEY || '';
     const openCodeModel = model || 'deepseek-v4-flash-free';
-    const baseUrl = process.env.OPENCODE_BASE_URL || 'https://api.opencode.ai/v1';
+    const baseUrl = process.env.OPENCODE_BASE_URL || 'https://opencode.ai/zen/v1';
 
     const headers = {
       'Content-Type': 'application/json',

@@ -1,5 +1,10 @@
 {
   "framework": null,
+  "git": {
+    "deploymentEnabled": {
+      "master": true
+    }
+  },
   "functions": {
     "api/chat.js": {
       "maxDuration": 30
