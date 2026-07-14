@@ -349,7 +349,7 @@ async function init() {
           try {
             const res = await fetch('/api/auth', {
               method: 'POST', headers: {'Content-Type':'application/json'},
-              body: JSON.stringify({ code, code_verifier: verifier, redirect_uri: 'https://omega-nine-weld.vercel.app' }),
+              body: JSON.stringify({ code, code_verifier: verifier, redirect_uri: 'https://omega-nine-weld.vercel.app/oauth/callback' }),
             });
             if (res.ok) {
               const data = await res.json();
@@ -544,72 +544,51 @@ async function refreshAccessToken() {
 }
 
 function initAuth() {
-  // Check existing Drive auth from localStorage
-  const token = localStorage.getItem('omega_gtoken');
-  const userInfo = localStorage.getItem('omega_user');
-  if (token && userInfo) {
-    try {
-      const parsed = JSON.parse(userInfo);
-      // Validate cached token is still alive
-      fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-        headers: { Authorization: 'Bearer ' + token }
-      }).then(r => {
-        if (r.ok) {
-          r.json().then(usr => {
-            STATE.auth = usr;
-            STATE.accessToken = token;
-            localStorage.setItem('omega_user', JSON.stringify(usr));
-            showUser();
-            hideLogin();
-            initDrive();
-          });
-        } else {
-          // Token expired — clear cache, force re-auth
-          console.log('[AUTH] cached token expired, clearing');
-          localStorage.removeItem('omega_gtoken');
-          localStorage.removeItem('omega_user');
-          renderGSignIn();
-        }
-      }).catch(() => {
-        // Network error: use cached data anyway
-        STATE.accessToken = token;
-        STATE.auth = parsed;
-        showUser();
-        hideLogin();
-        initDrive();
-      });
-    } catch(e) {
+  // ─── Legacy cleanup: remove old plaintext token ───
+  const legacyToken = localStorage.getItem('omega_gtoken');
+  if (legacyToken) {
+    // Attempt to migrate to PKCE if we have a refresh token
+    if (!getRefreshToken()) {
+      // Force re-auth via PKCE
+      console.log('[AUTH] legacy token found, clearing for PKCE migration');
+      localStorage.removeItem('omega_gtoken');
       localStorage.removeItem('omega_user');
       renderGSignIn();
+      return;
     }
-  } else if (getRefreshToken()) {
-    // No access token but refresh token exists — try silent refresh
+    // Has refresh token: clean up legacy token, use PKCE flow
+    localStorage.removeItem('omega_gtoken');
+  }
+
+  // ─── PKCE flow: try refresh token ───
+  const userInfo = localStorage.getItem('omega_user');
+  const rt = getRefreshToken();
+  if (rt && userInfo) {
     (async () => {
       const at = await refreshAccessToken();
       if (at) {
         STATE.accessToken = at;
-        const userInfo = localStorage.getItem('omega_user');
-        if (userInfo) {
-          try { STATE.auth = JSON.parse(userInfo); } catch {}
-          showUser();
-          hideLogin();
-          initDrive();
-          return;
-        }
+        try { STATE.auth = JSON.parse(userInfo); } catch {}
+        showUser();
+        hideLogin();
+        initDrive();
+        return;
       }
+      // Refresh failed — clear everything, force re-auth
+      clearRefreshToken();
+      localStorage.removeItem('omega_user');
       renderGSignIn();
     })();
   } else {
     renderGSignIn();
   }
-  // Listen for OAuth popup result
+
+  // Listen for OAuth popup result (legacy GIS fallback)
   window.addEventListener('message', function(e) {
-    if (e.origin !== window.location.origin) return;  // origin validation
+    if (e.origin !== window.location.origin) return;
     var d = e.data;
-    console.log('[OAUTH] msg from', e.origin, typeof d, d && JSON.stringify(d).slice(0,200));
     if (!d) return;
-    // Google's postmessage format: {type:"authorization_response", response:{access_token:"..."}}
-    var token = d.response && d.response.access_token || d.access_token;
+    const token = d.response?.access_token || d.access_token;
     if (token) { handleOAuthToken(token); }
   });
 }
@@ -631,7 +610,7 @@ function renderGSignIn() {
     sessionStorage.setItem('pkce_verifier', verifier);
     var u = 'https://accounts.google.com/o/oauth2/v2/auth'
       + '?client_id=' + encodeURIComponent('855819039877-5f4a8biid8hkf8j2hhd1jk3bj9ng2f5f.apps.googleusercontent.com')
-      + '&redirect_uri=' + encodeURIComponent('https://omega-nine-weld.vercel.app')
+      + '&redirect_uri=' + encodeURIComponent('https://omega-nine-weld.vercel.app/oauth/callback')
       + '&response_type=code'
       + '&scope=' + encodeURIComponent('https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email')
       + '&include_granted_scopes=true'
