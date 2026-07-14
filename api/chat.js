@@ -241,6 +241,51 @@ export const config = {
   runtime: 'edge',
 };
 
+const GOOGLE_CLIENT_ID = '855819039877-5f4a8biid8hkf8j2hhd1jk3bj9ng2f5f.apps.googleusercontent.com';
+
+// ─── Token Verification ───
+const tokenCache = new Map();
+async function verifyToken(authHeader) {
+  if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
+  const token = authHeader.slice(7);
+  if (token.length < 10) return null;
+
+  const cached = tokenCache.get(token);
+  if (cached && cached.exp > Date.now() / 1000) return cached;
+
+  try {
+    const res = await fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=${encodeURIComponent(token)}`);
+    if (!res.ok) { tokenCache.delete(token); return null; }
+    const data = await res.json();
+    if (data.aud !== GOOGLE_CLIENT_ID) return null;
+    if (data.exp && parseInt(data.exp) < Date.now() / 1000) return null;
+
+    const info = { email: data.email || data.sub, sub: data.sub, exp: parseInt(data.exp || '0') };
+    const ttl = Math.max(60, (info.exp - Date.now() / 1000 - 300)) * 1000;
+    tokenCache.set(token, info);
+    setTimeout(() => tokenCache.delete(token), ttl);
+    return info;
+  } catch { return null; }
+}
+
+// ─── Rate Limiting ───
+const rateMap = new Map();
+function checkRate(ip) {
+  const now = Date.now();
+  const window = 60000;
+  const maxReqs = 30;
+  const times = (rateMap.get(ip) || []).filter(t => now - t < window);
+  times.push(now);
+  rateMap.set(ip, times);
+  return times.length <= maxReqs;
+}
+
+function ipFromRequest(request) {
+  return request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+    || request.headers.get('x-real-ip')
+    || 'unknown';
+}
+
 export default async function handler(request) {
   // Handle CORS preflight
   if (request.method === 'OPTIONS') {
@@ -249,7 +294,7 @@ export default async function handler(request) {
       headers: {
         'Access-Control-Allow-Origin': 'https://omega-nine-weld.vercel.app',
         'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
       },
     });
   }
@@ -257,6 +302,24 @@ export default async function handler(request) {
   if (request.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'Method not allowed' }), {
       status: 405,
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://omega-nine-weld.vercel.app' },
+    });
+  }
+
+  // Rate limiting
+  const clientIp = ipFromRequest(request);
+  if (!checkRate(clientIp)) {
+    return new Response(JSON.stringify({ error: 'Too many requests. Slow down.' }), {
+      status: 429,
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://omega-nine-weld.vercel.app' },
+    });
+  }
+
+  // Verify authentication
+  const authInfo = await verifyToken(request.headers.get('Authorization'));
+  if (!authInfo) {
+    return new Response(JSON.stringify({ error: 'Unauthorized. Please sign in with Google.' }), {
+      status: 401,
       headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://omega-nine-weld.vercel.app' },
     });
   }
@@ -277,6 +340,10 @@ export default async function handler(request) {
       headers['Authorization'] = `Bearer ${openCodeKey}`;
     }
 
+    const userContext = authInfo?.email
+      ? `The signed-in user's email is: ${authInfo.email}. Address them appropriately.`
+      : 'The user is not signed in.';
+
     const response = await fetch(`${baseUrl}/chat/completions`, {
       method: 'POST',
       headers,
@@ -285,6 +352,7 @@ export default async function handler(request) {
         messages: [
           { role: 'system', content: OMEGA_SYSTEM_PROMPT },
           { role: 'system', content: 'Current date and time: ' + new Date().toUTCString() + ' (UTC). Local: ' + new Date().toLocaleString() + '.' },
+          { role: 'system', content: userContext },
           ...(conversationHistory || []).slice(-20),
           { role: 'user', content: message },
         ],
