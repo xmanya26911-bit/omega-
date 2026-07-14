@@ -102,16 +102,7 @@ export default async function handler(request) {
 
   try {
     const body = await request.json();
-    const { message, password, apiKey, model, conversationHistory } = body;
-
-    // ─── Password validation ───
-    const CORRECT_PASSWORD = 'unc.xo.anyaa';
-    if (password !== CORRECT_PASSWORD) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401,
-        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-      });
-    }
+    const { message, apiKey, model, conversationHistory } = body;
 
     // ─── Build messages array ───
     const messages = [
