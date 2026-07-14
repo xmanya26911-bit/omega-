@@ -1,12 +1,9 @@
 // OMEGA Cloud — Web Search Edge Function
-// Proxies search queries through DuckDuckGo (no API key needed)
+// Multi-source: DuckDuckGo Instant Answer + Wikipedia (no API keys needed)
 
-export const config = {
-  runtime: 'edge',
-};
+export const config = { runtime: 'edge' };
 
 export default async function handler(request) {
-  // CORS preflight
   if (request.method === 'OPTIONS') {
     return new Response(null, {
       status: 204,
@@ -36,7 +33,7 @@ export default async function handler(request) {
 
     const results = [];
 
-    // 1. Try DuckDuckGo Instant Answer API
+    // ─── Source 1: DuckDuckGo Instant Answer ───
     try {
       const ddgUrl = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1&skip_disambig=1`;
       const ddgRes = await fetch(ddgUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
@@ -47,58 +44,80 @@ export default async function handler(request) {
             title: ddgData.Heading || 'Summary',
             snippet: ddgData.AbstractText,
             url: ddgData.AbstractURL || '',
+            source: 'DuckDuckGo',
           });
         }
-        if (ddgData.Infobox && ddgData.Infobox.content) {
-          for (const item of ddgData.Infobox.content) {
-            if (item.label && item.value) {
+        // Related topics
+        if (ddgData.RelatedTopics) {
+          for (const topic of ddgData.RelatedTopics) {
+            if (topic.Text && results.length < 6) {
               results.push({
-                title: item.label,
-                snippet: typeof item.value === 'string' ? item.value : JSON.stringify(item.value),
-                url: '',
+                title: topic.Text.split(' - ')[0] || 'Related',
+                snippet: topic.Text,
+                url: topic.FirstURL || '',
+                source: 'DuckDuckGo',
               });
+            }
+            // Handle sub-topics
+            if (topic.Topics) {
+              for (const sub of topic.Topics) {
+                if (sub.Text && results.length < 6) {
+                  results.push({
+                    title: sub.Text.split(' - ')[0] || 'Related',
+                    snippet: sub.Text,
+                    url: sub.FirstURL || '',
+                    source: 'DuckDuckGo',
+                  });
+                }
+              }
             }
           }
         }
       }
-    } catch (e) {
-      // Instant answer failed, continue to HTML fallback
-    }
+    } catch (e) { /* DDG failed */ }
 
-    // 2. Fetch HTML search results for web links
-    try {
-      const htmlUrl = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(query)}`;
-      const htmlRes = await fetch(htmlUrl, {
-        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' },
-      });
-      if (htmlRes.ok) {
-        const html = await htmlRes.text();
-
-        // Parse result blocks
-        const blocks = html.split('<div class="result__body">');
-        for (let i = 1; i < blocks.length && results.length < 8; i++) {
-          const block = blocks[i];
-
-          // Extract title
-          const titleMatch = block.match(/<a[^>]+class="result__a"[^>]*>([\s\S]*?)<\/a>/);
-          const title = titleMatch ? titleMatch[1].replace(/<[^>]*>/g, '').trim() : '';
-
-          // Extract snippet
-          const snippetMatch = block.match(/<a[^>]+class="result__snippet"[^>]*>([\s\S]*?)<\/a>/);
-          let snippet = snippetMatch ? snippetMatch[1].replace(/<[^>]*>/g, '').trim() : '';
-
-          // Extract URL
-          const urlMatch = block.match(/<a[^>]+class="result__url"[^>]*href="([^"]*)"/);
-          let url = urlMatch ? urlMatch[1] : '';
-          if (url.startsWith('//')) url = 'https:' + url;
-
-          if (title) {
-            results.push({ title, snippet, url });
+    // ─── Source 2: Wikipedia API ───
+    if (results.length < 3) {
+      try {
+        // Try exact match first
+        let wikiQuery = query.replace(/^(what is|who is|the|a|an) /i, '').trim();
+        const wikiUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(wikiQuery)}`;
+        const wikiRes = await fetch(wikiUrl, { headers: { 'User-Agent': 'OmegaCloud/1.0' } });
+        if (wikiRes.ok) {
+          const wikiData = await wikiRes.json();
+          if (wikiData.extract && wikiData.extract.length > 50) {
+            let snippet = wikiData.extract;
+            if (wikiData.description) snippet = wikiData.description + '\n\n' + snippet;
+            results.push({
+              title: wikiData.title || wikiQuery,
+              snippet: snippet.slice(0, 600),
+              url: wikiData.content_urls?.desktop?.page || `https://en.wikipedia.org/wiki/${encodeURIComponent(wikiQuery)}`,
+              source: 'Wikipedia',
+            });
           }
         }
-      }
-    } catch (e) {
-      // HTML fallback failed
+      } catch (e) { /* Wiki failed */ }
+    }
+
+    // ─── Source 3: Wikipedia search (fallback) ───
+    if (results.length < 2) {
+      try {
+        const searchUrl = `https://en.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(query)}&limit=3&format=json`;
+        const searchRes = await fetch(searchUrl, { headers: { 'User-Agent': 'OmegaCloud/1.0' } });
+        if (searchRes.ok) {
+          const [_, titles, snippets, urls] = await searchRes.json();
+          if (titles && snippets) {
+            for (let i = 0; i < titles.length && results.length < 4; i++) {
+              results.push({
+                title: titles[i],
+                snippet: snippets[i] || '',
+                url: urls[i] || '',
+                source: 'Wikipedia',
+              });
+            }
+          }
+        }
+      } catch (e) { /* Wiki search failed */ }
     }
 
     return new Response(JSON.stringify({ results, query }), {
