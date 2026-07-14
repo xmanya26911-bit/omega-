@@ -55,6 +55,14 @@
 .dark .toast{background:#374151}.toast.success{border-left:3px solid #22c55e}.toast.error{border-left:3px solid #ef4444}
 .status-bar{display:flex;align-items:center;gap:8px;padding:6px 12px;font-size:12px;color:#6b7280;border-radius:8px;margin:4px 0}
 .status-bar .typing-dot{width:6px;height:6px}
+.ripple{position:relative;overflow:hidden}.ripple::after{content:'';position:absolute;border-radius:50%;background:rgba(255,255,255,0.3);width:100px;height:100px;margin-top:-50px;margin-left:-50px;top:50%;left:50%;transform:scale(0);animation:rippleAnim 0.6s ease-out}.dark .ripple::after{background:rgba(255,255,255,0.15)}
+@keyframes rippleAnim{to{transform:scale(4);opacity:0}}
+.skeleton{background:linear-gradient(90deg,#e5e7eb 25%,#f3f4f6 50%,#e5e7eb 75%);background-size:200% 100%;animation:skeletonShimmer 1.5s infinite}.dark .skeleton{background:linear-gradient(90deg,#333 25%,#444 50%,#333 75%);background-size:200% 100%}
+@keyframes skeletonShimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+.follow-up{transition:all 0.2s;cursor:pointer;user-select:none}.follow-up:hover{background:rgba(66,133,244,0.08);border-color:#4285F4;transform:translateY(-1px)}
+.lang-badge{position:absolute;top:8px;left:8px;z-index:10;font-size:10px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;padding:2px 6px;border-radius:4px;background:rgba(0,0,0,0.06);color:#6b7280}.dark .lang-badge{background:rgba(255,255,255,0.08);color:#9ca3af}
+.overlay-bg{background:rgba(0,0,0,0.5);backdrop-filter:blur(4px)}.dark .overlay-bg{background:rgba(0,0,0,0.7)}
+.img-zoom{transition:transform 0.3s ease}.img-zoom:hover{transform:scale(1.02)}
 </style>
 <script>
 tailwind.config={
@@ -148,6 +156,12 @@ tailwind.config={
           <div class="flex justify-between"><span>Show shortcuts</span><kbd class="px-2 py-0.5 bg-surface-variant rounded text-xs font-label-sm">?</kbd></div>
         </div>
         <button onclick="document.getElementById('shortcutsModal').classList.add('hidden')" class="mt-4 w-full bg-primary text-on-primary py-2 rounded-lg text-sm">Close</button>
+      </div>
+    </div>
+    <div id="imageModal" class="hidden fixed inset-0 z-50 flex items-center justify-center overlay-bg" onclick="closeImageViewer()">
+      <div class="relative max-w-[90vw] max-h-[90vh]" onclick="event.stopPropagation()">
+        <button onclick="closeImageViewer()" class="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-white dark:bg-gray-800 shadow-lg flex items-center justify-center z-10 hover:scale-110 transition-transform" title="Close"><span class="material-symbols-outlined text-on-surface" style="font-size:18px;">close</span></button>
+        <img id="fullscreenImg" src="" alt="" class="max-w-full max-h-[90vh] rounded-xl shadow-2xl"/>
       </div>
     </div>
 
@@ -568,6 +582,13 @@ function appendMsgDOM(role, content, msgId, animate = true) {
         cb.textContent = 'Copy';
         cb.onclick = () => { const code = pre.querySelector('code'); if(code) navigator.clipboard.writeText(code.textContent).then(()=>{cb.textContent='Copied!';setTimeout(()=>cb.textContent='Copy',1500);}); };
         pre.style.position = 'relative'; pre.classList.add('code-block'); pre.appendChild(cb);
+        addLangBadge(pre);
+      });
+      // Wire up image clicks for fullscreen
+      el.querySelectorAll('img:not([onclick])').forEach(img => {
+        if (img.closest('.msg-actions')) return;
+        img.style.cursor = 'pointer';
+        img.onclick = () => openImageViewer(img.src);
       });
     }, 50);
   }
@@ -586,6 +607,13 @@ function updateAssistantMessage(msgId, content) {
       cb.textContent = 'Copy';
       cb.onclick = () => { const code = pre.querySelector('code'); if(code) navigator.clipboard.writeText(code.textContent).then(()=>{cb.textContent='Copied!';setTimeout(()=>cb.textContent='Copy',1500);}); };
       pre.style.position = 'relative'; pre.classList.add('code-block'); pre.appendChild(cb);
+      addLangBadge(pre);
+    });
+    // Wire up image clicks for fullscreen
+    cd.querySelectorAll('img:not([onclick])').forEach(img => {
+      if (img.closest('.msg-actions')) return;
+      img.style.cursor = 'pointer';
+      img.onclick = () => openImageViewer(img.src);
     });
   }
   scrollToBottom();
@@ -610,6 +638,9 @@ function scrollToBottom() {
   ca.scrollTop = ca.scrollHeight;
   const btn = document.querySelector('.scroll-bottom-btn');
   if (btn) btn.classList.remove('visible');
+}
+function useFollowUp(text) {
+  const ta = document.getElementById('promptInput'); ta.value = text; ta.dispatchEvent(new Event('input')); sendMessage();
 }
 // Auto-detect scroll position
 document.addEventListener('DOMContentLoaded', () => {
@@ -689,6 +720,62 @@ function renameSessionById(id) {
   if (!sess) return;
   const name = prompt('Rename conversation:', sess.title || '');
   if (name && name.trim()) { sess.title = name.trim(); saveState(); renderHistory(); showToast('Renamed','success'); }
+}
+// ═══════════════════════════════════════════ POLISH FEATURES ═════════
+function openImageViewer(src) {
+  const m = document.getElementById('imageModal');
+  document.getElementById('fullscreenImg').src = src;
+  m.classList.remove('hidden');
+}
+function closeImageViewer() { document.getElementById('imageModal').classList.add('hidden'); }
+function addLangBadge(pre) {
+  if (pre.querySelector('.lang-badge')) return;
+  const code = pre.querySelector('code');
+  if (!code) return;
+  const lang = code.className.match(/language-(\w+)/) || [];
+  if (!lang[1]) return;
+  const badge = document.createElement('span');
+  badge.className = 'lang-badge'; badge.textContent = lang[1];
+  pre.style.position = 'relative'; pre.appendChild(badge);
+}
+function showFollowUps(msg) {
+  // Generate simple follow-ups from the AI response
+  const existing = document.querySelector('.follow-up-container');
+  if (existing) existing.remove();
+  const container = document.getElementById('messagesContainer');
+  const fuDiv = document.createElement('div');
+  fuDiv.className = 'follow-up-container flex justify-start gap-4 mt-1';
+  fuDiv.innerHTML = `<div class="max-w-[90%] md:max-w-[85%]"><div class="flex flex-wrap gap-2">${msg}</div></div>`;
+  container.appendChild(fuDiv);
+  scrollToBottom();
+}
+function deleteMessage(msgId) {
+  const el = document.getElementById(msgId);
+  if (!el) return;
+  // Find message index by scanning DOM
+  const msgs = STATE.currentMessages;
+  const idx = [...document.getElementById('messagesContainer').children].indexOf(el);
+  if (idx >= 0 && idx < msgs.length) {
+    msgs.splice(idx, 1);
+    // Also remove from conversationHistory if it was the last AI or user message
+    const m = STATE.conversationHistory.pop();
+    if (m?.role === 'user') STATE.conversationHistory.pop(); // Remove the systemContext version too
+  }
+  el.remove();
+  saveState();
+  showToast('Message deleted');
+}
+// Patch code blocks with language badges
+function patchCodeBlocks() {
+  document.querySelectorAll('.ai-content pre').forEach(pre => {
+    addLangBadge(pre);
+  });
+}
+// Ripple effect on buttons
+function addRipple(e) {
+  const btn = e.currentTarget;
+  btn.classList.add('ripple');
+  setTimeout(() => btn.classList.remove('ripple'), 600);
 }
 
 // ═══════════════════════════════════════════ WEB SEARCH ═════════════
@@ -823,6 +910,14 @@ async function sendMessage() {
         saveState();
         if (!sess.title && STATE.currentMessages.length >= 2) autoTitle();
       }
+      // Show follow-up suggestions
+      const suggestions = [
+        'Tell me more about that',
+        'Give me an example',
+        'Summarize the key points',
+        'What are the pros and cons?',
+      ];
+      showFollowUps(suggestions.map(s => `<button onclick="useFollowUp('${escHtml(s)}')" class="follow-up px-3 py-1.5 text-xs rounded-lg border border-surface-border bg-white/50 dark:bg-gray-800/50 text-text-muted hover:text-primary transition-all">${escHtml(s)}</button>`).join(''));
     }
   } catch(err) {
     if (err.name === 'AbortError') {
