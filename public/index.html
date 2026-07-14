@@ -595,10 +595,13 @@ async function initDrive() {
   console.log('[DRIVE] initDrive starting');
   STATE.driveReady = false;
   try {
-    console.log('[DRIVE] creating/getting folder');
-    const folderId = await driveGetOrCreateFolder();
-    console.log('[DRIVE] folder ID:', folderId);
-    STATE.driveFiles.folderId = folderId;
+    console.log('[DRIVE] creating/getting folder structure');
+    const rootId = await driveGetOrCreateRootFolder();
+    STATE.driveFiles.rootId = rootId;
+    // Create/get subfolders
+    STATE.driveFiles.memoriesFolderId = await driveGetOrCreateSubFolder(rootId, 'omegamemories');
+    STATE.driveFiles.sessionsFolderId = await driveGetOrCreateSubFolder(rootId, 'omegasessions');
+    console.log('[DRIVE] root:', rootId, 'memories:', STATE.driveFiles.memoriesFolderId, 'sessions:', STATE.driveFiles.sessionsFolderId);
     STATE.driveReady = true;
     console.log('[DRIVE] connected successfully');
     showToast('Drive connected', 'success');
@@ -618,38 +621,48 @@ function driveHeaders() {
   };
 }
 
-async function driveGetOrCreateFolder() {
+async function driveGetOrCreateRootFolder() {
   const userEmail = STATE.auth && STATE.auth.email;
   const userId = STATE.auth && STATE.auth.sub;
-  const folderName = userEmail 
-    ? 'OmegaCloudData_' + userEmail.replace(/[@.]/g, '_')
-    : (userId ? 'OmegaCloudData_' + userId : 'OmegaCloudData_' + (STATE.accessToken ? STATE.accessToken.slice(-8) : 'default'));
-  console.log('[DRIVE] using folder:', folderName, 'for user:', userEmail || userId || 'unknown');
-  const newQuery = encodeURIComponent("name='" + folderName + "' and mimeType='application/vnd.google-apps.folder' and trashed=false");
-  let r = await fetch(`https://www.googleapis.com/drive/v3/files?q=${newQuery}&fields=files(id,name)`, { headers: driveHeaders() });
+  const folderName = userEmail
+    ? 'Omega_' + userEmail.replace(/[@.]/g, '_')
+    : (userId ? 'Omega_' + userId : 'Omega_' + (STATE.accessToken ? STATE.accessToken.slice(-8) : 'default'));
+  console.log('[DRIVE] root folder:', folderName);
+  const query = encodeURIComponent("name='" + folderName + "' and mimeType='application/vnd.google-apps.folder' and trashed=false");
+  let r = await fetch(`https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name)`, { headers: driveHeaders() });
   let data = await r.json();
-  console.log('[DRIVE] search folder response:', r.status, data);
   if (!r.ok) throw new Error('Drive API ' + r.status + ': ' + JSON.stringify(data));
   if (data.files && data.files.length > 0) return data.files[0].id;
-  // Create folder
-  console.log('[DRIVE] folder not found, creating:', folderName);
+  console.log('[DRIVE] creating root folder:', folderName);
   r = await fetch('https://www.googleapis.com/drive/v3/files', {
-    method: 'POST',
-    headers: driveHeaders(),
-    body: JSON.stringify({
-      name: folderName,
-      mimeType: 'application/vnd.google-apps.folder',
-    })
+    method: 'POST', headers: driveHeaders(),
+    body: JSON.stringify({ name: folderName, mimeType: 'application/vnd.google-apps.folder' })
   });
   data = await r.json();
-  console.log('[DRIVE] create folder response:', r.status, data);
+  if (!r.ok) throw new Error('Drive API ' + r.status + ': ' + JSON.stringify(data));
+  return data.id;
+}
+
+async function driveGetOrCreateSubFolder(parentId, name) {
+  const query = encodeURIComponent(`name='${name}' and '${parentId}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false`);
+  let r = await fetch(`https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name)`, { headers: driveHeaders() });
+  let data = await r.json();
+  if (!r.ok) throw new Error('Drive API ' + r.status + ': ' + JSON.stringify(data));
+  if (data.files && data.files.length > 0) return data.files[0].id;
+  console.log('[DRIVE] creating subfolder:', name);
+  r = await fetch('https://www.googleapis.com/drive/v3/files', {
+    method: 'POST', headers: driveHeaders(),
+    body: JSON.stringify({ name, mimeType: 'application/vnd.google-apps.folder', parents: [parentId] })
+  });
+  data = await r.json();
   if (!r.ok) throw new Error('Drive API ' + r.status + ': ' + JSON.stringify(data));
   return data.id;
 }
 
 async function driveFindFile(name) {
-  if (!STATE.driveFiles.folderId) return null;
-  const query = encodeURIComponent(`name='${name}' and '${STATE.driveFiles.folderId}' in parents and trashed=false`);
+  const parentId = name === 'omega_memories.json' ? STATE.driveFiles.memoriesFolderId : STATE.driveFiles.sessionsFolderId;
+  if (!parentId) return null;
+  const query = encodeURIComponent(`name='${name}' and '${parentId}' in parents and trashed=false`);
   const r = await fetch(`https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name)`, { headers: driveHeaders() });
   const data = await r.json();
   return (data.files && data.files.length > 0) ? data.files[0].id : null;
@@ -678,9 +691,10 @@ async function driveWriteJSON(name, data) {
       body: form,
     });
   } else {
-    // Create new
+    // Create new in the right subfolder
+    const parentId = name === 'omega_memories.json' ? STATE.driveFiles.memoriesFolderId : STATE.driveFiles.sessionsFolderId;
     const form = new FormData();
-    form.append('metadata', new Blob([JSON.stringify({ name, parents: [STATE.driveFiles.folderId] })], { type: 'application/json' }));
+    form.append('metadata', new Blob([JSON.stringify({ name, parents: [parentId] })], { type: 'application/json' }));
     form.append('file', blob);
     await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
       method: 'POST',
