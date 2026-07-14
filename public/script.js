@@ -69,8 +69,10 @@
         chat.classList.remove('hidden');
         initChat();
       } else {
-        const data = await res.json().catch(() => ({}));
-        passwordError.textContent = data.error || 'Invalid access key';
+        const text = await res.text();
+        let msg = 'Invalid access key';
+        try { const d = JSON.parse(text); msg = d.error || msg; } catch(e) { msg = text.slice(0,100) || msg; }
+        passwordError.textContent = msg;
         passwordError.style.color = '#ff6b6b';
       }
     } catch (err) {
@@ -178,8 +180,10 @@
       });
 
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || `HTTP ${res.status}`);
+        const text = await res.text();
+        let msg = `HTTP ${res.status}`;
+        try { const d = JSON.parse(text); msg = d.error || msg; } catch(e) { msg = text.slice(0,150) || msg; }
+        throw new Error(msg);
       }
 
       // Check if streaming
