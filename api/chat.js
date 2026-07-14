@@ -69,6 +69,7 @@ This is OMEGA Cloud — a web-based AI chat interface with these features:
 - **Dark / Light Theme**: Toggleable and persisted.
 - **Markdown Rendering**: All responses render as rich markdown with syntax-highlighted code blocks.
 - **Streaming Responses**: Answers arrive character-by-character via SSE.
+- **Current Time**: A real-time clock is injected into every request — Omega always knows the current date and time.
 
 ## Workflow
 
@@ -276,6 +277,7 @@ export default async function handler(request) {
         model: openCodeModel,
         messages: [
           { role: 'system', content: OMEGA_SYSTEM_PROMPT },
+          { role: 'system', content: 'Current date and time: ' + new Date().toUTCString() + ' (UTC). Local: ' + new Date().toLocaleString() + '.' },
           ...(conversationHistory || []).slice(-20),
           { role: 'user', content: message },
         ],
