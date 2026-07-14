@@ -479,13 +479,12 @@ function renderGSignIn() {
   btn.onclick = function() {
     var url = 'https://accounts.google.com/o/oauth2/v2/auth'
       + '?client_id=' + encodeURIComponent(CLIENT_ID)
-      + '&redirect_uri=postmessage'
+      + '&redirect_uri=' + encodeURIComponent(window.location.origin + '/')
       + '&response_type=token'
       + '&scope=' + encodeURIComponent(SCOPES)
       + '&include_granted_scopes=true'
-      + '&state=omega_' + Date.now()
-      + '&origin=' + encodeURIComponent(window.location.origin);
-    window.open(url, 'google-oauth', 'width=600,height=700');
+      + '&state=omega_' + Date.now();
+    window.location.href = url;
   };
   w.innerHTML = '';
   w.appendChild(btn);
