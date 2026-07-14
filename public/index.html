@@ -449,17 +449,22 @@ function initAuth() {
     initDrive();
   }
   renderGSignIn();
-  // Listen for OAuth result (from postmessage redirect or custom callback)
+  // Debug: log all messages
   window.addEventListener('message', function(e) {
+    console.log('[MSG] from:', e.origin, 'data:', JSON.stringify(e.data));
     var d = e.data;
-    // Our callback page format
-    if (d && d.type === 'oauth-result' && d.access_token) {
-      handleOAuthToken(d.access_token);
-      return;
+    if (!d) return;
+    // Google's postmessage redirect format: {type:"authorization_response", response:{access_token:"..."}}
+    if (d.response && d.response.access_token) {
+      handleOAuthToken(d.response.access_token); return;
     }
-    // Google's native postmessage redirect format
-    if (d && (d.access_token || (d.response && d.response.access_token))) {
-      handleOAuthToken(d.access_token || d.response.access_token);
+    // Direct access_token in message
+    if (d.access_token) {
+      handleOAuthToken(d.access_token); return;
+    }
+    // Our callback page format
+    if (d.type === 'oauth-result' && d.access_token) {
+      handleOAuthToken(d.access_token);
     }
   });
 }
@@ -479,7 +484,7 @@ function renderGSignIn() {
       include_granted_scopes: 'true',
       state: 'omega_' + Date.now(),
     });
-    const win = window.open('https://accounts.google.com/o/oauth2/v2/auth?' + params.toString() + '&origin=' + encodeURIComponent(window.location.origin), 'google-oauth', 'width=600,height=700');
+    const win = window.open('https://accounts.google.com/o/oauth2/v2/auth?' + params.toString() + '&origin=' + window.location.origin, 'google-oauth', 'width=600,height=700');
   };
   w.innerHTML = '';
   w.appendChild(btn);
