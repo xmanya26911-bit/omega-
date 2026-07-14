@@ -589,19 +589,23 @@ function driveHeaders() {
 }
 
 async function driveGetOrCreateFolder() {
-  const query = encodeURIComponent("name='OmegaCloudData' and mimeType='application/vnd.google-apps.folder' and trashed=false");
-  let r = await fetch(`https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name)`, { headers: driveHeaders() });
+  const userEmail = (STATE.auth && STATE.auth.email) || 'default';
+  const folderName = 'OmegaCloudData_' + userEmail.replace(/[@.]/g, '_');
+  // Try old folder name first (migration)
+  const oldQuery = encodeURIComponent("name='OmegaCloudData' and mimeType='application/vnd.google-apps.folder' and trashed=false");
+  const newQuery = encodeURIComponent("name='" + folderName + "' and mimeType='application/vnd.google-apps.folder' and trashed=false");
+  let r = await fetch(`https://www.googleapis.com/drive/v3/files?q=${newQuery}&fields=files(id,name)`, { headers: driveHeaders() });
   let data = await r.json();
-  console.log('[DRIVE] search folder response:', r.status, data);
+  console.log('[DRIVE] search folder (' + folderName + ') response:', r.status, data);
   if (!r.ok) throw new Error('Drive API ' + r.status + ': ' + JSON.stringify(data));
   if (data.files && data.files.length > 0) return data.files[0].id;
   // Create folder
-  console.log('[DRIVE] folder not found, creating');
+  console.log('[DRIVE] folder not found, creating:', folderName);
   r = await fetch('https://www.googleapis.com/drive/v3/files', {
     method: 'POST',
     headers: driveHeaders(),
     body: JSON.stringify({
-      name: 'OmegaCloudData',
+      name: folderName,
       mimeType: 'application/vnd.google-apps.folder',
     })
   });
