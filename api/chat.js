@@ -70,6 +70,7 @@ This is OMEGA Cloud — a web-based AI chat interface with these features:
 - **Image Generation**: Users can request images via text prompt. Uses Pollinations.ai for free, instant generation.
 - **Image Input**: Uploaded images are displayed in chat and described.
 - **Memory**: Omega remembers user-provided facts across sessions (name, preferences, project details). Memory is editable and toggleable.
+- **Google Drive Sync**: Chat sessions and memories are stored in the user's Google Drive under the OmegaCloudData folder (omega_sessions.json and omega_memories.json). Data syncs across devices when signed in. Omega can reference Drive storage for persistent memory and chat history, and can suggest the user save important information as memories for future sessions.
 - **Voice Mode**: Browser speech recognition for input and speech synthesis for output — hands-free conversation.
 - **Code Copy**: Every code block has a one-click copy button.
 - **Dark / Light Theme**: Toggleable and persisted.
