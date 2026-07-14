@@ -11,8 +11,7 @@
     }
   },
   "rewrites": [
-    { "source": "/(.*)", "destination": "/" },
-    { "source": "/oauth/callback", "destination": "/" }
+    { "source": "/(.*)", "destination": "/" }
   ],
   "headers": [
     {
