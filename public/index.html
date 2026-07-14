@@ -10,18 +10,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&Omega;</text></svg>">
 <style>
-.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-style:normal;font-size:24px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;word-wrap:normal;direction:ltr;-webkit-font-feature-settings:'liga';-webkit-font-smoothing:antialiased}
-.chat-scroll::-webkit-scrollbar{width:6px}
-.chat-scroll::-webkit-scrollbar-track{background:transparent}
-.chat-scroll::-webkit-scrollbar-thumb{background-color:#D1D5DB;border-radius:10px}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:400;font-style:normal;font-size:24px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;word-wrap:normal;direction:ltr;-webkit-font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0}
+.chat-scroll::-webkit-scrollbar{width:6px}.chat-scroll::-webkit-scrollbar-track{background:transparent}.chat-scroll::-webkit-scrollbar-thumb{background-color:#D1D5DB;border-radius:10px}
 @keyframes gradientBG{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 @keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 @keyframes float{0%{transform:translateY(0)}50%{transform:translateY(-6px)}100%{transform:translateY(0)}}
 @keyframes typingBounce{0%,60%,100%{transform:translateY(0);opacity:0.3}30%{transform:translateY(-6px);opacity:1}}
-@keyframes slideIn{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes pulseRing{0%{box-shadow:0 0 0 0 rgba(66,133,244,0.4)}70%{box-shadow:0 0 0 8px rgba(66,133,244,0)}100%{box-shadow:0 0 0 0 rgba(66,133,244,0)}}
-@media(prefers-reduced-motion:reduce){.bg-animated-gradient,.fade-in-up,.float-anim,.slide-in{animation:none!important;transform:none!important}}
+@media(prefers-reduced-motion:reduce){.bg-animated-gradient,.fade-in-up,.float-anim{animation:none!important;transform:none!important}}
 .bg-animated-gradient{background:linear-gradient(-45deg,#f8f9fa,#e1e3e4,#e8f0fe,#f8f9fa);background-size:400% 400%;animation:gradientBG 15s ease infinite}
 .dark .bg-animated-gradient{background:linear-gradient(-45deg,#191c1d,#2e3132,#1a2333,#191c1d);background-size:400% 400%;animation:gradientBG 15s ease infinite}
 .glass-panel{background:rgba(255,255,255,0.65);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.5);box-shadow:0 4px 30px rgba(0,0,0,0.05)}
@@ -29,39 +26,21 @@
 .fade-in-up{animation:fadeInUp 0.6s ease-out forwards;opacity:0}
 .delay-100{animation-delay:100ms}.delay-200{animation-delay:200ms}.delay-300{animation-delay:300ms}
 .float-anim{animation:float 6s ease-in-out infinite}
-.slide-in{animation:slideIn 0.3s ease-out forwards}
 .input-glow:focus-within{box-shadow:0 0 0 2px #4285F440,0 4px 20px rgba(0,0,0,0.08)}
-.typing-dot{animation:typingBounce 1.4s infinite}
-.typing-dot:nth-child(2){animation-delay:0.2s}
-.typing-dot:nth-child(3){animation-delay:0.4s}
-.spinner{animation:spin 1s linear infinite}
-.search-active .search-indicator{animation:pulseRing 2s infinite}
-.copy-btn{opacity:0;transition:opacity 0.2s}
-.code-block:hover .copy-btn{opacity:1}
+.typing-dot{animation:typingBounce 1.4s infinite}.typing-dot:nth-child(2){animation-delay:0.2s}.typing-dot:nth-child(3){animation-delay:0.4s}
+.copy-btn{opacity:0;transition:opacity 0.2s}.code-block:hover .copy-btn{opacity:1}
+.file-drop-zone{border:2px dashed #D1D5DB;transition:all 0.3s}.file-drop-zone.dragover{border-color:#4285F4;background:rgba(66,133,244,0.05)}
+.mode-tab{transition:all 0.2s;cursor:pointer;user-select:none}.mode-tab.active{background:#000;color:#fff;border-color:#000}.dark .mode-tab.active{background:#fff;color:#000;border-color:#fff}
+.memory-tag{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:12px;font-size:11px;background:#E8F0FE;color:#1A73E8}.dark .memory-tag{background:#1A2333;color:#8AB4F8}
+@keyframes mic-pulse{0%{box-shadow:0 0 0 0 rgba(234,67,53,0.4)}50%{box-shadow:0 0 0 12px rgba(234,67,53,0)}100%{box-shadow:0 0 0 0 rgba(234,67,53,0)}}
+.mic-active{animation:mic-pulse 1.5s infinite;background:#EA4335!important;color:#fff!important}
 </style>
 <script>
 tailwind.config={
   darkMode:"class",
   theme:{
     extend:{
-      colors:{
-        "surface":"#f8f9fa","surface-dim":"#d9dadb","surface-bright":"#f8f9fa",
-        "surface-container-lowest":"#ffffff","surface-container-low":"#f3f4f5","surface-container":"#edeeef",
-        "surface-container-high":"#e7e8e9","surface-container-highest":"#e1e3e4",
-        "on-surface":"#191c1d","on-surface-variant":"#46464b","inverse-surface":"#2e3132","inverse-on-surface":"#f0f1f2",
-        "outline":"#77767b","outline-variant":"#c7c6cb","surface-tint":"#5e5e64",
-        "primary":"#000000","on-primary":"#ffffff","primary-container":"#1a1b20","on-primary-container":"#83838a",
-        "inverse-primary":"#c7c6cd","secondary":"#5f5e5e","on-secondary":"#ffffff",
-        "secondary-container":"#e4e2e1","on-secondary-container":"#656464","tertiary":"#000000",
-        "on-tertiary":"#ffffff","tertiary-container":"#211a14","on-tertiary-container":"#8c8279",
-        "error":"#ba1a1a","on-error":"#ffffff","error-container":"#ffdad6","on-error-container":"#93000a",
-        "primary-fixed":"#e3e2e9","primary-fixed-dim":"#c7c6cd","on-primary-fixed":"#1a1b20",
-        "on-primary-fixed-variant":"#46464c","secondary-fixed":"#e4e2e1","secondary-fixed-dim":"#c8c6c6",
-        "on-secondary-fixed":"#1b1c1c","on-secondary-fixed-variant":"#474747",
-        "tertiary-fixed":"#ede0d6","tertiary-fixed-dim":"#d0c4bb","on-tertiary-fixed":"#211a14",
-        "on-tertiary-fixed-variant":"#4d453e","background":"#f8f9fa","on-background":"#191c1d",
-        "surface-variant":"#e1e3e4","surface-border":"#E5E7EB","ai-accent":"#4285F4","text-muted":"#6B7280"
-      },
+      colors:{"surface":"#f8f9fa","surface-dim":"#d9dadb","surface-bright":"#f8f9fa","surface-container-lowest":"#ffffff","surface-container-low":"#f3f4f5","surface-container":"#edeeef","surface-container-high":"#e7e8e9","surface-container-highest":"#e1e3e4","on-surface":"#191c1d","on-surface-variant":"#46464b","inverse-surface":"#2e3132","inverse-on-surface":"#f0f1f2","outline":"#77767b","outline-variant":"#c7c6cb","surface-tint":"#5e5e64","primary":"#000000","on-primary":"#ffffff","primary-container":"#1a1b20","on-primary-container":"#83838a","inverse-primary":"#c7c6cd","secondary":"#5f5e5e","on-secondary":"#ffffff","secondary-container":"#e4e2e1","on-secondary-container":"#656464","tertiary":"#000000","on-tertiary":"#ffffff","tertiary-container":"#211a14","on-tertiary-container":"#8c8279","error":"#ba1a1a","on-error":"#ffffff","error-container":"#ffdad6","on-error-container":"#93000a","primary-fixed":"#e3e2e9","primary-fixed-dim":"#c7c6cd","on-primary-fixed":"#1a1b20","on-primary-fixed-variant":"#46464c","secondary-fixed":"#e4e2e1","secondary-fixed-dim":"#c8c6c6","on-secondary-fixed":"#1b1c1c","on-secondary-fixed-variant":"#474747","tertiary-fixed":"#ede0d6","tertiary-fixed-dim":"#d0c4bb","on-tertiary-fixed":"#211a14","on-tertiary-fixed-variant":"#4d453e","background":"#f8f9fa","on-background":"#191c1d","surface-variant":"#e1e3e4","surface-border":"#E5E7EB","ai-accent":"#4285F4","text-muted":"#6B7280"},
       borderRadius:{DEFAULT:"0.125rem",lg:"0.25rem",xl:"0.5rem",full:"0.75rem"},
       spacing:{"margin-desktop":"40px","sidebar-width":"280px","gutter":"24px","chat-max-width":"800px","base":"8px","margin-mobile":"16px"},
       fontFamily:{"headline-md":["Hanken Grotesk"],"label-sm":["JetBrains Mono"],"headline-lg":["Hanken Grotesk"],"body-lg":["Inter"],"headline-lg-mobile":["Hanken Grotesk"],"body-md":["Inter"],"sidebar-nav":["Inter"]},
@@ -76,31 +55,28 @@ tailwind.config={
 <div class="flex flex-1 overflow-hidden relative">
   <!-- Sidebar -->
   <aside id="sidebar" class="text-primary dark:text-inverse-primary font-sidebar-nav text-sidebar-nav w-sidebar-width h-screen fixed left-0 top-0 border-r border-surface-border/30 dark:border-outline-variant/30 flex flex-col py-base z-40 md:flex hidden glass-panel">
-    <div class="px-4 py-6 flex items-center gap-3 mb-4">
-      <div class="w-8 h-8 rounded overflow-hidden bg-primary-container flex items-center justify-center text-on-primary float-anim shadow-md">
-        <span class="text-on-primary font-bold text-lg">&Omega;</span>
-      </div>
-      <div>
-        <h1 class="text-headline-md font-headline-md font-bold text-primary dark:text-inverse-primary leading-none">Omega</h1>
-        <span class="text-label-sm font-label-sm text-on-surface-variant mt-1 block">Cloud AI</span>
-      </div>
+    <div class="px-4 py-5 flex items-center gap-3">
+      <div class="w-8 h-8 rounded overflow-hidden bg-primary-container flex items-center justify-center float-anim shadow-md"><span class="text-on-primary font-bold text-lg">&Omega;</span></div>
+      <div><h1 class="text-headline-md font-headline-md font-bold text-primary dark:text-inverse-primary leading-none">Omega</h1><span class="text-label-sm font-label-sm text-on-surface-variant mt-0.5 block">Cloud AI</span></div>
     </div>
-    <div class="px-4 mb-4">
-      <button onclick="newChat()" class="w-full flex items-center justify-center gap-2 bg-primary text-on-primary py-2 px-4 rounded-full font-sidebar-nav text-sidebar-nav hover:bg-on-primary-fixed-variant transition-all duration-300 hover:-translate-y-1 hover:shadow-lg shadow-sm group">
-        <span class="material-symbols-outlined group-hover:rotate-90 transition-transform duration-300" style="font-variation-settings:'FILL' 0;font-size:20px;">add</span>
-        New Chat
-      </button>
-    </div>
-    <!-- Model selector in sidebar -->
-    <div class="px-4 mb-4">
-      <label class="text-label-sm font-label-sm text-text-muted block mb-1.5">Model</label>
+    <div class="px-4 mb-3"><button onclick="newChat()" class="w-full flex items-center justify-center gap-2 bg-primary text-on-primary py-2 px-4 rounded-full hover:bg-on-primary-fixed-variant transition-all duration-300 hover:-translate-y-1 hover:shadow-lg shadow-sm group"><span class="material-symbols-outlined group-hover:rotate-90 transition-transform duration-300" style="font-size:20px;">add</span>New Chat</button></div>
+    <!-- Model selector -->
+    <div class="px-4 mb-3"><label class="text-label-sm font-label-sm text-text-muted block mb-1">Model</label>
       <select id="modelSelect" onchange="changeModel(this.value)" class="w-full bg-surface-container-low border border-surface-border rounded-lg px-3 py-2 text-sm font-body-md text-on-surface focus:ring-1 focus:ring-ai-accent focus:border-ai-accent outline-none"></select>
     </div>
-    <!-- Chat history list -->
+    <!-- Memory panel -->
+    <div class="px-4 mb-3">
+      <div class="flex items-center justify-between mb-1">
+        <label class="text-label-sm font-label-sm text-text-muted">Memory</label>
+        <button onclick="toggleMemory()" class="text-xs text-ai-accent hover:underline">Manage</button>
+      </div>
+      <div id="memoryTags" class="flex flex-wrap gap-1"></div>
+    </div>
+    <!-- Chat history -->
     <div class="flex-1 overflow-y-auto px-2 space-y-0.5" id="historyList"></div>
-    <!-- Bottom controls -->
-    <div class="px-4 py-4 mt-auto space-y-2 border-t border-surface-border/30 mx-2">
-      <button onclick="toggleTheme()" class="w-full bg-surface-container-high/60 text-primary font-sidebar-nav text-sidebar-nav py-2 rounded-lg hover:bg-surface-variant/80 transition-all duration-300 hover:-translate-y-0.5 hover:shadow border border-surface-border/50 text-xs uppercase tracking-wider font-semibold flex items-center justify-center gap-2">
+    <!-- Bottom -->
+    <div class="px-4 py-3 mt-auto space-y-2 border-t border-surface-border/30 mx-2">
+      <button onclick="toggleTheme()" class="w-full bg-surface-container-high/60 text-primary py-2 rounded-lg hover:bg-surface-variant/80 transition-all duration-300 hover:-translate-y-0.5 hover:shadow border border-surface-border/50 text-xs uppercase tracking-wider font-semibold flex items-center justify-center gap-2">
         <span class="material-symbols-outlined" style="font-size:16px;" id="themeIcon">dark_mode</span>
         <span id="themeLabel">Dark</span>
       </button>
@@ -112,13 +88,18 @@ tailwind.config={
     <!-- Mobile header -->
     <header class="md:hidden flex items-center justify-between p-4 glass-panel sticky top-0 z-30 border-b border-surface-border/30">
       <div class="flex items-center gap-2">
-        <span class="material-symbols-outlined cursor-pointer" style="font-variation-settings:'FILL' 0;" onclick="document.getElementById('sidebar').classList.toggle('hidden')">menu</span>
-        <span class="font-headline-md text-headline-md font-semibold text-primary">Omega</span>
+        <span class="material-symbols-outlined cursor-pointer" onclick="document.getElementById('sidebar').classList.toggle('hidden')">menu</span>
+        <span class="font-headline-md font-semibold text-primary">Omega</span>
       </div>
-      <button onclick="newChat()" class="p-2 text-on-surface-variant hover:text-primary rounded-full hover:bg-surface-container">
-        <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 0;">add</span>
-      </button>
+      <button onclick="newChat()" class="p-2 text-on-surface-variant hover:text-primary rounded-full hover:bg-surface-container"><span class="material-symbols-outlined">add</span></button>
     </header>
+
+    <!-- Mode tabs -->
+    <div class="flex gap-1.5 px-margin-mobile md:px-margin-desktop pt-3 pb-1 z-10">
+      <button class="mode-tab active text-xs font-medium px-3.5 py-1.5 rounded-full border border-surface-border" data-mode="standard" onclick="setMode('standard')">Standard</button>
+      <button class="mode-tab text-xs font-medium px-3.5 py-1.5 rounded-full border border-surface-border" data-mode="research" onclick="setMode('research')">Deep Research</button>
+      <button class="mode-tab text-xs font-medium px-3.5 py-1.5 rounded-full border border-surface-border" data-mode="coding" onclick="setMode('coding')">Coding</button>
+    </div>
 
     <!-- Chat Area -->
     <div id="chatArea" class="flex-1 overflow-y-auto chat-scroll p-margin-mobile md:p-margin-desktop scroll-smooth pb-48">
@@ -130,23 +111,27 @@ tailwind.config={
       <div class="max-w-chat-max-width mx-auto">
         <div class="glass-panel rounded-2xl shadow-lg flex flex-col relative overflow-hidden transition-all duration-300 focus-within:shadow-xl focus-within:-translate-y-1 input-glow">
           <textarea id="promptInput" class="w-full bg-transparent border-none resize-none focus:ring-0 text-body-md font-body-md text-on-surface placeholder-text-muted px-4 py-4 max-h-[200px] overflow-y-auto" placeholder="Message Omega..." rows="1"></textarea>
-          <div class="flex items-center justify-between px-3 py-3 border-t border-surface-border/30 bg-white/20">
-            <div class="flex items-center gap-2">
-              <!-- Web search toggle -->
-              <button id="searchToggle" onclick="toggleSearch()" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-label-sm font-label-sm text-text-muted hover:text-primary hover:bg-surface-container/50 transition-all duration-200" title="Search web for context">
-                <span class="material-symbols-outlined" style="font-size:16px;">public</span>
-                <span id="searchLabel">Search</span>
-              </button>
-              <span class="h-4 w-px bg-surface-border/40 mx-0.5"></span>
-              <span class="text-label-sm font-label-sm text-text-muted" id="modelLabel">deepseek-v4-flash-free</span>
+          <div class="flex items-center justify-between px-3 py-2.5 border-t border-surface-border/30 bg-white/20">
+            <div class="flex items-center gap-1.5">
+              <!-- Search toggle -->
+              <button id="searchToggle" onclick="toggleSearch()" class="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-label-sm font-label-sm text-text-muted hover:text-primary hover:bg-surface-container/50 transition-all duration-200" title="Web search"><span class="material-symbols-outlined" style="font-size:16px;">public</span><span id="searchLabel" class="hidden md:inline">Search</span></button>
+              <!-- File upload -->
+              <button onclick="document.getElementById('fileInput').click()" class="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-label-sm font-label-sm text-text-muted hover:text-primary hover:bg-surface-container/50 transition-all duration-200" title="Upload file"><span class="material-symbols-outlined" style="font-size:16px;">attach_file</span><span class="hidden md:inline">Upload</span></button>
+              <input id="fileInput" type="file" accept=".csv,.json,.txt,.md,.pdf,.py,.js,.ts,.html,.css,.png,.jpg,.jpeg,.gif,.webp" class="hidden" onchange="handleFileUpload(this.files[0])"/>
+              <!-- Image gen -->
+              <button onclick="openImageGen()" class="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-label-sm font-label-sm text-text-muted hover:text-primary hover:bg-surface-container/50 transition-all duration-200" title="Generate image"><span class="material-symbols-outlined" style="font-size:16px;">palette</span><span class="hidden md:inline">Image</span></button>
+              <!-- Voice -->
+              <button id="voiceBtn" onclick="toggleVoice()" class="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-label-sm font-label-sm text-text-muted hover:text-primary hover:bg-surface-container/50 transition-all duration-200" title="Voice input"><span class="material-symbols-outlined" style="font-size:16px;">mic</span><span id="voiceLabel" class="hidden md:inline">Voice</span></button>
+              <!-- Model label -->
+              <span class="h-4 w-px bg-surface-border/40 mx-1"></span>
+              <span class="text-label-sm font-label-sm text-text-muted hidden md:inline" id="modelLabel">deepseek-v4-flash-free</span>
             </div>
-            <button id="submitBtn" onclick="sendMessage()" class="bg-surface-container/50 text-text-muted w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 cursor-not-allowed">
-              <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;font-size:18px;">arrow_upward</span>
-            </button>
+            <button id="submitBtn" onclick="sendMessage()" class="bg-surface-container/50 text-text-muted w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 cursor-not-allowed"><span class="material-symbols-outlined" style="font-size:18px;">arrow_upward</span></button>
           </div>
         </div>
-        <div class="text-center mt-2">
-          <span class="text-[11px] font-label-sm text-text-muted mix-blend-multiply">Omega can make mistakes. Consider verifying important information.</span>
+        <div class="text-center mt-2 flex items-center justify-center gap-3">
+          <span class="text-[11px] font-label-sm text-text-muted">Omega can make mistakes.</span>
+          <span id="modeIndicator" class="text-[11px] font-label-sm text-ai-accent">Standard mode</span>
         </div>
       </div>
     </div>
@@ -154,611 +139,584 @@ tailwind.config={
 </div>
 
 <script>
-// ═══════════════════════════════════════════
-//  STATE
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════════ STATE ═══════════════════
 let STATE = {
-  sessions: {},         // { id: { id, title, model, created, updated, messages } }
-  sessionOrder: [],     // ordered session IDs
-  activeSession: null,  // current session ID
+  sessions: {},
+  sessionOrder: [],
+  activeSession: null,
   currentMessages: [],
   conversationHistory: [],
   currentModel: 'deepseek-v4-flash-free',
   allModels: [],
   isStreaming: false,
   searchEnabled: false,
+  chatMode: 'standard',
+  memories: [],                // [{key, value}]
+  memoryEnabled: true,
+  isListening: false,
+  recognition: null,
+  uploadedFiles: [],           // files uploaded in current session
 };
 
-// ═══════════════════════════════════════════
-//  INIT
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════════ INIT ═══════════════════
 async function init() {
-  // Load from localStorage
   loadState();
-  // Fetch models
   await fetchModels();
-  // Render sidebar history
   renderHistory();
-  // If no active session, create one
-  if (!STATE.activeSession || !STATE.sessions[STATE.activeSession]) {
-    newChat();
-  } else {
-    loadSession(STATE.activeSession);
-  }
-  // Theme
+  renderMemoryTags();
+  if (!STATE.activeSession || !STATE.sessions[STATE.activeSession]) newChat();
+  else loadSession(STATE.activeSession);
   applyTheme();
-  // UI events
   setupInputEvents();
+  loadMemories();
 }
 
-// ═══════════════════════════════════════════
-//  PERSISTENCE
-// ═══════════════════════════════════════════
+init();
+
+// ═══════════════════════════════════════════ PERSISTENCE ════════════
 function saveState() {
-  try {
-    localStorage.setItem('omega_state', JSON.stringify({
-      sessions: STATE.sessions,
-      sessionOrder: STATE.sessionOrder,
-      activeSession: STATE.activeSession,
-      currentModel: STATE.currentModel,
-    }));
-  } catch(e) {
-    // localStorage might be full
-  }
+  try { localStorage.setItem('omega_state', JSON.stringify({
+    sessions: STATE.sessions, sessionOrder: STATE.sessionOrder,
+    activeSession: STATE.activeSession, currentModel: STATE.currentModel,
+    chatMode: STATE.chatMode, searchEnabled: STATE.searchEnabled,
+    memoryEnabled: STATE.memoryEnabled,
+  })); } catch(e) {}
 }
-
 function loadState() {
   try {
-    const saved = localStorage.getItem('omega_state');
-    if (saved) {
-      const data = JSON.parse(saved);
-      STATE.sessions = data.sessions || {};
-      STATE.sessionOrder = data.sessionOrder || [];
-      STATE.activeSession = data.activeSession || null;
-      STATE.currentModel = data.currentModel || 'deepseek-v4-flash-free';
+    const s = localStorage.getItem('omega_state');
+    if (s) {
+      const d = JSON.parse(s);
+      STATE.sessions = d.sessions || {};
+      STATE.sessionOrder = d.sessionOrder || [];
+      STATE.activeSession = d.activeSession || null;
+      STATE.currentModel = d.currentModel || 'deepseek-v4-flash-free';
+      STATE.chatMode = d.chatMode || 'standard';
+      STATE.searchEnabled = d.searchEnabled || false;
+      STATE.memoryEnabled = d.memoryEnabled !== false;
     }
   } catch(e) {}
 }
 
-// ═══════════════════════════════════════════
-//  MODELS
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════════ MODELS ═════════════════
 async function fetchModels() {
   try {
-    const res = await fetch('/api/models');
-    if (res.ok) {
-      const data = await res.json();
-      STATE.allModels = data.data || [];
-    }
+    const r = await fetch('/api/models');
+    if (r.ok) STATE.allModels = (await r.json()).data || [];
   } catch(e) {
-    // Fallback to hardcoded
     STATE.allModels = [
-      { id: 'deepseek-v4-flash-free', free: true },
-      { id: 'mimo-v2.5-free', free: true },
-      { id: 'hy3-free', free: true },
-      { id: 'nemotron-3-ultra-free', free: true },
-      { id: 'north-mini-code-free', free: true },
-      { id: 'claude-fable-5', free: false },
-      { id: 'claude-sonnet-4', free: false },
-      { id: 'claude-haiku-4-5', free: false },
-      { id: 'gemini-3.5-flash', free: false },
-      { id: 'gpt-5.4-mini', free: false },
-      { id: 'deepseek-v4-flash', free: false },
-      { id: 'grok-4.5', free: false },
+      {id:'deepseek-v4-flash-free',free:true},{id:'mimo-v2.5-free',free:true},{id:'hy3-free',free:true},
+      {id:'nemotron-3-ultra-free',free:true},{id:'north-mini-code-free',free:true},
+      {id:'claude-fable-5',free:false},{id:'claude-sonnet-4',free:false},{id:'claude-haiku-4-5',free:false},
+      {id:'gemini-3.5-flash',free:false},{id:'gpt-5.4-mini',free:false},{id:'deepseek-v4-flash',free:false},
     ];
   }
   renderModelSelect();
 }
-
 function renderModelSelect() {
-  const sel = document.getElementById('modelSelect');
-  sel.innerHTML = '';
-  // Separate free and other models
-  const free = STATE.allModels.filter(m => m.free);
-  const paid = STATE.allModels.filter(m => !m.free);
-  const opts = [];
-  if (free.length) {
-    opts.push({ label: '— Free Models —', value: '', disabled: true });
-    for (const m of free) opts.push({ label: m.id, value: m.id });
-  }
-  if (paid.length) {
-    opts.push({ label: '— Other Models —', value: '', disabled: true });
-    for (const m of paid) opts.push({ label: m.id, value: m.id });
-  }
-  for (const o of opts) {
-    const opt = document.createElement('option');
-    opt.value = o.value;
-    opt.textContent = o.label;
-    if (o.disabled) opt.disabled = true;
-    if (o.value === STATE.currentModel) opt.selected = true;
-    sel.appendChild(opt);
+  const sel = document.getElementById('modelSelect'); sel.innerHTML = '';
+  for (const m of STATE.allModels) {
+    const o = document.createElement('option');
+    o.value = m.id; o.textContent = m.id + (m.free ? ' (FREE)' : '');
+    if (m.id === STATE.currentModel) o.selected = true;
+    sel.appendChild(o);
   }
   document.getElementById('modelLabel').textContent = STATE.currentModel;
 }
+function changeModel(m) {
+  STATE.currentModel = m;
+  document.getElementById('modelLabel').textContent = m;
+  if (STATE.sessions[STATE.activeSession]) { STATE.sessions[STATE.activeSession].model = m; saveState(); }
+}
 
-function changeModel(model) {
-  if (!model) return;
-  STATE.currentModel = model;
-  document.getElementById('modelLabel').textContent = model;
-  // Update in current session
-  if (STATE.sessions[STATE.activeSession]) {
-    STATE.sessions[STATE.activeSession].model = model;
-    saveState();
+// ═══════════════════════════════════════════ CHAT MODES ═════════════
+function setMode(mode) {
+  STATE.chatMode = mode;
+  document.querySelectorAll('.mode-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.mode === mode);
+  });
+  const labels = { standard:'Standard mode', research:'Deep Research — auto web search', coding:'Coding — code-first responses' };
+  document.getElementById('modeIndicator').textContent = labels[mode] || 'Standard mode';
+  saveState();
+}
+
+// ═══════════════════════════════════════════ MEMORY ═════════════════
+function loadMemories() {
+  try {
+    const m = localStorage.getItem('omega_memories');
+    if (m) STATE.memories = JSON.parse(m);
+  } catch(e) { STATE.memories = []; }
+  renderMemoryTags();
+}
+function saveMemories() {
+  try { localStorage.setItem('omega_memories', JSON.stringify(STATE.memories)); } catch(e) {}
+  renderMemoryTags();
+}
+function renderMemoryTags() {
+  const c = document.getElementById('memoryTags');
+  if (!STATE.memoryEnabled || !STATE.memories.length) { c.innerHTML = '<span class="text-xs text-text-muted">Memory disabled or empty</span>'; return; }
+  c.innerHTML = STATE.memories.slice(0,5).map(m =>
+    `<span class="memory-tag">${escHtml(m.key)}<span class="cursor-pointer hover:text-error" onclick="removeMemory('${escHtml(m.key)}')">✕</span></span>`
+  ).join('');
+}
+function addMemory(key, value) {
+  STATE.memories = STATE.memories.filter(m => m.key !== key);
+  STATE.memories.push({ key, value, ts: Date.now() });
+  saveMemories();
+}
+function removeMemory(key) {
+  STATE.memories = STATE.memories.filter(m => m.key !== key);
+  saveMemories();
+}
+function toggleMemory() {
+  STATE.memoryEnabled = !STATE.memoryEnabled;
+  saveState();
+  renderMemoryTags();
+  if (!STATE.memoryEnabled) STATE.memories = [];
+  else loadMemories();
+}
+
+// ═══════════════════════════════════════════ VOICE ══════════════════
+function toggleVoice() {
+  if (STATE.isListening) { stopVoice(); return; }
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) { alert('Voice not supported in this browser.'); return; }
+  STATE.recognition = new SpeechRecognition();
+  STATE.recognition.lang = 'en-US';
+  STATE.recognition.interimResults = true;
+  STATE.recognition.continuous = false;
+  STATE.recognition.onresult = e => {
+    let t = '';
+    for (const r of e.results) t += r[0].transcript;
+    document.getElementById('promptInput').value = t;
+    document.getElementById('promptInput').dispatchEvent(new Event('input'));
+  };
+  STATE.recognition.onend = () => {
+    STATE.isListening = false;
+    document.getElementById('voiceBtn').classList.remove('mic-active');
+    document.getElementById('voiceLabel').textContent = 'Voice';
+    // Auto-send if we got text
+    const val = document.getElementById('promptInput').value.trim();
+    if (val) sendMessage();
+  };
+  STATE.recognition.onerror = () => { stopVoice(); };
+  STATE.recognition.start();
+  STATE.isListening = true;
+  document.getElementById('voiceBtn').classList.add('mic-active');
+  document.getElementById('voiceLabel').textContent = 'Listening...';
+}
+function stopVoice() {
+  STATE.isListening = false;
+  if (STATE.recognition) { try { STATE.recognition.stop(); } catch(e) {} STATE.recognition = null; }
+  document.getElementById('voiceBtn').classList.remove('mic-active');
+  document.getElementById('voiceLabel').textContent = 'Voice';
+}
+function speakText(text) {
+  if (!window.speechSynthesis) return;
+  const clean = text.replace(/<[^>]*>/g, '').slice(0, 1000);
+  const u = new SpeechSynthesisUtterance(clean);
+  u.rate = 1.0;
+  u.pitch = 1.0;
+  speechSynthesis.cancel();
+  speechSynthesis.speak(u);
+}
+
+// ═══════════════════════════════════════════ FILE UPLOAD ════════════
+async function handleFileUpload(file) {
+  if (!file) return;
+  const formData = new FormData();
+  formData.append('file', file);
+  try {
+    const res = await fetch('/api/analyze', { method: 'POST', body: formData });
+    if (!res.ok) throw new Error('Upload failed');
+    const data = await res.json();
+    STATE.uploadedFiles.push(data);
+    // Add file as context to current message
+    const textarea = document.getElementById('promptInput');
+    if (data.type === 'image') {
+      // Display image in chat
+      const msgId = 'file-' + Date.now();
+      appendImageToChat(data);
+    } else {
+      const preview = data.preview || data.content.slice(0, 300);
+      textarea.value = (textarea.value ? textarea.value + '\n' : '') + `[Analyze this ${data.ext} file: ${data.name} (${(data.size/1024).toFixed(1)}KB)]`;
+      textarea.dispatchEvent(new Event('input'));
+    }
+  } catch(e) {
+    addSystemMessage('⚠️ Upload failed: ' + e.message);
+  }
+}
+function appendImageToChat(data) {
+  const container = document.getElementById('messagesContainer');
+  const welcome = container.querySelector('.flex.flex-col.items-center');
+  if (welcome) welcome.remove();
+  const div = document.createElement('div');
+  div.id = 'img-' + Date.now();
+  div.className = 'flex justify-start gap-4 fade-in-up';
+  div.innerHTML = `<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center shrink-0 mt-1 shadow-sm border border-surface-border/30"><span class="material-symbols-outlined text-on-primary" style="font-size:16px;">image</span></div>
+    <div class="max-w-[90%]"><div class="glass-panel rounded-xl p-3"><img src="${data.content}" alt="${data.name}" class="max-w-full max-h-64 rounded-lg object-contain"/><p class="text-xs text-text-muted mt-1">${data.name} (${(data.size/1024).toFixed(1)}KB)</p></div></div>`;
+  container.appendChild(div);
+  scrollToBottom();
+}
+
+// ═══════════════════════════════════════════ IMAGE GEN ══════════════
+function openImageGen() {
+  const prompt = prompt('Describe the image you want to generate:');
+  if (!prompt || !prompt.trim()) return;
+  generateImage(prompt.trim());
+}
+async function generateImage(prompt) {
+  const msgId = 'img-gen-' + Date.now();
+  const container = document.getElementById('messagesContainer');
+  const welcome = container.querySelector('.flex.flex-col.items-center');
+  if (welcome) welcome.remove();
+  const div = document.createElement('div');
+  div.id = msgId;
+  div.className = 'flex justify-start gap-4 fade-in-up';
+  div.innerHTML = `<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center shrink-0 mt-1 shadow-sm border border-surface-border/30"><span class="material-symbols-outlined text-on-primary" style="font-size:16px;">palette</span></div>
+    <div class="max-w-[90%]"><div class="glass-panel rounded-xl p-4"><p class="text-sm text-text-muted mb-2">Generating: "${escHtml(prompt)}"...</p><div class="spinner w-8 h-8 border-2 border-ai-accent border-t-transparent rounded-full mx-auto"></div></div></div>`;
+  container.appendChild(div);
+  scrollToBottom();
+  try {
+    const res = await fetch('/api/generate-image', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ prompt, width: 1024, height: 1024 }),
+    });
+    if (!res.ok) throw new Error('Generation failed');
+    const data = await res.json();
+    document.getElementById(msgId).querySelector('.glass-panel').innerHTML =
+      `<p class="text-xs text-text-muted mb-2">${escHtml(prompt)}</p><img src="${data.url}" alt="${escHtml(prompt)}" class="max-w-full rounded-lg"/>`;
+  } catch(e) {
+    document.getElementById(msgId).querySelector('.glass-panel').innerHTML = `<p class="text-sm text-error">⚠️ ${escHtml(e.message)}</p>`;
   }
 }
 
-// ═══════════════════════════════════════════
-//  SESSION MANAGEMENT
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════════ SESSION MGMT ═══════════
 function newChat() {
   const id = 'session-' + Date.now() + '-' + Math.random().toString(36).slice(2,6);
-  const session = {
-    id,
-    title: null,  // auto-generated after first exchange
-    model: STATE.currentModel,
-    created: new Date().toISOString(),
-    updated: new Date().toISOString(),
-    messages: [],
-  };
-  STATE.sessions[id] = session;
+  STATE.sessions[id] = { id, title: null, model: STATE.currentModel, created: new Date().toISOString(), updated: new Date().toISOString(), messages: [], mode: STATE.chatMode };
   STATE.sessionOrder.unshift(id);
   STATE.activeSession = id;
   STATE.currentMessages = [];
   STATE.conversationHistory = [];
-  saveState();
-  renderHistory();
-  showWelcome();
-  scrollToBottom();
+  STATE.uploadedFiles = [];
+  saveState(); renderHistory(); showWelcome(); scrollToBottom();
   document.getElementById('promptInput').focus();
 }
-
 function showWelcome() {
-  const container = document.getElementById('messagesContainer');
-  container.innerHTML = `
-    <div class="flex flex-col items-center justify-center py-16 fade-in-up">
-      <div class="w-16 h-16 rounded-full bg-primary-container flex items-center justify-center mb-4 shadow-md">
-        <span class="text-on-primary text-3xl font-bold">&Omega;</span>
-      </div>
+  document.getElementById('messagesContainer').innerHTML =
+    `<div class="flex flex-col items-center justify-center py-16 fade-in-up">
+      <div class="w-16 h-16 rounded-full bg-primary-container flex items-center justify-center mb-4 shadow-md"><span class="text-on-primary text-3xl font-bold">&Omega;</span></div>
       <h2 class="text-headline-lg font-headline-lg text-primary dark:text-inverse-primary text-center mb-2">Omega Cloud</h2>
-      <p class="text-on-surface-variant text-center max-w-md">Enterprise AI assistant. Ask me anything.</p>
+      <p class="text-on-surface-variant text-center max-w-md">Enterprise AI. Chat modes, file analysis, image generation, memory, voice, and more.</p>
       <div class="flex flex-wrap gap-2 mt-6 justify-center" id="suggestionChips"></div>
     </div>`;
-  const chips = ['Write a Python script to parse CSV','Explain quantum computing','Debug my React component','Design a REST API'];
+  const chips = ['Parse this CSV for me','Generate an image of a futuristic city','Explain quantum computing','Debug my Python code','What is the capital of France?'];
   const cc = document.getElementById('suggestionChips');
   for (const s of chips) {
     const btn = document.createElement('button');
     btn.className = 'px-4 py-2 border border-surface-border/50 rounded-lg text-label-sm font-label-sm text-on-surface-variant hover:bg-surface-container/50 hover:text-primary transition-all duration-200 hover:-translate-y-0.5 glass-panel';
     btn.textContent = s;
-    btn.onclick = () => { document.getElementById('promptInput').value = s; document.getElementById('promptInput').dispatchEvent(new Event('input')); sendMessage(); };
+    btn.onclick = () => {
+      if (s.startsWith('Generate an image')) {
+        const prompt = s.replace('Generate an image of ','');
+        generateImage(prompt);
+      } else {
+        document.getElementById('promptInput').value = s;
+        document.getElementById('promptInput').dispatchEvent(new Event('input'));
+        sendMessage();
+      }
+    };
     cc.appendChild(btn);
   }
 }
-
 function loadSession(id) {
-  const session = STATE.sessions[id];
-  if (!session) return;
+  const s = STATE.sessions[id]; if (!s) return;
   STATE.activeSession = id;
-  STATE.currentModel = session.model || STATE.currentModel;
-  STATE.currentMessages = session.messages || [];
+  STATE.currentModel = s.model || STATE.currentModel;
+  STATE.currentMessages = s.messages || [];
   STATE.conversationHistory = [...STATE.currentMessages];
   document.getElementById('modelSelect').value = STATE.currentModel;
   document.getElementById('modelLabel').textContent = STATE.currentModel;
-  renderMessages();
-  renderHistory();
-  scrollToBottom();
+  if (s.mode) setMode(s.mode);
+  renderMessages(); renderHistory(); scrollToBottom();
 }
-
 function deleteSession(id) {
-  if (!confirm('Delete this conversation?')) return;
+  if (!confirm('Delete?')) return;
   delete STATE.sessions[id];
   STATE.sessionOrder = STATE.sessionOrder.filter(s => s !== id);
-  if (STATE.activeSession === id) {
-    if (STATE.sessionOrder.length) {
-      loadSession(STATE.sessionOrder[0]);
-    } else {
-      newChat();
-    }
-  }
-  saveState();
-  renderHistory();
+  if (STATE.activeSession === id) STATE.sessionOrder.length ? loadSession(STATE.sessionOrder[0]) : newChat();
+  saveState(); renderHistory();
 }
-
 function renderHistory() {
   const list = document.getElementById('historyList');
-  if (!STATE.sessionOrder.length) {
-    list.innerHTML = '<div class="text-on-surface-variant text-center text-sm py-8">No conversations</div>';
-    return;
-  }
+  if (!STATE.sessionOrder.length) { list.innerHTML = '<div class="text-on-surface-variant text-center text-sm py-8">No conversations</div>'; return; }
   list.innerHTML = '';
   for (const id of STATE.sessionOrder) {
-    const s = STATE.sessions[id];
-    if (!s) continue;
-    const div = document.createElement('div');
+    const s = STATE.sessions[id]; if (!s) continue;
     const isActive = id === STATE.activeSession;
     const title = s.title || 'New Chat';
-    const date = new Date(s.updated);
-    const dateStr = date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-    div.className = 'group flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-all duration-200 ' +
-      (isActive ? 'bg-surface-container-low/80 border-l-2 border-ai-accent' : 'hover:bg-surface-container/50 border-l-2 border-transparent');
-    div.innerHTML = `
-      <div class="flex-1 min-w-0" onclick="loadSession('${id}')">
-        <div class="text-sm font-medium truncate ${isActive ? 'text-primary' : 'text-on-surface'}">${escapeHtml(title)}</div>
-        <div class="text-xs text-text-muted mt-0.5">${dateStr}</div>
-      </div>
-      <button onclick="event.stopPropagation();deleteSession('${id}')" class="opacity-0 group-hover:opacity-100 text-text-muted hover:text-error transition-all duration-200 p-1 rounded hover:bg-surface-container">
-        <span class="material-symbols-outlined" style="font-size:14px;">delete</span>
-      </button>
-    `;
+    const div = document.createElement('div');
+    div.className = `group flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-all duration-200 ${isActive ? 'bg-surface-container-low/80 border-l-2 border-ai-accent' : 'hover:bg-surface-container/50 border-l-2 border-transparent'}`;
+    div.innerHTML = `<div class="flex-1 min-w-0" onclick="loadSession('${id}')"><div class="text-sm font-medium truncate ${isActive ? 'text-primary' : 'text-on-surface'}">${escHtml(title)}</div><div class="text-xs text-text-muted mt-0.5">${new Date(s.updated).toLocaleDateString()}</div></div>
+      <button onclick="event.stopPropagation();deleteSession('${id}')" class="opacity-0 group-hover:opacity-100 text-text-muted hover:text-error transition-all p-1 rounded hover:bg-surface-container"><span class="material-symbols-outlined" style="font-size:14px;">delete</span></button>`;
     list.appendChild(div);
   }
 }
 
+// ═══════════════════════════════════════════ MESSAGE RENDER ═════════
+function renderMessages() {
+  const container = document.getElementById('messagesContainer');
+  if (!STATE.currentMessages.length) { showWelcome(); return; }
+  container.innerHTML = '';
+  for (let i = 0; i < STATE.currentMessages.length; i++) {
+    const m = STATE.currentMessages[i];
+    if (m.role === 'system') continue;
+    appendMsgDOM(m.role, m.content, 'restored-'+i, false);
+  }
+  scrollToBottom();
+}
+function appendMsgDOM(role, content, msgId, animate = true) {
+  const container = document.getElementById('messagesContainer');
+  const w = container.querySelector('.flex.flex-col.items-center');
+  if (w) w.remove();
+  const div = document.createElement('div');
+  div.id = msgId; div.className = 'flex ' + (role==='user' ? 'justify-end' : 'justify-start group gap-4') + (animate ? ' fade-in-up' : '');
+  if (role === 'user') {
+    div.innerHTML = `<div class="max-w-[85%] md:max-w-[75%]"><div class="glass-panel text-on-surface px-5 py-3.5 rounded-2xl rounded-tr-sm inline-block hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 relative"><p class="font-body-md text-body-md leading-relaxed whitespace-pre-wrap">${escHtml(content)}</p></div></div>`;
+  } else {
+    const isImg = content && (content.startsWith('data:image') || content.startsWith('<img'));
+    if (isImg && content.startsWith('data:image')) {
+      div.innerHTML = `<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center shrink-0 mt-1 shadow-sm border border-surface-border/30"><span class="material-symbols-outlined text-on-primary" style="font-size:16px;">image</span></div>
+        <div class="max-w-[90%]"><div class="glass-panel rounded-xl p-3"><img src="${content}" class="max-w-full max-h-64 rounded-lg"/></div></div>`;
+    } else {
+      div.innerHTML = `<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center shrink-0 mt-1 shadow-sm border border-surface-border/30"><span class="material-symbols-outlined text-on-primary" style="font-size:16px;">bolt</span></div>
+        <div class="max-w-[90%] md:max-w-[85%]"><div class="prose prose-slate max-w-none text-on-surface font-body-md text-body-md leading-relaxed"><div class="ai-content">${content ? renderMd(content) : '<div class="flex gap-1.5 py-2"><span class="typing-dot w-2 h-2 bg-on-surface-variant rounded-full inline-block"></span><span class="typing-dot w-2 h-2 bg-on-surface-variant rounded-full inline-block"></span><span class="typing-dot w-2 h-2 bg-on-surface-variant rounded-full inline-block"></span></div>'}</div></div>`;
+    }
+  }
+  container.appendChild(div);
+  if (animate) scrollToBottom();
+}
+function updateAssistantMessage(msgId, content) {
+  const el = document.getElementById(msgId);
+  if (!el) return;
+  const cd = el.querySelector('.ai-content');
+  if (cd) {
+    cd.innerHTML = renderMd(content);
+    cd.querySelectorAll('pre').forEach(pre => {
+      if (pre.querySelector('.copy-btn')) return;
+      const cb = document.createElement('button');
+      cb.className = 'copy-btn absolute top-2 right-2 px-2 py-1 text-xs rounded bg-surface-container-low border border-surface-border text-text-muted hover:text-primary hover:bg-surface-container transition-all';
+      cb.textContent = 'Copy';
+      cb.onclick = () => { const code = pre.querySelector('code'); if(code) navigator.clipboard.writeText(code.textContent).then(()=>{cb.textContent='Copied!';setTimeout(()=>cb.textContent='Copy',1500);}); };
+      pre.style.position = 'relative'; pre.classList.add('code-block'); pre.appendChild(cb);
+    });
+  }
+  scrollToBottom();
+}
+function addSystemMessage(text) {
+  const container = document.getElementById('messagesContainer');
+  const div = document.createElement('div');
+  div.className = 'flex justify-center fade-in-up';
+  div.innerHTML = `<div class="glass-panel px-4 py-2 rounded-full"><span class="text-xs text-text-muted">${escHtml(text)}</span></div>`;
+  container.appendChild(div);
+  scrollToBottom();
+}
+function renderMd(text) {
+  if (!text) return '';
+  let html; try { html = marked.parse(text); } catch(e) { html = escHtml(text); }
+  const t = document.createElement('div'); t.innerHTML = html;
+  t.querySelectorAll('pre code').forEach(b => { try { hljs.highlightElement(b); } catch(e) {} });
+  return t.innerHTML;
+}
+function scrollToBottom() { setTimeout(() => document.getElementById('chatArea').scrollTop = document.getElementById('chatArea').scrollHeight, 30); }
+function escHtml(t) { const d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
+
+// ═══════════════════════════════════════════ WEB SEARCH ═════════════
+function toggleSearch() {
+  STATE.searchEnabled = !STATE.searchEnabled;
+  const btn = document.getElementById('searchToggle'), label = document.getElementById('searchLabel');
+  if (STATE.searchEnabled) { btn.classList.add('bg-ai-accent/10','text-ai-accent','border','border-ai-accent/30'); label.textContent = 'Search On'; }
+  else { btn.classList.remove('bg-ai-accent/10','text-ai-accent','border','border-ai-accent/30'); label.textContent = 'Search'; }
+}
+async function webSearch(q) {
+  try {
+    const r = await fetch('/api/search', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({query:q}) });
+    if (!r.ok) return null;
+    return (await r.json()).results || [];
+  } catch(e) { return null; }
+}
+
+// ═══════════════════════════════════════════ SEND MESSAGE ═══════════
+async function sendMessage() {
+  if (STATE.isStreaming) return;
+  const textarea = document.getElementById('promptInput');
+  const text = textarea.value.trim();
+  if (!text) return;
+  textarea.value = ''; textarea.style.height = 'auto'; toggleSubmitBtn(false);
+
+  const mode = STATE.chatMode;
+  let systemContext = '';
+
+  // Mode system context
+  if (mode === 'coding') systemContext += '\n\nFocus on writing clean, correct code with explanations. Prioritize production-quality solutions.';
+  if (mode === 'research') {
+    STATE.searchEnabled = true;
+    document.getElementById('searchToggle').classList.add('bg-ai-accent/10','text-ai-accent','border','border-ai-accent/30');
+    document.getElementById('searchLabel').textContent = 'Search On';
+    systemContext += '\n\nDeep Research mode: Actively search the web for comprehensive information. Synthesize multiple sources. Cite your sources.';
+  }
+
+  // Memory context
+  if (STATE.memoryEnabled && STATE.memories.length) {
+    systemContext += '\n\nUser facts (memory): ' + STATE.memories.map(m => `${m.key}: ${m.value}`).join('; ');
+  }
+
+  // File upload context
+  if (STATE.uploadedFiles.length) {
+    for (const f of STATE.uploadedFiles) {
+      if (f.type === 'table') systemContext += '\n\nUploaded file "' + f.name + '" (' + f.rows + ' rows):\n' + f.content.slice(0, 3000);
+      else if (f.type === 'json' || f.type === 'code' || f.type === 'text') systemContext += '\n\nUploaded file "' + f.name + '":\n' + f.content.slice(0, 3000);
+    }
+  }
+
+  const userMsg = { role: 'user', content: text + systemContext };
+  STATE.currentMessages.push({ role: 'user', content: text });
+  STATE.conversationHistory.push(userMsg);
+  const userMsgId = 'msg-'+Date.now()+'-user';
+  appendMsgDOM('user', text, userMsgId);
+
+  const aiMsgId = 'msg-'+Date.now()+'-ai';
+  appendMsgDOM('assistant', '', aiMsgId);
+  STATE.isStreaming = true;
+
+  let searchContext = '';
+  if (STATE.searchEnabled || mode === 'research') {
+    const results = await webSearch(text);
+    if (results && results.length) {
+      searchContext = '\n\nWeb Search Results:\n' + results.map((r,i) => `[${i+1}] ${r.title}\n${r.snippet}\nSource: ${r.url}`).join('\n\n');
+    }
+  }
+
+  try {
+    let msgs = STATE.conversationHistory;
+    if (searchContext) {
+      msgs = [ { role:'system', content: 'Web search results for context:\n'+searchContext }, ...msgs ];
+    }
+
+    const res = await fetch('/api/chat', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ message: text + systemContext, model: STATE.currentModel, conversationHistory: STATE.conversationHistory.slice(0,-1) }),
+    });
+
+    if (!res.ok) {
+      const et = await res.text();
+      let msg = 'HTTP '+res.status;
+      try { const d=JSON.parse(et); msg=d.error||msg; } catch(e) { msg=et.slice(0,150)||msg; }
+      throw new Error(msg);
+    }
+
+    const ct = res.headers.get('Content-Type') || '';
+    let fullResp = '';
+
+    if (ct.includes('text/event-stream')) {
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buf = '';
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buf += decoder.decode(value, {stream:true});
+        const lines = buf.split('\n');
+        buf = lines.pop() || '';
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          const d = line.slice(6).trim();
+          if (d === '[DONE]') continue;
+          try {
+            const p = JSON.parse(d);
+            const c = p?.choices?.[0]?.delta?.content || '';
+            if (c) { fullResp += c; updateAssistantMessage(aiMsgId, fullResp); }
+          } catch(e) {}
+        }
+      }
+    } else {
+      const data = await res.json();
+      fullResp = data?.choices?.[0]?.message?.content || data?.content || 'No response';
+      updateAssistantMessage(aiMsgId, fullResp);
+    }
+
+    if (fullResp) {
+      STATE.currentMessages.push({ role:'assistant', content: fullResp });
+      STATE.conversationHistory.push({ role:'assistant', content: fullResp });
+      const sess = STATE.sessions[STATE.activeSession];
+      if (sess) {
+        sess.messages = STATE.currentMessages;
+        sess.updated = new Date().toISOString();
+        saveState();
+        if (!sess.title && STATE.currentMessages.length >= 2) autoTitle();
+      }
+    }
+  } catch(err) {
+    updateAssistantMessage(aiMsgId, '**⚠️ Error:** ' + escHtml(err.message));
+  } finally { STATE.isStreaming = false; STATE.uploadedFiles = []; }
+}
+
 async function autoTitle() {
-  const session = STATE.sessions[STATE.activeSession];
-  if (!session || session.title) return;
-  const msgs = session.messages || [];
+  const sess = STATE.sessions[STATE.activeSession];
+  if (!sess || sess.title) return;
+  const msgs = sess.messages || [];
   if (msgs.length < 2) return;
   const firstUser = msgs.find(m => m.role === 'user');
   const firstAI = msgs.find(m => m.role === 'assistant');
   if (!firstUser || !firstAI) return;
   try {
     const res = await fetch('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
-        message: 'Generate a concise 3-6 word title for this conversation. Return ONLY the title, nothing else.\n\nUser: ' + firstUser.content.slice(0,200) + '\nAssistant: ' + firstAI.content.slice(0,200),
+        message: 'Generate a concise 3-6 word title for this conversation. Return ONLY the title, nothing else.\n\nUser: '+firstUser.content.slice(0,200)+'\nAssistant: '+firstAI.content.slice(0,200),
         model: STATE.currentModel,
       }),
     });
     if (res.ok) {
-      const contentType = res.headers.get('Content-Type') || '';
+      const ct = res.headers.get('Content-Type')||'';
       let text = '';
-      if (contentType.includes('text/event-stream')) {
-        const reader = res.body.getReader();
-        const dec = new TextDecoder();
-        let buf = '';
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          buf += dec.decode(value, { stream: true });
-          const lines = buf.split('\n');
-          buf = lines.pop() || '';
-          for (const line of lines) {
-            if (!line.startsWith('data: ')) continue;
-            const d = line.slice(6).trim();
-            if (d === '[DONE]') continue;
-            try {
-              const p = JSON.parse(d);
-              const c = p?.choices?.[0]?.delta?.content || '';
-              if (c) text += c;
-            } catch(e) {}
-          }
-        }
-      } else {
-        const data = await res.json();
-        text = data?.choices?.[0]?.message?.content || data?.content || '';
-      }
-      text = text.replace(/[""*]/g, '').trim();
-      if (text && text.length < 60) {
-        session.title = text;
-        saveState();
-        renderHistory();
-      }
+      if (ct.includes('text/event-stream')) {
+        const reader = res.body.getReader(); const dec = new TextDecoder(); let buf='';
+        while(true){const{done,value}=await reader.read();if(done)break;buf+=dec.decode(value,{stream:true});const ls=buf.split('\n');buf=ls.pop()||'';for(const l of ls){if(!l.startsWith('data: '))continue;const d=l.slice(6).trim();if(d==='[DONE]')continue;try{const p=JSON.parse(d);const c=p?.choices?.[0]?.delta?.content||'';if(c)text+=c;}catch(e){}}}
+      } else { const d=await res.json(); text=d?.choices?.[0]?.message?.content||d?.content||''; }
+      text = text.replace(/[""*]/g,'').trim();
+      if (text && text.length < 60) { sess.title = text; saveState(); renderHistory(); }
     }
-  } catch(e) {
-    // Silent fail for auto-title
-  }
+  } catch(e) {}
 }
 
-// ═══════════════════════════════════════════
-//  MESSAGE RENDERING
-// ═══════════════════════════════════════════
-function renderMessages() {
-  const container = document.getElementById('messagesContainer');
-  if (!STATE.currentMessages.length) {
-    showWelcome();
-    return;
-  }
-  container.innerHTML = '';
-  for (let i = 0; i < STATE.currentMessages.length; i++) {
-    const msg = STATE.currentMessages[i];
-    appendMessageToDOM(msg.role, msg.content, 'restored-' + i, false);
-  }
-  scrollToBottom();
-}
-
-function appendMessageToDOM(role, content, msgId, animate = true) {
-  const container = document.getElementById('messagesContainer');
-  // Remove welcome if present
-  const welcome = container.querySelector('.flex.flex-col.items-center');
-  if (welcome) welcome.remove();
-
-  const div = document.createElement('div');
-  div.id = msgId;
-  div.className = 'flex ' + (role === 'user' ? 'justify-end' : 'justify-start group gap-4') + (animate ? ' fade-in-up' : '');
-  div.setAttribute('data-role', role);
-
-  let inner = '';
-  if (role === 'user') {
-    inner = `<div class="max-w-[85%] md:max-w-[75%]">
-      <div class="glass-panel text-on-surface px-5 py-3.5 rounded-2xl rounded-tr-sm inline-block transition-transform duration-300 hover:-translate-y-0.5 hover:shadow-md relative">
-        <p class="font-body-md text-body-md leading-relaxed whitespace-pre-wrap">${escapeHtml(content)}</p>
-      </div>
-    </div>`;
-  } else {
-    inner = `<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center shrink-0 mt-1 shadow-sm border border-surface-border/30">
-      <span class="material-symbols-outlined text-on-primary" style="font-variation-settings:'FILL' 1;font-size:16px;">bolt</span>
-    </div>
-    <div class="max-w-[90%] md:max-w-[85%]">
-      <div class="prose prose-slate max-w-none text-on-surface font-body-md text-body-md leading-relaxed">
-        <div class="ai-content">${content ? renderMarkdown(content) : '<div class="flex gap-1.5 py-2"><span class="typing-dot w-2 h-2 bg-on-surface-variant rounded-full inline-block"></span><span class="typing-dot w-2 h-2 bg-on-surface-variant rounded-full inline-block"></span><span class="typing-dot w-2 h-2 bg-on-surface-variant rounded-full inline-block"></span></div>'}</div>
-      </div>
-    </div>`;
-  }
-
-  div.innerHTML = inner;
-  container.appendChild(div);
-  if (animate) scrollToBottom();
-  return div;
-}
-
-function updateAssistantMessage(msgId, content) {
-  const el = document.getElementById(msgId);
-  if (!el) return;
-  const contentDiv = el.querySelector('.ai-content');
-  if (contentDiv) {
-    contentDiv.innerHTML = renderMarkdown(content);
-    // Attach copy buttons to code blocks
-    contentDiv.querySelectorAll('pre').forEach(pre => {
-      if (pre.querySelector('.copy-btn')) return;
-      const cb = document.createElement('button');
-      cb.className = 'copy-btn absolute top-2 right-2 px-2 py-1 text-xs rounded bg-surface-container-low border border-surface-border text-text-muted hover:text-primary hover:bg-surface-container transition-all duration-200';
-      cb.textContent = 'Copy';
-      cb.onclick = () => {
-        const code = pre.querySelector('code');
-        if (code) navigator.clipboard.writeText(code.textContent).then(() => { cb.textContent = 'Copied!'; setTimeout(() => cb.textContent='Copy', 1500); });
-      };
-      pre.style.position = 'relative';
-      pre.classList.add('code-block');
-      pre.appendChild(cb);
-    });
-  }
-  scrollToBottom();
-}
-
-function renderMarkdown(text) {
-  if (!text) return '';
-  let html;
-  try {
-    html = marked.parse(text);
-  } catch(e) {
-    html = escapeHtml(text);
-  }
-  // Wrap in temp div to highlight code
-  const temp = document.createElement('div');
-  temp.innerHTML = html;
-  temp.querySelectorAll('pre code').forEach(b => {
-    try { hljs.highlightElement(b); } catch(e) {}
-  });
-  return temp.innerHTML;
-}
-
-function scrollToBottom() {
-  const chatArea = document.getElementById('chatArea');
-  setTimeout(() => chatArea.scrollTop = chatArea.scrollHeight, 30);
-}
-
-// ═══════════════════════════════════════════
-//  WEB SEARCH
-// ═══════════════════════════════════════════
-function toggleSearch() {
-  STATE.searchEnabled = !STATE.searchEnabled;
-  const btn = document.getElementById('searchToggle');
-  const label = document.getElementById('searchLabel');
-  if (STATE.searchEnabled) {
-    btn.classList.add('bg-ai-accent/10', 'text-ai-accent', 'border', 'border-ai-accent/30');
-    label.textContent = 'Search On';
-  } else {
-    btn.classList.remove('bg-ai-accent/10', 'text-ai-accent', 'border', 'border-ai-accent/30');
-    label.textContent = 'Search';
-  }
-}
-
-async function webSearch(query) {
-  try {
-    const res = await fetch('/api/search', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query }),
-    });
-    if (!res.ok) return null;
-    const data = await res.json();
-    return data.results || [];
-  } catch(e) {
-    return null;
-  }
-}
-
-// ═══════════════════════════════════════════
-//  SEND MESSAGE
-// ═══════════════════════════════════════════
-async function sendMessage() {
-  if (STATE.isStreaming) return;
-  const textarea = document.getElementById('promptInput');
-  const text = textarea.value.trim();
-  if (!text) return;
-
-  // Clear input
-  textarea.value = '';
-  textarea.style.height = 'auto';
-  toggleSubmitBtn(false);
-
-  // Build message history
-  const userMsg = { role: 'user', content: text };
-  STATE.currentMessages.push(userMsg);
-  STATE.conversationHistory.push(userMsg);
-  const userMsgId = 'msg-' + Date.now() + '-user';
-  appendMessageToDOM('user', text, userMsgId);
-
-  // Add AI placeholder
-  const aiMsgId = 'msg-' + Date.now() + '-ai';
-  appendMessageToDOM('assistant', '', aiMsgId);
-  STATE.isStreaming = true;
-
-  let searchContext = '';
-  // Web search if enabled
-  if (STATE.searchEnabled) {
-    try {
-      const results = await webSearch(text);
-      if (results && results.length > 0) {
-        searchContext = '\n\nWeb Search Results:\n' + results.map((r, i) =>
-          `[${i+1}] ${r.title}\n${r.snippet}\nSource: ${r.url}`
-        ).join('\n\n');
-      }
-    } catch(e) {}
-  }
-
-  try {
-    let messages = STATE.conversationHistory;
-    if (searchContext) {
-      // Add search context as a system note before the last user message
-      messages = [
-        { role: 'system', content: 'Web search results for context:\n' + searchContext + '\n\nUse this information if relevant to answer the user.' },
-        ...STATE.conversationHistory.slice(0, -1),
-        { role: 'user', content: text + '\n\n(Note: Web search was queried. Results above may provide context.)' },
-      ];
-    }
-
-    const res = await fetch('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        message: text,
-        model: STATE.currentModel,
-        conversationHistory: STATE.conversationHistory.slice(0, -1),
-      }),
-    });
-
-    if (!res.ok) {
-      const errText = await res.text();
-      let msg = 'HTTP ' + res.status;
-      try { const d = JSON.parse(errText); msg = d.error || msg; } catch(e) { msg = errText.slice(0,150) || msg; }
-      throw new Error(msg);
-    }
-
-    const contentType = res.headers.get('Content-Type') || '';
-    let fullResponse = '';
-
-    if (contentType.includes('text/event-stream')) {
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = '';
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || '';
-        for (const line of lines) {
-          if (!line.startsWith('data: ')) continue;
-          const data = line.slice(6).trim();
-          if (data === '[DONE]') continue;
-          try {
-            const parsed = JSON.parse(data);
-            const c = parsed?.choices?.[0]?.delta?.content || '';
-            if (c) {
-              fullResponse += c;
-              updateAssistantMessage(aiMsgId, fullResponse);
-            }
-          } catch(e) {}
-        }
-      }
-    } else {
-      const data = await res.json();
-      fullResponse = data?.choices?.[0]?.message?.content || data?.content || 'No response';
-      updateAssistantMessage(aiMsgId, fullResponse);
-    }
-
-    if (fullResponse) {
-      const aiMsg = { role: 'assistant', content: fullResponse };
-      STATE.currentMessages.push(aiMsg);
-      STATE.conversationHistory.push(aiMsg);
-      // Save to session store
-      const session = STATE.sessions[STATE.activeSession];
-      if (session) {
-        session.messages = STATE.currentMessages;
-        session.updated = new Date().toISOString();
-        saveState();
-        // Auto-title after first exchange
-        if (!session.title && STATE.currentMessages.length >= 2) {
-          autoTitle();
-        }
-      }
-    }
-  } catch(err) {
-    updateAssistantMessage(aiMsgId, '**⚠️ Error:** ' + escapeHtml(err.message));
-  } finally {
-    STATE.isStreaming = false;
-  }
-}
-
-// ═══════════════════════════════════════════
-//  UI HELPERS
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════════ UI HELPERS ═════════════
 function setupInputEvents() {
-  const textarea = document.getElementById('promptInput');
-  textarea.addEventListener('input', function() {
-    this.style.height = 'auto';
-    this.style.height = this.scrollHeight + 'px';
-    toggleSubmitBtn(!!this.value.trim());
-  });
-  textarea.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
-  });
+  const ta = document.getElementById('promptInput');
+  ta.addEventListener('input', function() { this.style.height='auto'; this.style.height=this.scrollHeight+'px'; toggleSubmitBtn(!!this.value.trim()); });
+  ta.addEventListener('keydown', function(e) { if (e.key==='Enter'&&!e.shiftKey) { e.preventDefault(); sendMessage(); } });
 }
-
-function toggleSubmitBtn(active) {
-  const btn = document.getElementById('submitBtn');
-  btn.disabled = !active;
-  if (active) {
-    btn.classList.remove('bg-surface-container/50','text-text-muted','cursor-not-allowed');
-    btn.classList.add('bg-primary','text-on-primary','cursor-pointer','hover:-translate-y-0.5','hover:shadow-md');
-  } else {
-    btn.classList.add('bg-surface-container/50','text-text-muted','cursor-not-allowed');
-    btn.classList.remove('bg-primary','text-on-primary','cursor-pointer','hover:-translate-y-0.5','hover:shadow-md');
-  }
+function toggleSubmitBtn(a) {
+  const btn = document.getElementById('submitBtn'); btn.disabled = !a;
+  if (a) { btn.classList.remove('bg-surface-container/50','text-text-muted','cursor-not-allowed'); btn.classList.add('bg-primary','text-on-primary','cursor-pointer','hover:-translate-y-0.5','hover:shadow-md'); }
+  else { btn.classList.add('bg-surface-container/50','text-text-muted','cursor-not-allowed'); btn.classList.remove('bg-primary','text-on-primary','cursor-pointer','hover:-translate-y-0.5','hover:shadow-md'); }
 }
-
 function toggleTheme() {
-  const html = document.documentElement;
-  const isDark = html.classList.toggle('dark');
+  const h = document.documentElement;
+  const isDark = h.classList.toggle('dark');
   localStorage.setItem('omega_theme', isDark ? 'dark' : 'light');
   document.getElementById('themeIcon').textContent = isDark ? 'light_mode' : 'dark_mode';
   document.getElementById('themeLabel').textContent = isDark ? 'Light' : 'Dark';
 }
-
 function applyTheme() {
-  const saved = localStorage.getItem('omega_theme');
-  if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme:dark)').matches)) {
+  const s = localStorage.getItem('omega_theme');
+  if (s==='dark'||(!s&&window.matchMedia('(prefers-color-scheme:dark)').matches)) {
     document.documentElement.classList.add('dark');
     document.getElementById('themeIcon').textContent = 'light_mode';
     document.getElementById('themeLabel').textContent = 'Light';
   }
 }
-
-function escapeHtml(text) {
-  const d = document.createElement('div');
-  d.textContent = text;
-  return d.innerHTML;
-}
-
-// ═══════════════════════════════════════════
-//  BOOT
-// ═══════════════════════════════════════════
-init();
 </script>
 </body>
 </html>
