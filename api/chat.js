@@ -328,6 +328,26 @@ export default async function handler(request) {
     const body = await request.json();
     const { message, apiKey, model, conversationHistory } = body;
 
+    // ─── Input validation ───
+    if (!message || typeof message !== 'string') {
+      return new Response(JSON.stringify({ error: 'Message is required and must be a string' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://omega-nine-weld.vercel.app' },
+      });
+    }
+    if (message.length > 10000) {
+      return new Response(JSON.stringify({ error: 'Message too long (max 10000 chars)' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://omega-nine-weld.vercel.app' },
+      });
+    }
+    if (conversationHistory && (!Array.isArray(conversationHistory) || conversationHistory.length > 50)) {
+      return new Response(JSON.stringify({ error: 'Invalid conversation history' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://omega-nine-weld.vercel.app' },
+      });
+    }
+
     // ─── Call OpenCode AI API ───
     const openCodeKey = apiKey || process.env.OPENCODE_API_KEY || '';
     const openCodeModel = model || 'deepseek-v4-flash-free';
