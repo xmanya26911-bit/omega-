@@ -1,18 +1,8 @@
 {
-  "framework": null,
-  "git": {
-    "deploymentEnabled": {
-      "master": true
-    }
-  },
-  "functions": {
-    "api/chat.js": {
-      "maxDuration": 60
-    }
-  },
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/" }
-  ],
+  "version": 2,
+  "framework": "nextjs",
+  "buildCommand": "npx next build",
+  "outputDirectory": ".next",
   "headers": [
     {
       "source": "/(.*)",
@@ -20,9 +10,12 @@
         { "key": "X-Content-Type-Options", "value": "nosniff" },
         { "key": "X-Frame-Options", "value": "DENY" },
         { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" },
-        { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; connect-src 'self' https://www.googleapis.com https://oauth2.googleapis.com https://api.pollinations.ai https://opencode.ai https://cdn.jsdelivr.net; worker-src 'self' blob:; frame-src 'none'; object-src 'none'; base-uri 'self'" }
+        { "key": "X-DNS-Prefetch-Control", "value": "on" }
       ]
     }
-  ]
+  ],
+  "env": {
+    "GOOGLE_CLIENT_ID": "855819039877-5f4a8biid8hkf8j2hhd1jk3bj9ng2f5f.apps.googleusercontent.com",
+    "NEXT_PUBLIC_APP_URL": "https://omega-nine-weld.vercel.app"
+  }
 }
