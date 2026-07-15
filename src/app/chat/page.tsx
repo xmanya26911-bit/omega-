@@ -4,6 +4,7 @@ import * as React from "react";
 import { Suspense } from "react";
 import { motion } from "framer-motion";
 import { useOAuth } from "@/components/omega/hooks/use-oauth";
+import { PCRemoteProvider } from "@/components/omega/hooks/use-pc-remote";
 import { ChatSidebar } from "@/components/omega/chat/ChatSidebar";
 import { ChatArea } from "@/components/omega/chat/ChatArea";
 
@@ -69,10 +70,11 @@ function ChatShell() {
   if (!user) return <ChatLoader />;
 
   return (
-    <div
-      className="relative flex h-[100dvh] w-screen overflow-hidden bg-[var(--omega-bg)] text-[var(--omega-fg)]"
-    >
-      {/* ── Static aurora background (lightweight, no canvas) ────────── */}
+    <PCRemoteProvider>
+      <div
+        className="relative flex h-[100dvh] w-screen overflow-hidden bg-[var(--omega-bg)] text-[var(--omega-fg)]"
+      >
+        {/* ── Static aurora background (lightweight, no canvas) ────────── */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
@@ -98,7 +100,7 @@ function ChatShell() {
           <ChatArea />
         </main>
       </div>
-    </div>
+    </PCRemoteProvider>
   );
 }
 
