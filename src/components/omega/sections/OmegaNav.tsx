@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useMagnetic, useLenisScroll } from "../hooks/use-omega";
 import { OmegaButton } from "../ui/OmegaButton";
@@ -23,6 +23,7 @@ const LINKS = [
  */
 export function OmegaNav() {
   const ref = useRef<HTMLDivElement>(null);
+  const [isCliOpen, setIsCliOpen] = useState(false);
   const { scrollYProgress } = useScroll();
   const filament = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
   const scrollTo = useLenisScroll();
@@ -98,7 +99,79 @@ export function OmegaNav() {
               <path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </OmegaButton>
+          <button
+            onClick={() => setIsCliOpen(true)}
+            className="omega-glass-thin flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-medium text-[var(--omega-fg)] transition-all hover:border-[var(--omega-emerald)]/50 hover:text-[var(--omega-emerald)] sm:px-3.5 sm:py-2"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" />
+            </svg>
+            CLI
+          </button>
         </div>
+
+      {/* ── CLI Download Modal ──────────────────────────────────────── */}
+      {isCliOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+          onClick={() => setIsCliOpen(false)}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            onClick={(e) => e.stopPropagation()}
+            className="omega-glass w-full max-w-lg rounded-2xl p-6 sm:p-8"
+          >
+            <div className="mb-5 flex items-center justify-between">
+              <div>
+                <h3 className="font-display text-lg font-bold text-[var(--omega-fg)]">Omega CLI</h3>
+                <p className="mt-1 text-[13px] text-[var(--omega-fg-dim)]">
+                  The same AI engine, now in your terminal.
+                </p>
+              </div>
+              <button
+                onClick={() => setIsCliOpen(false)}
+                className="grid size-8 place-items-center rounded-full border border-[var(--omega-glass-border)] text-[var(--omega-fg-dim)] transition-colors hover:text-[var(--omega-fg)]"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
+              </button>
+            </div>
+
+            <div className="mb-5 space-y-2 text-[13px] leading-relaxed text-[var(--omega-fg-dim)]">
+              <p>Omega CLI brings the full power of the Omega AI platform to your local terminal:</p>
+              <ul className="space-y-1.5 pl-4">
+                <li>• 150+ built-in tools — files, web, code, git, SQL, images</li>
+                <li>• Long-term persistent memory across sessions</li>
+                <li>• Rich TUI with themes, command history, and auto-complete</li>
+                <li>• Multi-model support (DeepSeek, Mimo, Nemotron, and more)</li>
+                <li>• Python REPL, background tasks, REST API client</li>
+              </ul>
+            </div>
+
+            <div className="space-y-3">
+              <div className="rounded-xl border border-[var(--omega-glass-border)] bg-[oklch(0_0_0_/_0.3)] p-3 font-mono text-[12px]">
+                <div className="text-[var(--omega-fg-dim)]"># Clone &amp; run</div>
+                <div className="mt-1 text-[var(--omega-emerald)]">
+                  git clone https://github.com/xmanya26911-bit/omegacli.git<br />
+                  <span className="text-[var(--omega-fg)]">cd omegacli &amp;&amp; pip install -r requirements.txt</span><br />
+                  <span className="text-[var(--omega-amber)]">python main.py</span>
+                </div>
+              </div>
+
+              <a
+                href="https://github.com/xmanya26911-bit/omegacli"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="omega-button flex w-full items-center justify-center gap-2 rounded-xl py-2.5 text-[13px] font-medium transition-all"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" /></svg>
+                View on GitHub
+              </a>
+            </div>
+          </motion.div>
+        </div>
+      )}
       </div>
 
       {/* Scroll progress filament */}
