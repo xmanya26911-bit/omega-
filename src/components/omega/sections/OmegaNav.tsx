@@ -203,7 +203,7 @@ export function OmegaNav() {
               <div>
                 <h3 className="font-display text-lg font-bold text-[var(--omega-fg)]">Omega API</h3>
                 <p className="mt-1 text-[13px] text-[var(--omega-fg-dim)]">
-                  Your API credentials to use Omega models anywhere.
+                  Use Omega's models from any OpenAI-compatible client — no API key needed.
                 </p>
               </div>
               <button
@@ -218,9 +218,9 @@ export function OmegaNav() {
             <div className="mb-4">
               <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--omega-fg-dim)]">Base URL</label>
               <div className="flex items-center gap-2 rounded-xl border border-[var(--omega-glass-border)] bg-[oklch(0_0_0_/_0.3)] px-3.5 py-2.5 font-mono text-[13px] text-[var(--omega-emerald)]">
-                <span className="flex-1">https://opencode.ai/zen/v1</span>
+                <span className="flex-1">https://omega-nine-weld.vercel.app/v1</span>
                 <button
-                  onClick={() => { navigator.clipboard.writeText("https://opencode.ai/zen/v1"); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
+                  onClick={() => { navigator.clipboard.writeText("https://omega-nine-weld.vercel.app/v1"); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
                   className="shrink-0 text-[var(--omega-fg-dim)] transition-colors hover:text-[var(--omega-fg)]"
                 >
                   {copied ? (
@@ -232,9 +232,9 @@ export function OmegaNav() {
               </div>
             </div>
 
-            {/* API Key */}
+            {/* API Key (cosmetic — models are free, no key needed) */}
             <div className="mb-5">
-              <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--omega-fg-dim)]">API Key</label>
+              <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--omega-fg-dim)]">API Key <span className="text-[var(--omega-fg-dim)] font-normal normal-case tracking-normal">(optional — for compatibility)</span></label>
               <div className="flex items-center gap-2 rounded-xl border border-[var(--omega-glass-border)] bg-[oklch(0_0_0_/_0.3)] px-3.5 py-2.5 font-mono text-[13px]">
                 <span className="flex-1 truncate text-[var(--omega-amber)]">
                   {apiKey || "································"}
@@ -242,8 +242,7 @@ export function OmegaNav() {
                 <div className="flex shrink-0 gap-1">
                   <button
                     onClick={() => {
-                      const key = "omg_" + Array.from(crypto.getRandomValues(new Uint8Array(24)), b => b.toString(16).padStart(2, "0")).join("");
-                      setApiKey(key);
+                      setApiKey("omg_" + Array.from(crypto.getRandomValues(new Uint8Array(24)), b => b.toString(16).padStart(2, "0")).join(""));
                     }}
                     className="rounded-lg border border-[var(--omega-glass-border)] px-2 py-1 text-[10px] font-medium text-[var(--omega-fg-dim)] transition-colors hover:border-[var(--omega-emerald)]/50 hover:text-[var(--omega-emerald)]"
                   >
@@ -260,8 +259,27 @@ export function OmegaNav() {
                 </div>
               </div>
               <p className="mt-1.5 text-[11px] text-[var(--omega-fg-dim)]">
-                Generate a key and use it with any OpenAI-compatible client. Store it securely — it won't be shown again.
+                All models are free — no real API key required. The key above is for clients that require one; any value works.
               </p>
+            </div>
+
+            {/* Available Models */}
+            <div className="mb-5">
+              <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--omega-fg-dim)]">Available Models</label>
+              <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+                {[
+                  { id: "deepseek-v4-flash", desc: "Fast general-purpose" },
+                  { id: "mimo-v2.5", desc: "Reasoning & analysis" },
+                  { id: "nemotron-3-ultra", desc: "High-accuracy tasks" },
+                  { id: "north-mini-code", desc: "Code generation" },
+                  { id: "hy3", desc: "Lightweight & fast" },
+                ].map((m) => (
+                  <div key={m.id} className="rounded-lg border border-[var(--omega-glass-border)] bg-[oklch(0_0_0_/_0.25)] p-2.5">
+                    <div className="font-mono text-[12px] font-medium text-[var(--omega-fg)]">{m.id}</div>
+                    <div className="mt-0.5 text-[10px] text-[var(--omega-fg-dim)]">{m.desc}</div>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* Quick Start Tabs */}
@@ -272,10 +290,9 @@ export function OmegaNav() {
               <div className="rounded-xl border border-[var(--omega-glass-border)] bg-[oklch(0_0_0_/_0.3)] p-3 font-mono text-[12px]">
                 <div className="mb-1 text-[10px] text-[var(--omega-fg-dim)]">curl</div>
                 <div className="leading-relaxed text-[var(--omega-fg)]">
-                  curl https://opencode.ai/zen/v1/chat/completions \<br />
-                  <span className="text-[var(--omega-fg-dim)]">  -H "Authorization: Bearer {apiKey || '<YOUR_KEY>'}"</span> \<br />
+                  curl https://omega-nine-weld.vercel.app/v1/chat/completions \<br />
                   <span className="text-[var(--omega-fg-dim)]">  -H "Content-Type: application/json"</span> \<br />
-                  <span className="text-[var(--omega-fg-dim)]">  -d '{`{"model":"deepseek-v4-flash-free","messages":[{"role":"user","content":"Hello"}]}`}'</span>
+                  <span className="text-[var(--omega-fg-dim)]">  -d '{`{"model":"deepseek-v4-flash","messages":[{"role":"user","content":"Hello"}]}`}'</span>
                 </div>
               </div>
 
@@ -285,11 +302,11 @@ export function OmegaNav() {
                 <div className="leading-relaxed">
                   <span className="text-[var(--omega-fg-dim)]">from openai import OpenAI</span><br />
                   <span className="text-[var(--omega-fg-dim)]">client = OpenAI(</span><br />
-                  <span className="text-[var(--omega-fg-dim)]">  base_url="https://opencode.ai/zen/v1",</span><br />
-                  <span className="text-[var(--omega-fg-dim)]">  api_key="{apiKey || '<YOUR_KEY>'}",</span><br />
+                  <span className="text-[var(--omega-fg-dim)]">  base_url="https://omega-nine-weld.vercel.app/v1",</span><br />
+                  <span className="text-[var(--omega-fg-dim)]">  api_key="omg_any_value",</span><br />
                   <span className="text-[var(--omega-fg-dim)]">)</span><br />
                   <span className="text-[var(--omega-emerald)]">response = client.chat.completions.create(</span><br />
-                  <span className="text-[var(--omega-emerald)]">  model="deepseek-v4-flash-free",</span><br />
+                  <span className="text-[var(--omega-emerald)]">  model="deepseek-v4-flash",</span><br />
                   <span className="text-[var(--omega-emerald)]">  messages=[{`{"role":"user","content":"Hello"}`}],</span><br />
                   <span className="text-[var(--omega-emerald)]">)</span>
                 </div>
@@ -301,11 +318,11 @@ export function OmegaNav() {
                 <div className="leading-relaxed">
                   <span className="text-[var(--omega-fg-dim)]">import OpenAI from "openai";</span><br />
                   <span className="text-[var(--omega-fg-dim)]">const client = new OpenAI({'{'}</span><br />
-                  <span className="text-[var(--omega-fg-dim)]">  baseURL: "https://opencode.ai/zen/v1",</span><br />
-                  <span className="text-[var(--omega-fg-dim)]">  apiKey: "{apiKey || '<YOUR_KEY>'}",</span><br />
+                  <span className="text-[var(--omega-fg-dim)]">  baseURL: "https://omega-nine-weld.vercel.app/v1",</span><br />
+                  <span className="text-[var(--omega-fg-dim)]">  apiKey: "omg_any_value",</span><br />
                   <span className="text-[var(--omega-fg-dim)]">{'}'});</span><br />
                   <span className="text-[var(--omega-amber)]">const chat = await client.chat.completions.create({'{'}</span><br />
-                  <span className="text-[var(--omega-amber)]">  model: "deepseek-v4-flash-free",</span><br />
+                  <span className="text-[var(--omega-amber)]">  model: "deepseek-v4-flash",</span><br />
                   <span className="text-[var(--omega-amber)]">  messages: [{'{"role":"user","content":"Hello"}'}],</span><br />
                   <span className="text-[var(--omega-amber)]">{'}'});</span>
                 </div>
