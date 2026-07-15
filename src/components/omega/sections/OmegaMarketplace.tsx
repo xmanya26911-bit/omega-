@@ -41,65 +41,72 @@ interface Connector {
 }
 
 const ALL_CONNECTORS: Connector[] = [
-  // ── AI Models ──
-  { icon: Bot, name: "DeepSeek V4 Flash", desc: "High-speed reasoning with 128K context. Default free model.", category: "models", status: "ready", accent: "#34d399" },
-  { icon: Bot, name: "Mimo 2.5", desc: "Lightweight model optimized for rapid response.", category: "models", status: "ready", accent: "#34d399" },
-  { icon: Bot, name: "Nemotron 3 Ultra", desc: "Heavy-duty reasoning with enhanced accuracy.", category: "models", status: "ready", accent: "#34d399" },
-  { icon: Bot, name: "North Mini Code", desc: "Code-specialist model for generation & review.", category: "models", status: "ready", accent: "#34d399" },
-  { icon: Bot, name: "Hybrid-3 (Hy3)", desc: "Balanced general-purpose model.", category: "models", status: "ready", accent: "#34d399" },
-  { icon: Globe, name: "OpenAI-Compatible", desc: "Connect any OpenAI-compatible API as a custom provider.", category: "models", status: "ready", accent: "#fbbf24" },
+  // ── AI Models (The Control Plane) ──
+  { icon: Bot, name: "DeepSeek V4 Flash", desc: "128K context. Default reasoning engine. Multi-step planning + tool use.", category: "models", status: "ready", accent: "#34d399" },
+  { icon: Bot, name: "Nemotron 3 Ultra", desc: "Heavy-duty reasoning. Code, architecture, math — dominates benchmarks.", category: "models", status: "ready", accent: "#34d399" },
+  { icon: Bot, name: "Mimo 2.5", desc: "Lightning-fast responses. Optimized for latency-critical paths.", category: "models", status: "ready", accent: "#34d399" },
+  { icon: Bot, name: "North Mini Code", desc: "Code specialist. Generation, review, refactoring — built for devs.", category: "models", status: "ready", accent: "#34d399" },
+  { icon: Bot, name: "Hybrid-3 (Hy3)", desc: "Balanced generalist. Chat, analysis, creative — zero compromise.", category: "models", status: "ready", accent: "#34d399" },
+  { icon: Globe, name: "Custom OpenAI-Compatible", desc: "Plug in ANY endpoint. Your keys, your models, Omega's orchestration.", category: "models", status: "ready", accent: "#fbbf24" },
+  { icon: Cpu, name: "OpenCode Zen Free", desc: "5 premium models via opencode.ai/zen/v1. Zero config. Zero cost.", category: "models", status: "ready", accent: "#818cf8" },
 
-  // ── MCP Servers ──
-  { icon: Cpu, name: "Time & Date", desc: "Real-time clock, timezone conversion, date arithmetic via MCP.", category: "mcp", status: "ready", accent: "#818cf8" },
-  { icon: Globe, name: "Web Fetch", desc: "Fetch and extract content from any URL. Supports markdown, PDF, JSON.", category: "mcp", status: "ready", accent: "#818cf8" },
-  { icon: Cpu, name: "Sequential Thinking", desc: "Chain-of-thought reasoning with dynamic thought management.", category: "mcp", status: "ready", accent: "#818cf8" },
-  { icon: HardDrive, name: "Filesystem", desc: "Full file system access: read, write, search, watch, edit.", category: "mcp", status: "ready", accent: "#818cf8" },
-  { icon: Database, name: "SQLite", desc: "Query and manage SQLite databases directly from chat.", category: "mcp", status: "ready", accent: "#818cf8" },
-  { icon: Code2, name: "Git", desc: "Full git operations: clone, commit, push, branch, log, diff.", category: "mcp", status: "ready", accent: "#818cf8" },
-  { icon: Puzzle, name: "Everything", desc: "Test MCP server with every resource/tool type for development.", category: "mcp", status: "ready", accent: "#818cf8" },
-  { icon: Image, name: "Playwright", desc: "Browser automation: navigate, click, type, screenshot, console.", category: "mcp", status: "beta", accent: "#f43f5e" },
-  { icon: Globe, name: "Brave Search", desc: "Web and local search via Brave Search API.", category: "mcp", status: "ready", accent: "#818cf8" },
-  { icon: Bot, name: "GitHub", desc: "Repository management, issues, PRs, code review via GitHub API.", category: "mcp", status: "ready", accent: "#818cf8" },
-  { icon: Database, name: "PostgreSQL", desc: "Query PostgreSQL databases, schema inspection, data exploration.", category: "mcp", status: "ready", accent: "#818cf8" },
-  { icon: Server, name: "Docker", desc: "Container lifecycle: pull, run, stop, exec, logs, compose.", category: "mcp", status: "ready", accent: "#818cf8" },
-  { icon: Server, name: "Kubernetes", desc: "Manage k8s clusters: pods, deployments, services, namespaces.", category: "mcp", status: "ready", accent: "#818cf8" },
-  { icon: MessageSquare, name: "Linear", desc: "Issue tracking, project management, sprint planning via Linear API.", category: "mcp", status: "ready", accent: "#818cf8" },
-  { icon: Search, name: "Sentry", desc: "Error tracking, performance monitoring, issue triage.", category: "mcp", status: "ready", accent: "#818cf8" },
-  { icon: Image, name: "Excalidraw", desc: "Create hand-drawn style diagrams and wireframes.", category: "mcp", status: "ready", accent: "#818cf8" },
-  { icon: FileText, name: "Memory", desc: "Persistent knowledge store — facts, notes, user preferences.", category: "mcp", status: "ready", accent: "#818cf8" },
+  // ── MCP Servers (Infrastructure Layer) ──
+  { icon: HardDrive, name: "Filesystem MCP", desc: "Full FS access: read, write, search, watch, glob, patch. Sandboxed.", category: "mcp", status: "ready", accent: "#818cf8" },
+  { icon: Database, name: "SQLite MCP", desc: "Query, migrate, index SQLite databases directly from chat.", category: "mcp", status: "ready", accent: "#818cf8" },
+  { icon: Code2, name: "Git MCP", desc: "Clone, commit, push, branch, merge, log, diff — git as a tool.", category: "mcp", status: "ready", accent: "#818cf8" },
+  { icon: Server, name: "Docker MCP", desc: "Container lifecycle: pull, run, exec, logs, compose. Full control.", category: "mcp", status: "ready", accent: "#818cf8" },
+  { icon: Server, name: "Kubernetes MCP", desc: "Manage k8s: pods, deployments, services, namespaces, logs.", category: "mcp", status: "ready", accent: "#818cf8" },
+  { icon: Database, name: "PostgreSQL MCP", desc: "Production Postgres: query, schema, explain, backup.", category: "mcp", status: "ready", accent: "#818cf8" },
+  { icon: Globe, name: "Brave Search MCP", desc: "Real-time web search with citations. No hallucination.", category: "mcp", status: "ready", accent: "#818cf8" },
+  { icon: Bot, name: "GitHub MCP", desc: "Repos, issues, PRs, code review, workflows — GitHub native.", category: "mcp", status: "ready", accent: "#818cf8" },
+  { icon: MessageSquare, name: "Linear MCP", desc: "Issues, sprints, projects, cycles — Linear workflow automation.", category: "mcp", status: "ready", accent: "#818cf8" },
+  { icon: Search, name: "Sentry MCP", desc: "Errors, traces, metrics, releases — observability in chat.", category: "mcp", status: "ready", accent: "#818cf8" },
+  { icon: Image, name: "Excalidraw MCP", desc: "Generate hand-drawn diagrams programmatically. Architecture as code.", category: "mcp", status: "ready", accent: "#818cf8" },
+  { icon: Globe, name: "Web Fetch MCP", desc: "Extract clean markdown from any URL. PDFs, JS-heavy sites, auth.", category: "mcp", status: "ready", accent: "#818cf8" },
+  { icon: Cpu, name: "Sequential Thinking", desc: "Structured reasoning traces. Dynamic thought management.", category: "mcp", status: "ready", accent: "#818cf8" },
+  { icon: FileText, name: "Memory MCP", desc: "Persistent knowledge graph: entities, relations, temporal queries.", category: "mcp", status: "ready", accent: "#818cf8" },
+  { icon: Puzzle, name: "Everything MCP", desc: "Test server with every resource/tool type. Dev playground.", category: "mcp", status: "beta", accent: "#f43f5e" },
+  { icon: Image, name: "Playwright MCP", desc: "Browser automation: navigate, click, type, screenshot, console.", category: "mcp", status: "beta", accent: "#f43f5e" },
 
   // ── Storage & Sync ──
-  { icon: Cloud, name: "Google Drive", desc: "Backup and sync conversations. OAuth 2.0 secured.", category: "storage", status: "ready", accent: "#fbbf24" },
-  { icon: Database, name: "Local Storage", desc: "Automatic session persistence in browser localStorage.", category: "storage", status: "ready", accent: "#fbbf24" },
-  { icon: Cloud, name: "S3 / R2", desc: "Connect any S3-compatible object storage. (Coming soon)", category: "storage", status: "coming", accent: "#fbbf24" },
-  { icon: Lock, name: "Encrypted Secrets", desc: "AES-256 encrypted credential storage via ~/.omega/secrets.", category: "storage", status: "ready", accent: "#f43f5e" },
+  { icon: Cloud, name: "Google Drive", desc: "Auto-sync conversations. OAuth PKCE. Cross-device history.", category: "storage", status: "ready", accent: "#fbbf24" },
+  { icon: Lock, name: "Encrypted Secrets Vault", desc: "AES-256. ~/.omega/.secrets.json. Multi-layer fallback.", category: "storage", status: "ready", accent: "#f43f5e" },
+  { icon: Database, name: "Local Storage", desc: "Instant session persistence. Zero config. Browser native.", category: "storage", status: "ready", accent: "#fbbf24" },
+  { icon: Cloud, name: "S3 / R2 Compatible", desc: "Any S3 API. Object storage for datasets, models, backups.", category: "storage", status: "beta", accent: "#fbbf24" },
 
-  // ── Developer Tools ──
-  { icon: Code2, name: "Python REPL", desc: "Persistent Python execution environment with auto-pip-install.", category: "tools", status: "ready", accent: "#34d399" },
-  { icon: Terminal, name: "Shell Terminal", desc: "Full shell access via git-bash. Run scripts, build, deploy.", category: "tools", status: "ready", accent: "#34d399" },
-  { icon: Search, name: "Web Search", desc: "DuckDuckGo + Wikipedia search integration.", category: "tools", status: "ready", accent: "#34d399" },
-  { icon: FileText, name: "PDF Extraction", desc: "Extract text from PDF files including arXiv papers.", category: "tools", status: "ready", accent: "#34d399" },
-  { icon: Image, name: "Vision Analysis", desc: "Analyze images, screenshots, diagrams with vision models.", category: "tools", status: "ready", accent: "#34d399" },
-  { icon: Mic, name: "Speech Recognition", desc: "Browser SpeechRecognition API for voice input.", category: "tools", status: "ready", accent: "#818cf8" },
-  { icon: FileText, name: "Text-to-Speech", desc: "Neural TTS via Edge and OpenAI. Convert any response to speech.", category: "tools", status: "ready", accent: "#818cf8" },
-  { icon: Camera, name: "Screen Capture", desc: "Capture full screen or window for context.", category: "tools", status: "ready", accent: "#818cf8" },
+  // ── Developer Tools (Built-In, Not Plugins) ──
+  { icon: Code2, name: "Python REPL", desc: "Stateful Python. Auto-pip. Variables persist across calls.", category: "tools", status: "ready", accent: "#34d399" },
+  { icon: Terminal, name: "Shell Terminal", desc: "Full git-bash. Build, deploy, ssh, docker — anything.", category: "tools", status: "ready", accent: "#34d399" },
+  { icon: Search, name: "Web Search", desc: "DuckDuckGo + Wikipedia. Clean markdown extraction.", category: "tools", status: "ready", accent: "#34d399" },
+  { icon: FileText, name: "PDF Extraction", desc: "arXiv, docs, reports → clean markdown. Vision fallback.", category: "tools", status: "ready", accent: "#34d399" },
+  { icon: Image, name: "Vision Analysis", desc: "Analyze screenshots, diagrams, images. Extract text/data.", category: "tools", status: "ready", accent: "#34d399" },
+  { icon: Mic, name: "Speech Recognition", desc: "Browser SpeechRecognition. Voice input → text.", category: "tools", status: "ready", accent: "#818cf8" },
+  { icon: FileText, name: "Text-to-Speech", desc: "Edge TTS + OpenAI TTS. Natural voices. Any response → speech.", category: "tools", status: "ready", accent: "#818cf8" },
+  { icon: Camera, name: "Screen Capture", desc: "Full screen or window. Use as model context instantly.", category: "tools", status: "ready", accent: "#818cf8" },
 
   // ── Social & Communication ──
-  { icon: MessageSquare, name: "Telegram Bot", desc: "Chat with Omega via Telegram. Pull-based message delivery.", category: "social", status: "coming", accent: "#f43f5e" },
-  { icon: MessageSquare, name: "Discord Bot", desc: "Omega in your Discord server. Slash commands + threads.", category: "social", status: "coming", accent: "#f43f5e" },
-  { icon: MessageSquare, name: "WhatsApp", desc: "Send and receive messages via WhatsApp Business API.", category: "social", status: "coming", accent: "#f43f5e" },
-  { icon: Globe, name: "Webhooks", desc: "Trigger Omega workflows via HTTP webhooks. (Coming soon)", category: "social", status: "coming", accent: "#f43f5e" },
+  { icon: MessageSquare, name: "Telegram Bot", desc: "Omega in Telegram. Commands, inline, threads, webhooks.", category: "social", status: "beta", accent: "#f43f5e" },
+  { icon: MessageSquare, name: "Discord Bot", desc: "Slash commands, threads, ephemeral, autocomplete.", category: "social", status: "beta", accent: "#f43f5e" },
+  { icon: MessageSquare, name: "WhatsApp Business", desc: "Official Business API. Templates, media, flows.", category: "social", status: "coming", accent: "#f43f5e" },
+  { icon: Globe, name: "Webhooks", desc: "Trigger workflows via HTTP. Signatures, retries, DLQ.", category: "social", status: "beta", accent: "#f43f5e" },
 
   // ── Media & Content ──
-  { icon: Image, name: "Pollinations AI", desc: "Free AI image generation from text prompts.", category: "media", status: "ready", accent: "#f43f5e" },
-  { icon: Video, name: "YouTube Transcripts", desc: "Extract and summarize YouTube video transcripts.", category: "media", status: "ready", accent: "#f43f5e" },
-  { icon: FileText, name: "Music Generation", desc: "Generate songs and audio from lyrics + tags via Suno.", category: "media", status: "coming", accent: "#f43f5e" },
+  { icon: Image, name: "Pollinations AI", desc: "Free image generation. Prompt → image in chat. No key.", category: "media", status: "ready", accent: "#f43f5e" },
+  { icon: Video, name: "YouTube Transcripts", desc: "Extract, summarize, search any YouTube video.", category: "media", status: "ready", accent: "#f43f5e" },
+  { icon: FileText, name: "Music Generation", desc: "Suno API. Lyrics + tags → full song. Audio in chat.", category: "media", status: "beta", accent: "#f43f5e" },
 
-  // ── Deployment ──
-  { icon: Globe, name: "Vercel", desc: "One-command deployment of web apps to Vercel Edge/Serverless.", category: "deploy", status: "ready", accent: "#34d399" },
-  { icon: Server, name: "Render", desc: "Deploy backend services with zero-config render.yaml.", category: "deploy", status: "ready", accent: "#34d399" },
-  { icon: Server, name: "Docker Compose", desc: "Deploy multi-container applications locally or on any host.", category: "deploy", status: "ready", accent: "#34d399" },
-  { icon: Globe, name: "Railway", desc: "Quick-deploy Node.js and Python services. (Coming soon)", category: "deploy", status: "coming", accent: "#34d399" },
+  // ── Deployment Targets ──
+  { icon: Globe, name: "Vercel", desc: "Edge + Serverless. Zero-config. Preview every push.", category: "deploy", status: "ready", accent: "#34d399" },
+  { icon: Server, name: "Render", desc: "Backend services, cron jobs, static sites. render.yaml.", category: "deploy", status: "ready", accent: "#34d399" },
+  { icon: Server, name: "Docker Compose", desc: "Multi-container locally or remote. One file deploys all.", category: "deploy", status: "ready", accent: "#34d399" },
+  { icon: Globe, name: "Railway", desc: "Instant Node/Python/DB. Git push → live URL.", category: "deploy", status: "beta", accent: "#34d399" },
+
+  // ── Omega Exclusive: System Control ──
+  { icon: Cpu, name: "PC Remote Control", desc: "WebSocket relay (Render) + local agent. Full shell from web chat.", category: "system", status: "ready", accent: "#34d399" },
+  { icon: HardDrive, name: "File Encryption", desc: "AES-256 encrypt/decrypt any file. Strong, simple.", category: "system", status: "ready", accent: "#fbbf24" },
+  { icon: Lock, name: "Registry & Services", desc: "Windows Registry RW. Service mgmt. Task Scheduler.", category: "system", status: "ready", accent: "#f43f5e" },
+  { icon: Globe, name: "Network Discovery", desc: "LAN scan, topology map, port discovery, service ID.", category: "system", status: "ready", accent: "#818cf8" },
+  { icon: Shield, name: "Security Hardening", desc: "CSP, CORS, rate limit, input sanitize, secret scan.", category: "system", status: "ready", accent: "#34d399" },
 ];
 
 const CATEGORIES = [
@@ -111,6 +118,7 @@ const CATEGORIES = [
   { id: "social", label: "Social", count: ALL_CONNECTORS.filter((c) => c.category === "social").length },
   { id: "media", label: "Media", count: ALL_CONNECTORS.filter((c) => c.category === "media").length },
   { id: "deploy", label: "Deploy", count: ALL_CONNECTORS.filter((c) => c.category === "deploy").length },
+  { id: "system", label: "System", count: ALL_CONNECTORS.filter((c) => c.category === "system").length },
 ];
 
 const STATUS_COLORS: Record<string, string> = {

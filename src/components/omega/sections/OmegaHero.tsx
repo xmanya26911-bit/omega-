@@ -121,8 +121,8 @@ export function OmegaHero() {
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 1.05 }}
           className="mt-7 max-w-xl text-base leading-relaxed text-[var(--omega-fg-dim)] sm:text-lg"
         >
-          A living digital environment engineered for depth, motion, and craft.
-          Intelligence at every layer — not a chatbot, an operating system.
+          The only AI that builds, deploys, and commands other AIs. Multi-agent orchestration. 
+          Persistent memory. Code execution. PC control. Full-stack autonomy.
         </motion.p>
 
         {/* CTAs */}
