@@ -1,6 +1,5 @@
 // Omega Cloud — OpenCode proxy (OpenAI-compatible)
-// https://omega-nine-weld.vercel.app/v1/* → https://opencode.ai/zen/v1/**
-// Transparent pass-through for GET (models, etc.) and POST (chat completions).
+// Debug version — returns info about the upstream response.
 
 import { NextRequest } from "next/server";
 
@@ -13,32 +12,41 @@ async function handler(req: NextRequest) {
   const path = url.pathname.replace("/v1", "");
   const target = new URL(path + url.search, OPENCODE_BASE);
 
+  // Minimal headers — just like the working chat route
+  const bodyText = req.method !== "GET" && req.method !== "HEAD"
+    ? await req.text()
+    : undefined;
+
+  // Debug: return info about what we got from OpenCode
+  const debugInfo: Record<string, unknown> = {
+    target: target.toString(),
+    method: req.method,
+    bodyLength: bodyText?.length || 0,
+    path,
+  };
+
   try {
-    const upstream = await fetch(target.toString(), {
+    const res = await fetch(target.toString(), {
       method: req.method,
-      headers: {
-        "Content-Type": "application/json",
-        ...(req.headers.get("authorization")
-          ? { Authorization: req.headers.get("authorization")! }
-          : {}),
-      },
-      ...(req.method !== "GET" && req.method !== "HEAD"
-        ? { body: await req.text() }
-        : {}),
+      headers: { "Content-Type": "application/json" },
+      ...(bodyText !== undefined ? { body: bodyText } : {}),
     });
 
-    const respHeaders = new Headers(upstream.headers);
-    respHeaders.delete("set-cookie");
+    const text = await res.text();
+    debugInfo.upstreamStatus = res.status;
+    debugInfo.upstreamContentType = res.headers.get("content-type");
+    debugInfo.upstreamBodyLength = text.length;
+    debugInfo.upstreamBodyPreview = text.slice(0, 500);
 
-    return new Response(upstream.body, {
-      status: upstream.status,
-      statusText: upstream.statusText,
-      headers: respHeaders,
+    return new Response(JSON.stringify(debugInfo, null, 2), {
+      status: 200,
+      headers: { "content-type": "application/json" },
     });
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : "Unknown error";
-    return new Response(JSON.stringify({ error: msg }), {
-      status: 502,
+    debugInfo.error = msg;
+    return new Response(JSON.stringify(debugInfo, null, 2), {
+      status: 200,
       headers: { "content-type": "application/json" },
     });
   }
