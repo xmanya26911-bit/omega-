@@ -218,9 +218,9 @@ export function OmegaNav() {
             <div className="mb-4">
               <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--omega-fg-dim)]">Base URL</label>
               <div className="flex items-center gap-2 rounded-xl border border-[var(--omega-glass-border)] bg-[oklch(0_0_0_/_0.3)] px-3.5 py-2.5 font-mono text-[13px] text-[var(--omega-emerald)]">
-                <span className="flex-1">https://omega-nine-weld.vercel.app/v1</span>
+                <span className="flex-1">https://omega-nine-weld.vercel.app/api/v1</span>
                 <button
-                  onClick={() => { navigator.clipboard.writeText("https://omega-nine-weld.vercel.app/v1"); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
+                  onClick={() => { navigator.clipboard.writeText("https://omega-nine-weld.vercel.app/api/v1"); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
                   className="shrink-0 text-[var(--omega-fg-dim)] transition-colors hover:text-[var(--omega-fg)]"
                 >
                   {copied ? (

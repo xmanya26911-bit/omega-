@@ -1,6 +1,6 @@
 // Omega Cloud — OpenCode proxy (OpenAI-compatible)
-// https://omega-nine-weld.vercel.app/v1/* → https://opencode.ai/zen/v1/**
-// Lets users point any OpenAI client at our domain.
+// https://omega-nine-weld.vercel.app/api/v1/* → https://opencode.ai/zen/v1/**
+// Transparent pass-through for API calls.
 
 import { NextRequest } from "next/server";
 
@@ -10,28 +10,20 @@ const OPENCODE_BASE = "https://opencode.ai/zen/v1";
 
 async function handler(req: NextRequest) {
   const url = new URL(req.url);
-  const path = url.pathname.replace("/api/v1", ""); // strip /api prefix — renders as /v1
+  const path = url.pathname.replace("/api/v1", "");
   const target = new URL(path + url.search, OPENCODE_BASE);
 
-  const headers = new Headers(req.headers);
-  headers.delete("host");
-
-  const init: RequestInit = {
-    method: req.method,
-    headers,
-  };
-
-  if (req.method !== "GET" && req.method !== "HEAD") {
-    init.body = req.body;
-    // @ts-expect-error — duplex required for streaming body
-    init.duplex = "half";
-  }
-
   try {
-    const upstream = await fetch(target.toString(), init);
+    const upstream = await fetch(target.toString(), {
+      method: req.method,
+      headers: { "Content-Type": "application/json" },
+      ...(req.method !== "GET" && req.method !== "HEAD"
+        ? { body: await req.text() }
+        : {}),
+    });
 
     const respHeaders = new Headers(upstream.headers);
-    respHeaders.delete("set-cookie"); // don't leak upstream cookies
+    respHeaders.delete("set-cookie");
 
     return new Response(upstream.body, {
       status: upstream.status,
