@@ -151,10 +151,10 @@ export function OmegaNav() {
 
             <div className="space-y-3">
               <div className="rounded-xl border border-[var(--omega-glass-border)] bg-[oklch(0_0_0_/_0.3)] p-3 font-mono text-[12px]">
-                <div className="text-[var(--omega-fg-dim)]"># Clone &amp; run</div>
+                <div className="text-[var(--omega-fg-dim)]"># Clone & run</div>
                 <div className="mt-1 text-[var(--omega-emerald)]">
                   git clone https://github.com/xmanya26911-bit/omegacli.git<br />
-                  <span className="text-[var(--omega-fg)]">cd omegacli &amp;&amp; pip install -r requirements.txt</span><br />
+                  <span className="text-[var(--omega-fg)]">cd omegacli && pip install -r requirements.txt</span><br />
                   <span className="text-[var(--omega-amber)]">python main.py</span>
                 </div>
               </div>
