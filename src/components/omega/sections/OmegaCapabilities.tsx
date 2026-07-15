@@ -22,69 +22,65 @@ interface Cap {
 
 const ALL_CAPS: Cap[] = [
   // ── Core AI ──
-  { icon: Brain, title: "Supreme Orchestrator", body: "Omega doesn't chat — it commands. Every request decomposes into parallel specialist agents. You get the synthesis, not the conversation.", category: "core", accent: "#34d399" },
-  { icon: MessageSquare, title: "Multi-Provider LLM Control Plane", body: "DeepSeek V4 Flash, Mimo 2.5, Nemotron 3 Ultra, North Mini Code, Hy3 — plus any OpenAI-compatible endpoint. You pick the model per task. Omega optimizes cost/latency/quality.", category: "core", accent: "#34d399" },
-  { icon: Sparkles, title: "Zero-Cost Free Models", body: "Every model free. No API keys. No rate limits. No credits. Just power.", category: "core", accent: "#34d399" },
-  { icon: Layers, title: "Persistent Knowledge Graph", body: "Entities, relationships, temporal queries across all sessions. Omega builds a living map of your work — preferences, decisions, failures, patterns.", category: "core", accent: "#fbbf24" },
-  { icon: Code, title: "Code Execution Sandbox", body: "Python/Node/Shell with full stdlib. Auto-installs packages. Real-time output streaming. Verified results, not guesses.", category: "core", accent: "#fbbf24" },
-  { icon: Search, title: "Deep Research Engine", body: "Multi-source web search, recursive extraction, contradiction detection, citation tracking. Reports with verified claims only.", category: "core", accent: "#818cf8" },
+  { icon: Brain, title: "Reasoning Engine", body: "Multi-step planning, tool orchestration, and self-critique. Omega thinks in structured traces — visible, auditable, fast.", category: "core", accent: "#34d399" },
+  { icon: MessageSquare, title: "Multi-Provider LLMs", body: "DeepSeek V4 Flash, Mimo 2.5, Nemotron 3 Ultra, North Mini Code, Hy3 — plus custom provider support for any OpenAI-compatible API.", category: "core", accent: "#34d399" },
+  { icon: Sparkles, title: "5 Free Models", body: "Every model is free to use. No credits, no tokens, no paywall. Just install and run.", category: "core", accent: "#34d399" },
+  { icon: Layers, title: "Long-Term Memory", body: "Persistent context across sessions. Omega remembers your preferences, project state, and decisions — forever.", category: "core", accent: "#fbbf24" },
+  { icon: Code, title: "Code Execution", body: "Python REPL, shell scripts, Node.js — run code inline with full stdlib access. Auto-installs missing packages.", category: "core", accent: "#fbbf24" },
 
   // ── TUI / CLI ──
-  { icon: Terminal, title: "Rich Terminal TUI", body: "Full-screen prompt_toolkit with ASCII art welcome, real-time system dashboard, streaming response output, thinking display.", category: "tui", accent: "#34d399" },
-  { icon: Palette, title: "11 Custom Themes", body: "Cyber, Iron Man, Matrix, Midnight, Plasma, Draco, Nova, Storm, Amber, Frost, Ember — complete color palettes per theme.", category: "tui", accent: "#f43f5e" },
-  { icon: Layers, title: "Premium Input Bar", body: "FuzzyWordCompleter, Alt+Enter multi-line, bottom toolbar with model/token/status, clipboard integration, paste-as-image.", category: "tui", accent: "#fbbf24" },
+  { icon: Terminal, title: "Rich Terminal TUI", body: "Full-screen prompt_toolkit interface with ASCII art welcome, real-time system dashboard, and streaming response output.", category: "tui", accent: "#34d399" },
+  { icon: Palette, title: "11 Custom Themes", body: "Cyber, Iron Man, Matrix, Midnight, Plasma, Draco, Nova, Storm, Amber, Frost, Ember — full color palette per theme.", category: "tui", accent: "#f43f5e" },
+  { icon: Layers, title: "Premium Input Bar", body: "FuzzyWordCompleter, Alt+Enter multi-line input, bottom toolbar with model/token/status info, clipboard integration.", category: "tui", accent: "#fbbf24" },
   { icon: MessageSquare, title: "15 Slash Commands", body: "/model, /clear, /theme, /export, /memory, /tools, /help, /status, /tokens, /diagnostics, /agents, /provider, /keys, /session, /save", category: "tui", accent: "#34d399" },
-  { icon: Brain, title: "Visible Reasoning Stream", body: "Chain-of-thought streamed in real-time with styled prefix. Watch Omega think step-by-step before acting.", category: "tui", accent: "#818cf8" },
+  { icon: Brain, title: "Thinking Display", body: "Visible chain-of-thought streamed in real-time with styled prefix. Watch Omega reason step-by-step.", category: "tui", accent: "#818cf8" },
 
   // ── Multi-Agent System ──
-  { icon: Workflow, title: "ADK 2.0 Multi-Agent Orchestration", body: "6-agent graph workflow: Orchestrator leads 5 specialists (UI, Backend, Code, Review, User). Parallel execution, automatic synthesis.", category: "agents", accent: "#34d399" },
-  { icon: Puzzle, title: "Agent-to-Agent Delegation", body: "Built on Google ADK 2.0. Orchestrator transfers tasks via structured delegation. Results flow back automatically.", category: "agents", accent: "#fbbf24" },
-  { icon: Shield, title: "Automated Code Review Pipeline", body: "Verifier agent reviews every output before delivery. Security audit, style check, edge case analysis, type safety — zero human overhead.", category: "agents", accent: "#f43f5e" },
-  { icon: Layers, title: "Universal LLM Connector", body: "Custom BaseLlm implementation lets ADK agents use any OpenAI-compatible provider. Your models, your rules.", category: "agents", accent: "#818cf8" },
-  { icon: Terminal, title: "Team Mode CLI", body: "`omega --team` launches full multi-agent system. Orchestrator + 5 specialists, one-shot or interactive.", category: "agents", accent: "#34d399" },
-  { icon: Brain, title: "Specialist Agents", body: "UI Agent (React/Tailwind/TSX), Backend Agent (APIs/DB/Auth/Infra), Code Writer (implementation), Verifier (security/quality), User Interface (conversation UX).", category: "agents", accent: "#34d399" },
+  { icon: Workflow, title: "ADK Multi-Agent System", body: "6-agent graph-based workflow: Orchestrator leads, 5 specialists handle UI, backend, code, review, and user interaction.", category: "agents", accent: "#34d399" },
+  { icon: Puzzle, title: "Agent-to-Agent Delegation", body: "Built on Google ADK 2.0. Orchestrator transfers tasks to specialists via structured delegation — results flow back automatically.", category: "agents", accent: "#fbbf24" },
+  { icon: Shield, title: "Code Review Pipeline", body: "Verifier agent reviews every output before delivery. Security audit, style check, edge case analysis — automated.", category: "agents", accent: "#f43f5e" },
+  { icon: Layers, title: "OpenCode LLM Connector", body: "Custom BaseLlm implementation lets ADK agents use any OpenAI-compatible model provider — including your own.", category: "agents", accent: "#818cf8" },
+  { icon: Terminal, title: "Team Mode CLI", body: "`omega --team` launches the full multi-agent system from your terminal. Orchestrator + 5 specialists, one-shot or interactive.", category: "agents", accent: "#34d399" },
 
-  // ── Provider / API ──
-  { icon: Key, title: "Programmatic API Key Management", body: "Generate, validate, revoke keys programmatically. `omg_` prefixed with per-key rate limiting and usage tracking.", category: "provider", accent: "#34d399" },
-  { icon: Globe, title: "OpenAI-Compatible REST API", body: "Drop-in replacement for any OpenAI SDK. Set base_url to Omega Provider — all your tools work unchanged.", category: "provider", accent: "#fbbf24" },
-  { icon: Server, title: "FastAPI Production Server", body: "`python -m omega.provider.server` — REST API with CORS, rate limiting, full model list endpoint, streaming support.", category: "provider", accent: "#f43f5e" },
-  { icon: Cpu, title: "Sliding-Window Rate Limiter", body: "60 req/min default per key. Configurable window and burst. Token-bucket algorithm with Redis-ready architecture.", category: "provider", accent: "#818cf8" },
+  // ── Provider / API Keys ──
+  { icon: Key, title: "API Key Management", body: "Generate, validate, revoke API keys programmatically. `omg_` prefixed keys with per-key rate limiting and usage tracking.", category: "provider", accent: "#34d399" },
+  { icon: Globe, title: "OpenAI-Compatible API", body: "Drop-in replacement for any OpenAI SDK. Set base_url to your OmegaCLI provider and all your tools work unchanged.", category: "provider", accent: "#fbbf24" },
+  { icon: Server, title: "FastAPI Server", body: "`python -m omega.provider.server` starts a production REST API with CORS, rate limiting, and full model list endpoint.", category: "provider", accent: "#f43f5e" },
+  { icon: Cpu, title: "Rate Limiter", body: "Sliding-window per-key rate limiter — 60 req/min default. Configurable window and burst limits.", category: "provider", accent: "#818cf8" },
 
-  // ── Developer Tools ──
-  { icon: FileCode, title: "File Operations Suite", body: "Read, write, patch, search across files. Glob-aware, ripgrep-backed content search. Auto-lints Python/TS/JSON on write.", category: "tools", accent: "#34d399" },
-  { icon: Search, title: "Web Search & Extraction", body: "DuckDuckGo, Wikipedia, custom backends. Extract clean markdown from any URL — including PDFs. Deep research mode.", category: "tools", accent: "#fbbf24" },
-  { icon: GitBranch, title: "Full Git Integration", body: "Clone, commit, push, branch, merge, PR, CI/CD — all from within Omega. Deploy to Vercel with one command.", category: "tools", accent: "#f43f5e" },
-  { icon: Database, title: "SQLite/PostgreSQL Engine", body: "Full SQL with persistent connections. Create, query, join, index, migrate — run against local or remote DBs.", category: "tools", accent: "#818cf8" },
-  { icon: Terminal, title: "Process Orchestration", body: "Spawn background processes, poll output, wait on completion, kill, stdin write. Full server lifecycle management.", category: "tools", accent: "#34d399" },
-  { icon: Code, title: "Stateful Python REPL", body: "Persistent Python environment for complex computation. Auto-pip-install any library. Variables persist across calls.", category: "tools", accent: "#fbbf24" },
-  { icon: FileText, title: "Document Processing", body: "PDF extraction (arXiv, docs, reports), OCR, markdown conversion, structured data extraction from any document.", category: "tools", accent: "#34d399" },
+  // ── Tools ──
+  { icon: FileCode, title: "File Operations", body: "Read, write, patch, search across files. Glob-aware, ripgrep-backed content search. Auto-lints Python/TS/JSON on write.", category: "tools", accent: "#34d399" },
+  { icon: Search, title: "Web Search & Extract", body: "Search the web via DuckDuckGo, Wikipedia, or custom backends. Extract clean markdown from any URL — including PDFs.", category: "tools", accent: "#fbbf24" },
+  { icon: GitBranch, title: "Git Integration", body: "Full git CLI pass-through. Clone, commit, push, branch, merge — all from within Omega. Deploy to Vercel with one command.", category: "tools", accent: "#f43f5e" },
+  { icon: Database, title: "SQLite Databases", body: "Full SQL support with persistent connections. Create, query, join, index — run SQL against local databases interactively.", category: "tools", accent: "#818cf8" },
+  { icon: Terminal, title: "Process Management", body: "Spawn background processes, poll output, wait on completion, kill, write to stdin. Server lifecycle management.", category: "tools", accent: "#34d399" },
+  { icon: Code, title: "Python REPL", body: "Persistent stateful Python environment for complex computation. Auto-pip-install any library needed.", category: "tools", accent: "#fbbf24" },
 
-  // ── Media & IO ──
-  { icon: Image, title: "Vision-Language Analysis", body: "Analyze images, screenshots, diagrams. Extract text, describe content, answer visual questions.", category: "media", accent: "#34d399" },
-  { icon: Camera, title: "Screen Capture & Analysis", body: "Capture full screen or window. Analyze content, extract data, use as model context.", category: "media", accent: "#fbbf24" },
-  { icon: Mic, title: "Speech-to-Text", body: "Browser SpeechRecognition API. Record from microphone, get transcription. Voice input for any task.", category: "media", accent: "#f43f5e" },
-  { icon: Volume2, title: "Neural Text-to-Speech", body: "Edge TTS, OpenAI TTS. Convert any response to natural speech. Multiple voices, languages.", category: "media", accent: "#818cf8" },
+  // ── Media / Input ──
+  { icon: Image, title: "Image Understanding", body: "Vision-language analysis of images, screenshots, diagrams. Extract text, describe content, answer questions about visuals.", category: "media", accent: "#34d399" },
+  { icon: Camera, title: "Screen Capture", body: "Capture the entire screen or a window. Analyze content, extract data, or use as context for the model.", category: "media", accent: "#fbbf24" },
+  { icon: Mic, title: "Speech Recognition", body: "Browser SpeechRecognition API converts voice to text. Record from microphone and get transcription.", category: "media", accent: "#f43f5e" },
+  { icon: Volume2, title: "Text-to-Speech", body: "Neural TTS via multiple providers (Edge, OpenAI). Convert any response to natural-sounding speech.", category: "media", accent: "#818cf8" },
+  { icon: FileText, title: "PDF Extraction", body: "Read text from any PDF. arXiv papers, documents, reports — extract clean markdown content.", category: "media", accent: "#34d399" },
 
-  // ── System Control ──
-  { icon: Cpu, title: "Real-Time System Monitor", body: "Live CPU/RAM/disk dashboard. Background health watcher with configurable threshold alerts.", category: "system", accent: "#34d399" },
-  { icon: HardDrive, title: "AES-256 File Encryption", body: "Encrypt/decrypt any file. Strong encryption directly from Omega. Secure sensitive data.", category: "system", accent: "#fbbf24" },
-  { icon: Lock, title: "Windows Registry & Services", body: "Full Registry read/write/delete. Service management (list/start/stop/restart). Task Scheduler integration.", category: "system", accent: "#f43f5e" },
-  { icon: Globe, title: "Network Discovery & Mapping", body: "LAN scan, topology mapping, port discovery, service identification. Full network visibility.", category: "system", accent: "#818cf8" },
-  { icon: Cloud, title: "Docker Container Control", body: "Pull, create, start, stop, exec, logs. Full container lifecycle from within Omega.", category: "system", accent: "#34d399" },
-  { icon: Terminal, title: "PC Remote Control", body: "WebSocket relay (Render free tier) + local agent. Execute shell commands on your Windows PC from the website chat.", category: "system", accent: "#34d399" },
+  // ── System ──
+  { icon: Cpu, title: "System Monitoring", body: "Real-time CPU/RAM/disk usage dashboard. Background health watcher with configurable threshold alerts.", category: "system", accent: "#34d399" },
+  { icon: HardDrive, title: "File Encryption", body: "AES-256 encrypt/decrypt any file. Secure your sensitive data with strong encryption, directly from Omega.", category: "system", accent: "#fbbf24" },
+  { icon: Lock, title: "Registry & Services", body: "Full Windows Registry read/write/delete. Service management (list/start/stop/restart), Task Scheduler integration.", category: "system", accent: "#f43f5e" },
+  { icon: Globe, title: "Network Discovery", body: "Scan LAN for active devices. Map network topology, discover open ports, identify services.", category: "system", accent: "#818cf8" },
+  { icon: Cloud, title: "Docker Containers", body: "Full container lifecycle — pull, create, start, stop, exec, logs. Manage containers from within Omega.", category: "system", accent: "#34d399" },
 
   // ── Cloud Features ──
-  { icon: MessageSquare, title: "Supreme Chat Interface", body: "Streaming markdown, syntax-highlighted code blocks, thinking display, model selector, file upload, paste image, auto-save to Drive.", category: "cloud", accent: "#34d399" },
-  { icon: Cloud, title: "Google Drive Auto-Sync", body: "2-second debounced auto-save. Cross-device history. AI-generated session titles. OAuth PKCE flow, no popups.", category: "cloud", accent: "#fbbf24" },
-  { icon: Globe, title: "Google OAuth PKCE", body: "Secure redirect flow. Full session restoration. Clean URL after auth (no hash). Production-ready.", category: "cloud", accent: "#f43f5e" },
-  { icon: Image, title: "AI Image Generation", body: "Pollinations.ai integration. Describe → generate → insert. Free, no API key.", category: "cloud", accent: "#818cf8" },
-  { icon: Download, title: "One-Click CLI Installer", body: "Git clone + pip install — running in under 60 seconds. Desktop shortcuts auto-created.", category: "cloud", accent: "#34d399" },
+  { icon: MessageSquare, title: "Chat Interface", body: "Streaming chat with full markdown rendering, syntax-highlighted code blocks, and real-time thinking display.", category: "cloud", accent: "#34d399" },
+  { icon: Cloud, title: "Google Drive Sync", body: "Auto-save conversations to Drive with 2-second debounce. Load history across devices. OAuth-secured.", category: "cloud", accent: "#fbbf24" },
+  { icon: Globe, title: "Google OAuth", body: "PKCE-based Google sign-in. Secure redirect flow, no popups. Full session restoration on return.", category: "cloud", accent: "#f43f5e" },
+  { icon: Image, title: "Image Generation", body: "Pollinations.ai integration for free AI image generation. Describe what you want, get a generated image.", category: "cloud", accent: "#818cf8" },
+  { icon: Download, title: "CLI Download", body: "One-click CLI installer from the website header. Git clone + pip install — running in under a minute.", category: "cloud", accent: "#34d399" },
 
-  // ── Security & Privacy ──
-  { icon: Shield, title: "Local-First Architecture", body: "All processing on your machine. Data never leaves without permission. Zero telemetry. Zero tracking.", category: "security", accent: "#34d399" },
-  { icon: Lock, title: "Encrypted Secrets Vault", body: "API keys in ~/.omega/.secrets.json, encrypted. Auto-validated at load. Multi-layer fallback (env, file, defaults).", category: "security", accent: "#fbbf24" },
-  { icon: Key, title: "Granular Permission System", body: "Per-tool permissions: ALWAYS, CONFIRM, RESTRICTED, NEVER, SANDBOXED. You control every capability.", category: "security", accent: "#f43f5e" },
-  { icon: Shield, title: "Security Hardening", body: "CSP headers, CORS policy, rate limiting, input sanitization, prompt injection defense, secret scanning, audit logging.", category: "security", accent: "#34d399" },
+  // ── Privacy & Security ──
+  { icon: Shield, title: "Local-First Architecture", body: "All processing happens on your machine. Your data never leaves without your permission. No telemetry, no tracking.", category: "security", accent: "#34d399" },
+  { icon: Lock, title: "Encrypted Secrets", body: "API keys stored encrypted in ~/.omega/.secrets.json. Auto-validated at load. Multi-layer fallback system.", category: "security", accent: "#fbbf24" },
+  { icon: Key, title: "Granular Permissions", body: "Permission levels per tool: ALWAYS, CONFIRM, RESTRICTED, NEVER, SANDBOXED. You control what Omega can do.", category: "security", accent: "#f43f5e" },
 ];
 
 const CATEGORIES = [
