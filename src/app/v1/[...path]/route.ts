@@ -14,7 +14,7 @@ async function handler(req: NextRequest) {
   const target = new URL(path + url.search, OPENCODE_BASE);
 
   const headers = new Headers(req.headers);
-  headers.delete("host");
+  headers.set("host", "opencode.ai");
 
   const init: RequestInit = {
     method: req.method,
