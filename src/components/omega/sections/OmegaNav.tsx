@@ -24,9 +24,7 @@ const LINKS = [
 export function OmegaNav() {
   const ref = useRef<HTMLDivElement>(null);
   const [isCliOpen, setIsCliOpen] = useState(false);
-  const [isApiOpen, setIsApiOpen] = useState(false);
-  const [apiKey, setApiKey] = useState("");
-  const [copied, setCopied] = useState(false);
+
   const { scrollYProgress } = useScroll();
   const filament = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
   const scrollTo = useLenisScroll();
@@ -111,15 +109,6 @@ export function OmegaNav() {
             </svg>
             CLI
           </button>
-          <button
-            onClick={() => setIsApiOpen(true)}
-            className="omega-glass-thin flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-[11px] font-medium text-[var(--omega-fg)] transition-all hover:border-[var(--omega-amber)]/50 hover:text-[var(--omega-amber)] sm:px-3.5 sm:py-2"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 002 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" /><circle cx="12" cy="12" r="2" />
-            </svg>
-            API
-          </button>
         </div>
 
       {/* ── CLI Download Modal ──────────────────────────────────────── */}
@@ -185,152 +174,6 @@ export function OmegaNav() {
         </div>
       )}
 
-      {/* ── API Credentials Modal ──────────────────────────────────────── */}
-      {isApiOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
-          onClick={() => setIsApiOpen(false)}
-        >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.92, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            onClick={(e) => e.stopPropagation()}
-            className="omega-glass w-full max-w-xl rounded-2xl p-6 sm:p-8"
-          >
-            {/* Header */}
-            <div className="mb-5 flex items-center justify-between">
-              <div>
-                <h3 className="font-display text-lg font-bold text-[var(--omega-fg)]">Omega API</h3>
-                <p className="mt-1 text-[13px] text-[var(--omega-fg-dim)]">
-                  Use Omega's models from any OpenAI-compatible client — no API key needed.
-                </p>
-              </div>
-              <button
-                onClick={() => setIsApiOpen(false)}
-                className="grid size-8 place-items-center rounded-full border border-[var(--omega-glass-border)] text-[var(--omega-fg-dim)] transition-colors hover:text-[var(--omega-fg)]"
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
-              </button>
-            </div>
-
-            {/* Base URL */}
-            <div className="mb-4">
-              <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--omega-fg-dim)]">Base URL</label>
-              <div className="flex items-center gap-2 rounded-xl border border-[var(--omega-glass-border)] bg-[oklch(0_0_0_/_0.3)] px-3.5 py-2.5 font-mono text-[13px] text-[var(--omega-emerald)]">
-                <span className="flex-1">https://omega-nine-weld.vercel.app/api/v1</span>
-                <button
-                  onClick={() => { navigator.clipboard.writeText("https://omega-nine-weld.vercel.app/api/v1"); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
-                  className="shrink-0 text-[var(--omega-fg-dim)] transition-colors hover:text-[var(--omega-fg)]"
-                >
-                  {copied ? (
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--omega-emerald)" strokeWidth="2"><path d="M20 6L9 17l-5-5" /></svg>
-                  ) : (
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" /></svg>
-                  )}
-                </button>
-              </div>
-            </div>
-
-            {/* API Key (cosmetic — models are free, no key needed) */}
-            <div className="mb-5">
-              <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--omega-fg-dim)]">API Key <span className="text-[var(--omega-fg-dim)] font-normal normal-case tracking-normal">(optional — for compatibility)</span></label>
-              <div className="flex items-center gap-2 rounded-xl border border-[var(--omega-glass-border)] bg-[oklch(0_0_0_/_0.3)] px-3.5 py-2.5 font-mono text-[13px]">
-                <span className="flex-1 truncate text-[var(--omega-amber)]">
-                  {apiKey || "································"}
-                </span>
-                <div className="flex shrink-0 gap-1">
-                  <button
-                    onClick={() => {
-                      setApiKey("omg_" + Array.from(crypto.getRandomValues(new Uint8Array(24)), b => b.toString(16).padStart(2, "0")).join(""));
-                    }}
-                    className="rounded-lg border border-[var(--omega-glass-border)] px-2 py-1 text-[10px] font-medium text-[var(--omega-fg-dim)] transition-colors hover:border-[var(--omega-emerald)]/50 hover:text-[var(--omega-emerald)]"
-                  >
-                    Generate
-                  </button>
-                  {apiKey && (
-                    <button
-                      onClick={() => { navigator.clipboard.writeText(apiKey); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
-                      className="rounded-lg border border-[var(--omega-glass-border)] px-2 py-1 text-[10px] font-medium text-[var(--omega-fg-dim)] transition-colors hover:border-[var(--omega-emerald)]/50 hover:text-[var(--omega-emerald)]"
-                    >
-                      Copy
-                    </button>
-                  )}
-                </div>
-              </div>
-              <p className="mt-1.5 text-[11px] text-[var(--omega-fg-dim)]">
-                All models are free — no real API key required. The key above is for clients that require one; any value works.
-              </p>
-            </div>
-
-            {/* Available Models */}
-            <div className="mb-5">
-              <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--omega-fg-dim)]">Available Models</label>
-              <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
-                {[
-                  { id: "deepseek-v4-flash", desc: "Fast general-purpose" },
-                  { id: "mimo-v2.5", desc: "Reasoning & analysis" },
-                  { id: "nemotron-3-ultra", desc: "High-accuracy tasks" },
-                  { id: "north-mini-code", desc: "Code generation" },
-                  { id: "hy3", desc: "Lightweight & fast" },
-                ].map((m) => (
-                  <div key={m.id} className="rounded-lg border border-[var(--omega-glass-border)] bg-[oklch(0_0_0_/_0.25)] p-2.5">
-                    <div className="font-mono text-[12px] font-medium text-[var(--omega-fg)]">{m.id}</div>
-                    <div className="mt-0.5 text-[10px] text-[var(--omega-fg-dim)]">{m.desc}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Quick Start Tabs */}
-            <div className="space-y-2">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--omega-fg-dim)]">Quick Start</p>
-
-              {/* curl */}
-              <div className="rounded-xl border border-[var(--omega-glass-border)] bg-[oklch(0_0_0_/_0.3)] p-3 font-mono text-[12px]">
-                <div className="mb-1 text-[10px] text-[var(--omega-fg-dim)]">curl</div>
-                <div className="leading-relaxed text-[var(--omega-fg)]">
-                  curl https://omega-nine-weld.vercel.app/v1/chat/completions \<br />
-                  <span className="text-[var(--omega-fg-dim)]">  -H "Content-Type: application/json"</span> \<br />
-                  <span className="text-[var(--omega-fg-dim)]">  -d '{`{"model":"deepseek-v4-flash","messages":[{"role":"user","content":"Hello"}]}`}'</span>
-                </div>
-              </div>
-
-              {/* Python */}
-              <div className="rounded-xl border border-[var(--omega-glass-border)] bg-[oklch(0_0_0_/_0.3)] p-3 font-mono text-[12px]">
-                <div className="mb-1 text-[10px] text-[var(--omega-fg-dim)]">Python</div>
-                <div className="leading-relaxed">
-                  <span className="text-[var(--omega-fg-dim)]">from openai import OpenAI</span><br />
-                  <span className="text-[var(--omega-fg-dim)]">client = OpenAI(</span><br />
-                  <span className="text-[var(--omega-fg-dim)]">  base_url="https://omega-nine-weld.vercel.app/v1",</span><br />
-                  <span className="text-[var(--omega-fg-dim)]">  api_key="omg_any_value",</span><br />
-                  <span className="text-[var(--omega-fg-dim)]">)</span><br />
-                  <span className="text-[var(--omega-emerald)]">response = client.chat.completions.create(</span><br />
-                  <span className="text-[var(--omega-emerald)]">  model="deepseek-v4-flash",</span><br />
-                  <span className="text-[var(--omega-emerald)]">  messages=[{`{"role":"user","content":"Hello"}`}],</span><br />
-                  <span className="text-[var(--omega-emerald)]">)</span>
-                </div>
-              </div>
-
-              {/* JS */}
-              <div className="rounded-xl border border-[var(--omega-glass-border)] bg-[oklch(0_0_0_/_0.3)] p-3 font-mono text-[12px]">
-                <div className="mb-1 text-[10px] text-[var(--omega-fg-dim)]">JavaScript</div>
-                <div className="leading-relaxed">
-                  <span className="text-[var(--omega-fg-dim)]">import OpenAI from "openai";</span><br />
-                  <span className="text-[var(--omega-fg-dim)]">const client = new OpenAI({'{'}</span><br />
-                  <span className="text-[var(--omega-fg-dim)]">  baseURL: "https://omega-nine-weld.vercel.app/v1",</span><br />
-                  <span className="text-[var(--omega-fg-dim)]">  apiKey: "omg_any_value",</span><br />
-                  <span className="text-[var(--omega-fg-dim)]">{'}'});</span><br />
-                  <span className="text-[var(--omega-amber)]">const chat = await client.chat.completions.create({'{'}</span><br />
-                  <span className="text-[var(--omega-amber)]">  model: "deepseek-v4-flash",</span><br />
-                  <span className="text-[var(--omega-amber)]">  messages: [{'{"role":"user","content":"Hello"}'}],</span><br />
-                  <span className="text-[var(--omega-amber)]">{'}'});</span>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      )}
       </div>
 
       {/* Scroll progress filament */}
