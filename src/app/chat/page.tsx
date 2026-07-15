@@ -98,7 +98,7 @@ function ChatShell() {
           <ChatArea />
         </main>
       </div>
-    </PCRemoteProvider>
+    </div>
   );
 }
 
