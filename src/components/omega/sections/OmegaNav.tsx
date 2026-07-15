@@ -11,6 +11,8 @@ const LINKS = [
   { label: "Capabilities", href: "#capabilities" },
   { label: "Neural", href: "#neural" },
   { label: "Console", href: "#console" },
+  { label: "Pricing", href: "#pricing" },
+  { label: "Plugins", href: "#marketplace" },
 ];
 
 /**
