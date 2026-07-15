@@ -3,26 +3,28 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import {
-  Plug,
+  Bot,
   Database,
   Globe,
-  GitBranch,
   Server,
-  Bot,
   FileText,
-  MessageSquare,
   Image,
-  Music,
-  Video,
   Cloud,
   HardDrive,
   Lock,
   Search,
-  Puzzle,
   Cpu,
   Code2,
   Terminal,
-  Brain,
+  Key,
+  FileCode,
+  Check,
+  Mic,
+  MessageSquare,
+  Video,
+  Puzzle,
+  Camera,
+  PenTool,
   type LucideIcon,
 } from "lucide-react";
 import { SectionHeading } from "../ui/SectionHeading";
@@ -36,7 +38,6 @@ interface Connector {
   category: string;
   status: "ready" | "coming" | "beta";
   accent: string;
-  docs?: string;
 }
 
 const ALL_CONNECTORS: Connector[] = [
@@ -51,11 +52,10 @@ const ALL_CONNECTORS: Connector[] = [
   // ── MCP Servers ──
   { icon: Cpu, name: "Time & Date", desc: "Real-time clock, timezone conversion, date arithmetic via MCP.", category: "mcp", status: "ready", accent: "#818cf8" },
   { icon: Globe, name: "Web Fetch", desc: "Fetch and extract content from any URL. Supports markdown, PDF, JSON.", category: "mcp", status: "ready", accent: "#818cf8" },
-  { icon: Brain, name: "Sequential Thinking", desc: "Chain-of-thought reasoning with dynamic thought management.", category: "mcp", status: "ready", accent: "#818cf8" },
-
-  // { icon: HardDrive, name: "Filesystem", desc: "Full file system access: read, write, search, watch, edit.", category: "mcp", status: "ready", accent: "#818cf8" },
+  { icon: Cpu, name: "Sequential Thinking", desc: "Chain-of-thought reasoning with dynamic thought management.", category: "mcp", status: "ready", accent: "#818cf8" },
+  { icon: HardDrive, name: "Filesystem", desc: "Full file system access: read, write, search, watch, edit.", category: "mcp", status: "ready", accent: "#818cf8" },
   { icon: Database, name: "SQLite", desc: "Query and manage SQLite databases directly from chat.", category: "mcp", status: "ready", accent: "#818cf8" },
-  { icon: GitBranch, name: "Git", desc: "Full git operations: clone, commit, push, branch, log, diff.", category: "mcp", status: "ready", accent: "#818cf8" },
+  { icon: Code2, name: "Git", desc: "Full git operations: clone, commit, push, branch, log, diff.", category: "mcp", status: "ready", accent: "#818cf8" },
   { icon: Puzzle, name: "Everything", desc: "Test MCP server with every resource/tool type for development.", category: "mcp", status: "ready", accent: "#818cf8" },
   { icon: Image, name: "Playwright", desc: "Browser automation: navigate, click, type, screenshot, console.", category: "mcp", status: "beta", accent: "#f43f5e" },
   { icon: Globe, name: "Brave Search", desc: "Web and local search via Brave Search API.", category: "mcp", status: "ready", accent: "#818cf8" },
@@ -81,7 +81,7 @@ const ALL_CONNECTORS: Connector[] = [
   { icon: FileText, name: "PDF Extraction", desc: "Extract text from PDF files including arXiv papers.", category: "tools", status: "ready", accent: "#34d399" },
   { icon: Image, name: "Vision Analysis", desc: "Analyze images, screenshots, diagrams with vision models.", category: "tools", status: "ready", accent: "#34d399" },
   { icon: Mic, name: "Speech Recognition", desc: "Browser SpeechRecognition API for voice input.", category: "tools", status: "ready", accent: "#818cf8" },
-  { icon: Music, name: "Text-to-Speech", desc: "Neural TTS via Edge and OpenAI. Convert any response to speech.", category: "tools", status: "ready", accent: "#818cf8" },
+  { icon: FileText, name: "Text-to-Speech", desc: "Neural TTS via Edge and OpenAI. Convert any response to speech.", category: "tools", status: "ready", accent: "#818cf8" },
   { icon: Camera, name: "Screen Capture", desc: "Capture full screen or window for context.", category: "tools", status: "ready", accent: "#818cf8" },
 
   // ── Social & Communication ──
@@ -93,13 +93,13 @@ const ALL_CONNECTORS: Connector[] = [
   // ── Media & Content ──
   { icon: Image, name: "Pollinations AI", desc: "Free AI image generation from text prompts.", category: "media", status: "ready", accent: "#f43f5e" },
   { icon: Video, name: "YouTube Transcripts", desc: "Extract and summarize YouTube video transcripts.", category: "media", status: "ready", accent: "#f43f5e" },
-  { icon: Music, name: "Music Generation", desc: "Generate songs and audio from lyrics + tags via Suno.", category: "media", status: "coming", accent: "#f43f5e" },
+  { icon: FileText, name: "Music Generation", desc: "Generate songs and audio from lyrics + tags via Suno.", category: "media", status: "coming", accent: "#f43f5e" },
 
   // ── Deployment ──
   { icon: Globe, name: "Vercel", desc: "One-command deployment of web apps to Vercel Edge/Serverless.", category: "deploy", status: "ready", accent: "#34d399" },
   { icon: Server, name: "Render", desc: "Deploy backend services with zero-config render.yaml.", category: "deploy", status: "ready", accent: "#34d399" },
   { icon: Server, name: "Docker Compose", desc: "Deploy multi-container applications locally or on any host.", category: "deploy", status: "ready", accent: "#34d399" },
-  { icon: Cloud, name: "Railway", desc: "Quick-deploy Node.js and Python services. (Coming soon)", category: "deploy", status: "coming", accent: "#34d399" },
+  { icon: Globe, name: "Railway", desc: "Quick-deploy Node.js and Python services. (Coming soon)", category: "deploy", status: "coming", accent: "#34d399" },
 ];
 
 const CATEGORIES = [
@@ -261,7 +261,7 @@ function ConnectorCard({ conn, index }: { conn: Connector; index: number }) {
                   : "cursor-not-allowed bg-[var(--omega-bg-2)] text-[var(--omega-muted)]"
               )}
             >
-              <Plug className="size-3" strokeWidth={2} />
+              <Puzzle className="size-3" strokeWidth={2} />
               {conn.status === "coming" ? "Soon" : "Connect"}
             </button>
           </div>
