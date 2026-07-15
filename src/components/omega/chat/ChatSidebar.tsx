@@ -138,10 +138,12 @@ export function ChatSidebar() {
 
   const [query, setQuery] = React.useState("");
 
-  // Restore sessions from localStorage on mount.
+  // Restore sessions from localStorage on mount, then auto-load from Drive.
   React.useEffect(() => {
     hydrateFromStorage();
-  }, [hydrateFromStorage]);
+    // Auto-load from Drive if connected
+    loadFromDrive();
+  }, [hydrateFromStorage, loadFromDrive]);
 
   const filtered = React.useMemo(() => {
     const q = query.trim().toLowerCase();

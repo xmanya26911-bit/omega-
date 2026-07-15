@@ -2,11 +2,21 @@
 
 import * as React from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowDown, Sparkles } from "lucide-react";
+import {
+  ArrowDown,
+  ChevronDown,
+  Sparkles,
+} from "lucide-react";
 import { useChatStore } from "../store/chat-store";
 import { MessageBubble } from "./MessageBubble";
 import { ModeTabs } from "./ModeTabs";
 import { ChatInput } from "./ChatInput";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 
 const SUGGESTIONS = [
@@ -27,8 +37,18 @@ export function ChatArea() {
   const activeSession = useChatStore((s) => s.activeSession);
   const sessions = useChatStore((s) => s.sessions);
   const currentModel = useChatStore((s) => s.currentModel);
+  const setModel = useChatStore((s) => s.setModel);
   const isStreaming = useChatStore((s) => s.isStreaming);
   const sendMessage = useChatStore((s) => s.sendMessage);
+  const [modelOpen, setModelOpen] = React.useState(false);
+
+  const MODEL_LIST = [
+    "deepseek-v4-flash-free",
+    "mimo-v2.5-free",
+    "hy3-free",
+    "nemotron-3-ultra-free",
+    "north-mini-code-free",
+  ];
 
   const scrollRef = React.useRef<HTMLDivElement>(null);
   const [pinned, setPinned] = React.useState(true);
@@ -86,20 +106,73 @@ export function ChatArea() {
       <header className="flex shrink-0 items-center justify-between gap-3 px-4 py-3 sm:px-6">
         <ModeTabs />
         <div className="flex items-center gap-2">
-          <span
-            className="hidden items-center gap-1.5 rounded-full omega-glass-thin px-2.5 py-1 font-mono text-[10px] text-[var(--omega-fg-dim)] sm:inline-flex"
-            aria-label={`Active model: ${currentModel}`}
-          >
-            <span
-              className="size-1.5 rounded-full"
-              style={{
-                background: currentModel.includes("-free")
-                  ? "var(--omega-emerald)"
-                  : "var(--omega-amber)",
-              }}
-            />
-            <span className="max-w-[160px] truncate">{currentModel}</span>
-          </span>
+          <DropdownMenu open={modelOpen} onOpenChange={setModelOpen}>
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                data-cursor="hover"
+                aria-label="Switch model"
+                className="inline-flex items-center gap-1.5 rounded-full omega-glass-thin px-2.5 py-1 font-mono text-[10px] text-[var(--omega-fg-dim)] transition-all duration-200 hover:border-[oklch(0.82_0.17_162_/_0.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--omega-ring)] sm:inline-flex"
+              >
+                <span
+                  className="size-1.5 rounded-full shrink-0"
+                  style={{
+                    background: currentModel.includes("-free")
+                      ? "var(--omega-emerald)"
+                      : "var(--omega-amber)",
+                  }}
+                />
+                <span className="max-w-[140px] truncate">{currentModel}</span>
+                <ChevronDown
+                  className={`size-3 shrink-0 transition-transform duration-200 ${
+                    modelOpen ? "rotate-180" : ""
+                  }`}
+                  strokeWidth={2}
+                />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              sideOffset={6}
+              className="min-w-[220px] p-1.5 rounded-xl omega-glass border-[var(--omega-glass-border)]"
+            >
+              {MODEL_LIST.map((m) => {
+                const active = m === currentModel;
+                return (
+                  <DropdownMenuItem
+                    key={m}
+                    data-cursor="hover"
+                    onSelect={(e) => {
+                      e.preventDefault();
+                      setModel(m);
+                      setModelOpen(false);
+                    }}
+                    className={`flex items-center justify-between gap-2 rounded-lg px-2.5 py-2 cursor-pointer outline-none transition-colors duration-200 data-[highlighted]:bg-[oklch(0.82_0.17_162_/_0.1)] ${
+                      active ? "bg-[oklch(0.82_0.17_162_/_0.08)]" : ""
+                    }`}
+                  >
+                    <span className="flex min-w-0 items-center gap-2">
+                      {active && (
+                        <span className="size-1.5 rounded-full shrink-0" style={{ background: "var(--omega-emerald)", boxShadow: "0 0 8px oklch(0.82 0.17 162 / 0.7)" }} />
+                      )}
+                      <span className={`truncate font-mono text-xs ${active ? "text-[var(--omega-emerald)]" : "text-[var(--omega-fg)]"}`}>
+                        {m}
+                      </span>
+                    </span>
+                    <span
+                      className="shrink-0 rounded px-1 py-px font-mono text-[9px] font-semibold uppercase tracking-wider"
+                      style={{
+                        color: "var(--omega-emerald)",
+                        background: "oklch(0.82 0.17 162 / 0.12)",
+                      }}
+                    >
+                      Free
+                    </span>
+                  </DropdownMenuItem>
+                );
+              })}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </header>
 

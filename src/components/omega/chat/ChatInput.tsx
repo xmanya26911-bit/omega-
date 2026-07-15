@@ -80,6 +80,7 @@ function ToolbarButton({
  *  - Enter to send, Shift+Enter for newline
  *  - search toggle, file upload, image generation, voice input
  *  - send button becomes a stop button while streaming
+ +  *  - paste images/files inline
  */
 export function ChatInput() {
   const [text, setText] = React.useState("");
@@ -178,6 +179,26 @@ export function ChatInput() {
     }
   };
 
+  // ── Paste handler (images from clipboard) ─────────────────────
+  const handlePaste = React.useCallback(async (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+    for (const item of Array.from(items)) {
+      if (item.type.startsWith("image/")) {
+        e.preventDefault();
+        const file = item.getAsFile();
+        if (!file) continue;
+        const reader = new FileReader();
+        reader.onload = () => {
+          const dataUrl = reader.result as string;
+          setText((prev) => prev + (prev ? "\n" : "") + `![Pasted image](${dataUrl})`);
+        };
+        reader.readAsDataURL(file);
+        return;
+      }
+    }
+  }, []);
+
   // ── Voice input ────────────────────────────────────────────
   const handleVoiceInput = () => {
     if (isListening) {
@@ -247,6 +268,7 @@ export function ChatInput() {
           onChange={(e) => setText(e.target.value)}
           onKeyDown={handleKeyDown}
           onInput={autoResize}
+          onPaste={handlePaste}
           rows={1}
           placeholder="Message Omega…"
           aria-label="Message input"

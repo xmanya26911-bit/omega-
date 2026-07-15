@@ -18,6 +18,44 @@ function scheduleDriveSave(state: ChatState) {
   }, DEBOUNCE_MS);
 }
 
+// Generates an AI title from the first few messages
+async function generateSessionTitle(
+  sessionId: string,
+  messages: { role: string; content: string }[]
+) {
+  const preview = messages
+    .filter((m) => m.role !== "error" && m.content.length > 0)
+    .slice(0, 3)
+    .map((m) => `${m.role === "user" ? "User" : "AI"}: ${m.content.slice(0, 200)}`)
+    .join("\n");
+  if (!preview) return;
+  try {
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: `Generate a short descriptive title (max 6 words, no quotes) for this conversation:\n\n${preview}\n\nTitle:`,
+        model: "deepseek-v4-flash-free",
+        sessionId: "title-gen",
+        searchEnabled: false,
+        mode: "standard",
+        conversationHistory: [],
+      }),
+    });
+    if (!res.ok) return;
+    const data = await res.json().catch(() => ({}));
+    const title = (data.content || data.choices?.[0]?.message?.content || "")
+      .replace(/^["']|["']$/g, "")
+      .trim()
+      .slice(0, 60);
+    if (title && title.length > 3) {
+      useChatStore.getState().renameSession(sessionId, title);
+    }
+  } catch {
+    // silent — titles are non-critical
+  }
+}
+
 // ── Types ──────────────────────────────────────────────────────────────
 export type Role = "user" | "assistant" | "system" | "error";
 
@@ -51,6 +89,7 @@ interface ChatState {
   searchEnabled: boolean;
   abortController: AbortController | null;
   driveStatus: "idle" | "saving" | "loading" | "connected" | "error";
+  messageCount: number;
 
   // actions
   newChat: () => string;
@@ -71,6 +110,7 @@ interface ChatState {
 
 const STORAGE_KEY = "omega_sessions_v1";
 const DEFAULT_MODEL = "deepseek-v4-flash-free";
+const AUTO_SAVE_INTERVAL = 3; // save to Drive every N messages
 
 function uid() {
   return (
@@ -126,6 +166,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   searchEnabled: false,
   abortController: null,
   driveStatus: "idle",
+  messageCount: 0,
 
   newChat: () => {
     const id = uid();
@@ -227,6 +268,45 @@ export const useChatStore = create<ChatState>((set, get) => ({
     set({ isStreaming: false, abortController: null });
   },
 
+  saveToDrive: async () => {
+    set({ driveStatus: "saving" });
+    try {
+      const { sessions, sessionOrder, activeSession, currentModel } = get();
+      const ok = await driveSave({ sessions, sessionOrder, activeSession, currentModel });
+      set({ driveStatus: ok ? "connected" : "error" });
+      return ok;
+    } catch {
+      set({ driveStatus: "error" });
+      return false;
+    }
+  },
+
+  loadFromDrive: async () => {
+    set({ driveStatus: "loading" });
+    try {
+      const data = await driveLoad<{
+        sessions: Record<string, ChatSession>;
+        sessionOrder: string[];
+        activeSession: string | null;
+        currentModel: string;
+      }>();
+      if (data && data.sessions) {
+        set({
+          sessions: data.sessions,
+          sessionOrder: data.sessionOrder || [],
+          activeSession: data.activeSession || null,
+          currentModel: data.currentModel || DEFAULT_MODEL,
+          driveStatus: "connected",
+        });
+        persist(get());
+      } else {
+        set({ driveStatus: "idle" });
+      }
+    } catch {
+      set({ driveStatus: "error" });
+    }
+  },
+
   sendMessage: async (text, opts) => {
     const trimmed = text.trim();
     if (!trimmed || get().isStreaming) return;
@@ -250,6 +330,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
       createdAt: Date.now(),
       model: get().currentModel,
     };
+
+    const wasEmpty = get().sessions[sessionId]?.messages.length === 0;
 
     set((s) => {
       const sess = s.sessions[sessionId!];
@@ -332,7 +414,6 @@ export const useChatStore = create<ChatState>((set, get) => ({
               const evt = JSON.parse(payload);
               if (evt.type === "delta" && evt.content) {
                 acc += evt.content;
-                // patch the assistant message live
                 set((s) => {
                   const sess = s.sessions[sessionId!];
                   if (!sess) return s;
@@ -349,14 +430,12 @@ export const useChatStore = create<ChatState>((set, get) => ({
               } else if (evt.type === "error") {
                 throw new Error(evt.content || "Stream error");
               }
-              // type === "done" → finish
             } catch {
               /* ignore malformed line */
             }
           }
         }
       } else {
-        // non-SSE JSON fallback
         const data = await res.json();
         acc = data.content || data.choices?.[0]?.message?.content || "";
         set((s) => {
@@ -391,7 +470,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     } catch (e) {
       const err = e as Error;
       if (err.name === "AbortError") {
-        // keep partial content, just stop
+        // keep partial content
       } else {
         set((s) => {
           const sess = s.sessions[sessionId!];
@@ -407,48 +486,18 @@ export const useChatStore = create<ChatState>((set, get) => ({
         });
       }
     } finally {
-      set({ isStreaming: false, abortController: null });
+      const newCount = get().messageCount + 1;
+      set({ isStreaming: false, abortController: null, messageCount: newCount });
       persist(get());
-      scheduleDriveSave(get());
-    }
-  },
-
-  saveToDrive: async () => {
-    set({ driveStatus: "saving" });
-    try {
-      const { sessions, sessionOrder, activeSession, currentModel } = get();
-      const ok = await driveSave({ sessions, sessionOrder, activeSession, currentModel });
-      set({ driveStatus: ok ? "connected" : "error" });
-      return ok;
-    } catch {
-      set({ driveStatus: "error" });
-      return false;
-    }
-  },
-
-  loadFromDrive: async () => {
-    set({ driveStatus: "loading" });
-    try {
-      const data = await driveLoad<{
-        sessions: Record<string, ChatSession>;
-        sessionOrder: string[];
-        activeSession: string | null;
-        currentModel: string;
-      }>();
-      if (data && data.sessions) {
-        set({
-          sessions: data.sessions,
-          sessionOrder: data.sessionOrder || [],
-          activeSession: data.activeSession || null,
-          currentModel: data.currentModel || DEFAULT_MODEL,
-          driveStatus: "connected",
-        });
-        persist(get());
-      } else {
-        set({ driveStatus: "idle" });
+      // Auto-save to Drive every N messages
+      if (newCount % AUTO_SAVE_INTERVAL === 0) {
+        scheduleDriveSave(get());
       }
-    } catch {
-      set({ driveStatus: "error" });
+      // Generate AI title after first response if session was empty
+      if (wasEmpty && acc && acc.length > 3) {
+        const msgs = get().sessions[sessionId]?.messages ?? [];
+        generateSessionTitle(sessionId, msgs);
+      }
     }
   },
 }));
