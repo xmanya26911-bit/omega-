@@ -1,6 +1,5 @@
 // Omega Cloud — OpenCode proxy (OpenAI-compatible)
 // https://omega-nine-weld.vercel.app/api/v1/* → https://opencode.ai/zen/v1/**
-// Transparent pass-through for API calls.
 
 import { NextRequest } from "next/server";
 
@@ -16,7 +15,10 @@ async function handler(req: NextRequest) {
   try {
     const upstream = await fetch(target.toString(), {
       method: req.method,
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json, text/event-stream, */*",
+      },
       ...(req.method !== "GET" && req.method !== "HEAD"
         ? { body: await req.text() }
         : {}),
