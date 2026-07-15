@@ -3,6 +3,21 @@
 import { create } from "zustand";
 import { saveToDrive as driveSave, loadFromDrive as driveLoad } from "@/lib/drive-service";
 
+let driveSaveTimer: ReturnType<typeof setTimeout> | null = null;
+const DEBOUNCE_MS = 3000;
+
+function scheduleDriveSave(state: ChatState) {
+  if (driveSaveTimer) clearTimeout(driveSaveTimer);
+  if (!state.activeSession) return;
+  driveSaveTimer = setTimeout(() => {
+    const { sessions, sessionOrder, activeSession, currentModel } =
+      useChatStore.getState();
+    driveSave({ sessions, sessionOrder, activeSession, currentModel }).then((ok) => {
+      useChatStore.setState({ driveStatus: ok ? "connected" : "error" });
+    });
+  }, DEBOUNCE_MS);
+}
+
 // ── Types ──────────────────────────────────────────────────────────────
 export type Role = "user" | "assistant" | "system" | "error";
 
@@ -128,6 +143,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
       activeSession: id,
     }));
     persist(get());
+    scheduleDriveSave(get());
     return id;
   },
 
@@ -140,6 +156,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     if (!get().sessions[id]) return;
     set({ activeSession: id });
     persist(get());
+    scheduleDriveSave(get());
   },
 
   deleteSession: (id) => {
@@ -152,6 +169,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
       return { sessions, sessionOrder: order, activeSession: active };
     });
     persist(get());
+    scheduleDriveSave(get());
   },
 
   renameSession: (id, title) => {
@@ -163,6 +181,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
       };
     });
     persist(get());
+    scheduleDriveSave(get());
   },
 
   setModel: (model) => {
@@ -390,6 +409,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     } finally {
       set({ isStreaming: false, abortController: null });
       persist(get());
+      scheduleDriveSave(get());
     }
   },
 

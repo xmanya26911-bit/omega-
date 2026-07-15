@@ -46,7 +46,7 @@ export function OmegaFooter() {
               </span>
             </div>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-[var(--omega-fg-dim)]">
-              The AI operating system. Engineered for depth, motion, and craft —
+              THE OMEGA AI operating system. Engineered for depth, motion, and craft —
               a living digital environment.
             </p>
             <div className="mt-5 flex items-center gap-2">

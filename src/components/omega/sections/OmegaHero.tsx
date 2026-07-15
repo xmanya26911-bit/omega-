@@ -101,7 +101,7 @@ export function OmegaHero() {
           <RevealText
             as="span"
             className="block text-[var(--omega-fg)]"
-            text="The AI"
+            text="THE OMEGA AI"
             delay={0.4}
             stagger={0.06}
           />

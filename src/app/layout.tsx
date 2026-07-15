@@ -25,7 +25,7 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Ω OMEGA — The AI Operating System",
+  title: "Ω OMEGA — THE OMEGA AI Operating System",
   description:
     "Omega is a cinematic AI operating system. Intelligence at every layer — a living digital environment engineered for depth, motion, and craft.",
   keywords: ["Omega", "AI Operating System", "AI", "cinematic", "motion", "WebGL"],
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
       "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%2333e8b0'>Ω</text></svg>",
   },
   openGraph: {
-    title: "Ω OMEGA — The AI Operating System",
+    title: "Ω OMEGA — THE OMEGA AI Operating System",
     description: "A cinematic AI operating system. Living, deep, intelligent.",
     type: "website",
   },

@@ -187,6 +187,7 @@ export function OmegaNeural() {
                         fill="oklch(0.16 0.01 264 / 0.9)"
                         stroke="oklch(0.82 0.17 162 / 0.8)"
                         strokeWidth={0.3}
+                        initial={{ r: 1.5 }}
                         animate={{ r: [1.5, 1.9, 1.5] }}
                         transition={{
                           duration: 2.4,
