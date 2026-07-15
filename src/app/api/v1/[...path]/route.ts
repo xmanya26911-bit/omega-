@@ -1,7 +1,4 @@
-// Omega Cloud — OpenCode proxy (OpenAI-compatible)
-// https://omega-nine-weld.vercel.app/api/v1/* → https://opencode.ai/zen/v1/**
-// Transparent pass-through for API calls.
-
+// Debug proxy — returns the target URL and upstream response info
 import { NextRequest } from "next/server";
 
 export const runtime = "edge";
@@ -12,31 +9,36 @@ async function handler(req: NextRequest) {
   const url = new URL(req.url);
   const path = url.pathname.replace("/api/v1", "");
   const target = new URL(path + url.search, OPENCODE_BASE);
+  const method = req.method;
 
   try {
     const upstream = await fetch(target.toString(), {
-      method: req.method,
+      method,
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json, text/event-stream, */*",
+        "User-Agent": "OmegaCloud/1.0",
       },
-      ...(req.method !== "GET" && req.method !== "HEAD"
+      ...(method !== "GET" && method !== "HEAD"
         ? { body: await req.text() }
         : {}),
     });
 
-    const respHeaders = new Headers(upstream.headers);
-    respHeaders.delete("set-cookie");
-
-    return new Response(upstream.body, {
-      status: upstream.status,
-      statusText: upstream.statusText,
-      headers: respHeaders,
-    });
+    const text = await upstream.text();
+    return new Response(
+      JSON.stringify({
+        target: target.toString(),
+        status: upstream.status,
+        contentType: upstream.headers.get("content-type"),
+        bodyPreview: text.slice(0, 300),
+        bodyLength: text.length,
+      }),
+      { status: 200, headers: { "content-type": "application/json" } }
+    );
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : "Unknown error";
-    return new Response(JSON.stringify({ error: msg }), {
-      status: 502,
+    return new Response(JSON.stringify({ target: target.toString(), error: msg }), {
+      status: 200,
       headers: { "content-type": "application/json" },
     });
   }
