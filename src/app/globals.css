@@ -230,6 +230,11 @@
   .omega-custom-cursor-active * { cursor: none !important; }
 }
 
+/* Always show native cursor on auth pages regardless of custom cursor state */
+@media (pointer: fine) {
+  [data-omega-auth="true"] * { cursor: auto !important; }
+}
+
 /* Respect reduced motion globally */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

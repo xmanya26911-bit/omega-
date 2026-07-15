@@ -52,6 +52,7 @@ export function OmegaLogin() {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
           className="fixed inset-0 z-[80] flex items-center justify-center px-4"
+          data-omega-auth="true"
           style={{
             background:
               "radial-gradient(ellipse at center, oklch(0.05 0.01 264 / 0.7), oklch(0.02 0 0 / 0.92))",

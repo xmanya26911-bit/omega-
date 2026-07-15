@@ -185,11 +185,21 @@ export function OmegaCursor() {
     let curReduced = useMotionStore.getState().reducedMotion;
 
     const apply = () => {
-      const ok = curReady && curFine && !curReduced;
+      const ok = curReady && curFine && !curReduced && !isAuthPage();
       setActive((prev) => (prev === ok ? prev : ok));
       if (ok) document.body.classList.add("omega-custom-cursor-active");
       else document.body.classList.remove("omega-custom-cursor-active");
     };
+
+    function isAuthPage() {
+      if (typeof window === "undefined") return false;
+      // Check if we're on an auth-related page
+      const path = window.location.pathname;
+      if (path === "/chat" || path.startsWith("/chat/")) return true;
+      // Check for auth overlay presence
+      if (document.querySelector("[data-omega-auth]")) return true;
+      return false;
+    }
     apply();
 
     const unsub = useMotionStore.subscribe((s) => {
