@@ -7,7 +7,6 @@ import { useChatStore } from "../store/chat-store";
 import { useAuthStore } from "../store/auth-store";
 import { OmegaButton } from "../ui/OmegaButton";
 import { ModelSelect } from "./ModelSelect";
-import { PCRemotePanel } from "./PCRemote";
 import { cn } from "@/lib/utils";
 
 // ── Relative time formatter ───────────────────────────────────────────
@@ -367,7 +366,7 @@ export function ChatSidebar() {
               className="overflow-hidden"
               style={{ height: "260px" }}
             >
-              <PCRemotePanel />
+              {/* PCRemotePanel placeholder */}
             </motion.div>
           )}
         </AnimatePresence>
