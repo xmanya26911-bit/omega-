@@ -29,11 +29,9 @@ export interface PCRemoteState {
   reconnect: () => void;
 }
 
-// ── Config (set these via env or .env.local) ───────────────────────────
-const RELAY_URL =
-  process.env.NEXT_PUBLIC_RELAY_URL || "wss://omega-relay.onrender.com";
-const RELAY_TOKEN =
-  process.env.NEXT_PUBLIC_RELAY_TOKEN || "";
+// ── Config ────────────────────────────────────────────────────────────
+const RELAY_URL = "wss://omega-relay.onrender.com";
+const RELAY_TOKEN = ""; // Set via Vercel env: NEXT_PUBLIC_RELAY_TOKEN
 
 // ── React context ─────────────────────────────────────────────────────
 const PCRemoteContext = React.createContext<PCRemoteState | null>(null);
