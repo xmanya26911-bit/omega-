@@ -25,7 +25,7 @@ const TIERS = [
   },
   {
     name: "Startup",
-    price: "$49",
+    price: "$10",
     period: "/mo",
     desc: "For teams building on Omega",
     icon: Server,
@@ -44,7 +44,7 @@ const TIERS = [
   },
   {
     name: "Enterprise",
-    price: "$499",
+    price: "$20",
     period: "/mo",
     desc: "For production at scale",
     icon: Shield,
