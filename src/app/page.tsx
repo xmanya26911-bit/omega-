@@ -10,6 +10,7 @@ import { OmegaCapabilities } from "@/components/omega/sections/OmegaCapabilities
 import { OmegaNeural } from "@/components/omega/sections/OmegaNeural";
 import { OmegaConsole } from "@/components/omega/sections/OmegaConsole";
 import { OmegaCTA } from "@/components/omega/sections/OmegaCTA";
+import { OmegaPricing } from "@/components/omega/sections/OmegaPricing";
 import { OmegaFooter } from "@/components/omega/sections/OmegaFooter";
 import { OmegaLogin } from "@/components/omega/sections/OmegaLogin";
 import { useOAuth } from "@/components/omega/hooks/use-oauth";
@@ -70,6 +71,7 @@ export default function Home() {
           <OmegaCapabilities />
           <OmegaNeural />
           <OmegaConsole />
+          <OmegaPricing />
           <OmegaCTA />
         </main>
         <OmegaFooter />
