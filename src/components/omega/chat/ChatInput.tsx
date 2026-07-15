@@ -6,6 +6,7 @@ import {
   ArrowUp,
   Globe,
   Image as ImageIcon,
+  Loader2,
   Mic,
   Paperclip,
   Square,
@@ -14,7 +15,7 @@ import { useChatStore } from "../store/chat-store";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
-const MAX_HEIGHT = 200; // ~6 rows
+const MAX_HEIGHT = 200;
 
 interface ToolbarButtonProps {
   "aria-label": string;
@@ -77,13 +78,15 @@ function ToolbarButton({
 /**
  * ChatInput — auto-resizing textarea + bottom toolbar.
  *  - Enter to send, Shift+Enter for newline
- *  - search toggle reads/writes searchEnabled
- *  - upload / image / voice are disabled with "coming soon" tooltips
+ *  - search toggle, file upload, image generation, voice input
  *  - send button becomes a stop button while streaming
  */
 export function ChatInput() {
   const [text, setText] = React.useState("");
+  const [isListening, setIsListening] = React.useState(false);
+  const [isGeneratingImage, setIsGeneratingImage] = React.useState(false);
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const isStreaming = useChatStore((s) => s.isStreaming);
   const searchEnabled = useChatStore((s) => s.searchEnabled);
@@ -91,7 +94,6 @@ export function ChatInput() {
   const stopGeneration = useChatStore((s) => s.stopGeneration);
   const toggleSearch = useChatStore((s) => s.toggleSearch);
 
-  // Auto-resize the textarea on input.
   const autoResize = React.useCallback(() => {
     const el = textareaRef.current;
     if (!el) return;
@@ -109,15 +111,12 @@ export function ChatInput() {
     if (!canSend) return;
     const value = text;
     setText("");
-    // reset height on next tick
     requestAnimationFrame(() => {
       const el = textareaRef.current;
       if (el) el.style.height = "auto";
     });
     void sendMessage(value, {
-      onAuthError: () => {
-        // surface to auth store via global hook elsewhere; here just stop
-      },
+      onAuthError: () => {},
     });
   };
 
@@ -128,9 +127,92 @@ export function ChatInput() {
     }
   };
 
+  // ── File upload ────────────────────────────────────────────
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const ext = file.name.split(".").pop()?.toLowerCase() || "";
+    const textExts = ["txt", "md", "json", "csv", "js", "ts", "py", "html", "css", "xml", "yaml", "yml", "log", "sh", "bat", "env", "cfg", "ini", "toml"];
+    if (!textExts.includes(ext)) {
+      setText((prev) => prev + ` [file: ${file.name}]`);
+      return;
+    }
+    const content = await file.text();
+    const snippet = content.length > 2000 ? content.slice(0, 2000) + "\n\n_[file truncated, full content: " + file.size + " bytes]_" : content;
+    setText((prev) => prev + (prev ? "\n\n" : "") + `\`\`\`\n// ${file.name}\n${snippet}\n\`\`\``);
+    // Reset input so same file can be picked again
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  // ── Image generation ───────────────────────────────────────
+  const handleGenerateImage = async () => {
+    const prompt = text.trim();
+    if (!prompt) {
+      setText("Enter a prompt first, then click the image button.");
+      return;
+    }
+    setIsGeneratingImage(true);
+    try {
+      const accessToken =
+        typeof window !== "undefined"
+          ? window.__omega_access_token ?? ""
+          : "";
+      const res = await fetch("/api/generate-image", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ prompt }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        setText((prev) => prev + `\n\n![Generated](${data.url})`);
+      } else {
+        setText((prev) => prev + `\n\n⚠️ Image generation failed: ${data.error || "unknown error"}`);
+      }
+    } catch (err) {
+      setText((prev) => prev + `\n\n⚠️ Image generation error: ${(err as Error).message}`);
+    } finally {
+      setIsGeneratingImage(false);
+    }
+  };
+
+  // ── Voice input ────────────────────────────────────────────
+  const handleVoiceInput = () => {
+    if (isListening) {
+      setIsListening(false);
+      return;
+    }
+    const SpeechRecognition =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      setText((prev) => prev + " [Voice input not supported in this browser]");
+      return;
+    }
+    const recognition = new SpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.interimResults = false;
+    recognition.continuous = false;
+
+    recognition.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      setText((prev) => prev + (prev ? " " : "") + transcript);
+      setIsListening(false);
+    };
+    recognition.onerror = () => {
+      setIsListening(false);
+    };
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+    setIsListening(true);
+    recognition.start();
+  };
+
   return (
     <div className="relative">
-      {/* top gradient fade suggestion */}
+      {/* top gradient fade */}
       <div
         aria-hidden
         className="pointer-events-none absolute -top-6 left-0 right-0 h-6"
@@ -147,6 +229,16 @@ export function ChatInput() {
           "focus-within:border-[oklch(0.82_0.17_162_/_0.4)]"
         )}
       >
+        {/* Hidden file input */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".txt,.md,.json,.csv,.js,.ts,.py,.html,.css,.xml,.yaml,.yml,.log,.sh"
+          onChange={handleFileSelect}
+          className="hidden"
+          aria-hidden
+        />
+
         {/* Textarea */}
         <textarea
           ref={textareaRef}
@@ -180,24 +272,30 @@ export function ChatInput() {
 
           <ToolbarButton
             aria-label="Upload file"
-            tooltip="Coming soon"
-            disabled
+            tooltip="Upload file"
+            onClick={() => fileInputRef.current?.click()}
           >
             <Paperclip className="size-4" strokeWidth={2} />
           </ToolbarButton>
 
           <ToolbarButton
-            aria-label="Attach image"
-            tooltip="Coming soon"
-            disabled
+            aria-label="Generate image"
+            tooltip="Generate image from prompt"
+            disabled={isGeneratingImage}
+            onClick={handleGenerateImage}
           >
-            <ImageIcon className="size-4" strokeWidth={2} />
+            {isGeneratingImage ? (
+              <Loader2 className="size-4 animate-spin" strokeWidth={2} />
+            ) : (
+              <ImageIcon className="size-4" strokeWidth={2} />
+            )}
           </ToolbarButton>
 
           <ToolbarButton
             aria-label="Voice input"
-            tooltip="Coming soon"
-            disabled
+            tooltip={isListening ? "Listening… tap to stop" : "Voice input"}
+            active={isListening}
+            onClick={handleVoiceInput}
           >
             <Mic className="size-4" strokeWidth={2} />
           </ToolbarButton>

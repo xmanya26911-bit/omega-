@@ -1,6 +1,7 @@
 "use client";
 
 import { create } from "zustand";
+import { saveToDrive as driveSave, loadFromDrive as driveLoad } from "@/lib/drive-service";
 
 // ── Types ──────────────────────────────────────────────────────────────
 export type Role = "user" | "assistant" | "system" | "error";
@@ -34,6 +35,7 @@ interface ChatState {
   isStreaming: boolean;
   searchEnabled: boolean;
   abortController: AbortController | null;
+  driveStatus: "idle" | "saving" | "loading" | "connected" | "error";
 
   // actions
   newChat: () => string;
@@ -48,6 +50,8 @@ interface ChatState {
   setActiveSession: (id: string | null) => void;
   hydrateFromStorage: () => void;
   clearAll: () => void;
+  saveToDrive: () => Promise<boolean>;
+  loadFromDrive: () => Promise<void>;
 }
 
 const STORAGE_KEY = "omega_sessions_v1";
@@ -106,6 +110,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   isStreaming: false,
   searchEnabled: false,
   abortController: null,
+  driveStatus: "idle",
 
   newChat: () => {
     const id = uid();
@@ -385,6 +390,45 @@ export const useChatStore = create<ChatState>((set, get) => ({
     } finally {
       set({ isStreaming: false, abortController: null });
       persist(get());
+    }
+  },
+
+  saveToDrive: async () => {
+    set({ driveStatus: "saving" });
+    try {
+      const { sessions, sessionOrder, activeSession, currentModel } = get();
+      const ok = await driveSave({ sessions, sessionOrder, activeSession, currentModel });
+      set({ driveStatus: ok ? "connected" : "error" });
+      return ok;
+    } catch {
+      set({ driveStatus: "error" });
+      return false;
+    }
+  },
+
+  loadFromDrive: async () => {
+    set({ driveStatus: "loading" });
+    try {
+      const data = await driveLoad<{
+        sessions: Record<string, ChatSession>;
+        sessionOrder: string[];
+        activeSession: string | null;
+        currentModel: string;
+      }>();
+      if (data && data.sessions) {
+        set({
+          sessions: data.sessions,
+          sessionOrder: data.sessionOrder || [],
+          activeSession: data.activeSession || null,
+          currentModel: data.currentModel || DEFAULT_MODEL,
+          driveStatus: "connected",
+        });
+        persist(get());
+      } else {
+        set({ driveStatus: "idle" });
+      }
+    } catch {
+      set({ driveStatus: "error" });
     }
   },
 }));

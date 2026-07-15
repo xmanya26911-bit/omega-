@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { LogOut, Plus, Search, Trash2 } from "lucide-react";
+import { Cloud, CloudOff, Download, LogOut, Plus, Search, Trash2, Upload } from "lucide-react";
 import { useChatStore } from "../store/chat-store";
 import { useAuthStore } from "../store/auth-store";
 import { OmegaButton } from "../ui/OmegaButton";
@@ -132,6 +132,10 @@ export function ChatSidebar() {
   const user = useAuthStore((s) => s.user);
   const signOut = useAuthStore((s) => s.signOut);
 
+  const saveToDrive = useChatStore((s) => s.saveToDrive);
+  const loadFromDrive = useChatStore((s) => s.loadFromDrive);
+  const driveStatus = useChatStore((s) => s.driveStatus);
+
   const [query, setQuery] = React.useState("");
 
   // Restore sessions from localStorage on mount.
@@ -259,6 +263,79 @@ export function ChatSidebar() {
             ))}
           </AnimatePresence>
         )}
+      </div>
+
+      {/* ── Drive sync ────────────────────────────────────────────── */}
+      <div className="border-t border-[var(--omega-glass-border)] px-3 py-2">
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            data-cursor="hover"
+            aria-label="Save to Google Drive"
+            disabled={driveStatus === "saving"}
+            onClick={() => { saveToDrive(); }}
+            className={cn(
+              "inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[10px] font-mono",
+              "transition-all duration-200",
+              "hover:bg-[oklch(0.82_0.17_162_/_0.1)] hover:text-[var(--omega-emerald)]",
+              "disabled:opacity-40",
+              "text-[var(--omega-fg-dim)]"
+            )}
+          >
+            {driveStatus === "saving" ? (
+              <span className="size-3.5 animate-pulse rounded-full border border-[var(--omega-emerald)]" />
+            ) : (
+              <Upload className="size-3.5" strokeWidth={2} />
+            )}
+            Save
+          </button>
+          <button
+            type="button"
+            data-cursor="hover"
+            aria-label="Load from Google Drive"
+            disabled={driveStatus === "loading"}
+            onClick={() => { loadFromDrive(); }}
+            className={cn(
+              "inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[10px] font-mono",
+              "transition-all duration-200",
+              "hover:bg-[oklch(0.82_0.17_162_/_0.1)] hover:text-[var(--omega-emerald)]",
+              "disabled:opacity-40",
+              "text-[var(--omega-fg-dim)]"
+            )}
+          >
+            {driveStatus === "loading" ? (
+              <span className="size-3.5 animate-pulse rounded-full border border-[var(--omega-emerald)]" />
+            ) : (
+              <Download className="size-3.5" strokeWidth={2} />
+            )}
+            Load
+          </button>
+          <span
+            className={cn(
+              "inline-flex size-6 items-center justify-center",
+              driveStatus === "connected"
+                ? "text-[var(--omega-emerald)]"
+                : driveStatus === "error"
+                  ? "text-[var(--omega-rose)]"
+                  : "text-[var(--omega-muted)]"
+            )}
+            title={
+              driveStatus === "connected"
+                ? "Drive connected"
+                : driveStatus === "error"
+                  ? "Drive error"
+                  : "Drive idle"
+            }
+          >
+            {driveStatus === "connected" ? (
+              <Cloud className="size-3.5" strokeWidth={2} />
+            ) : driveStatus === "error" ? (
+              <CloudOff className="size-3.5" strokeWidth={2} />
+            ) : (
+              <Cloud className="size-3.5 opacity-50" strokeWidth={2} />
+            )}
+          </span>
+        </div>
       </div>
 
       {/* ── User footer ──────────────────────────────────────────── */}
