@@ -40,6 +40,7 @@ const ALL_CAPS: Cap[] = [
   { icon: Puzzle, title: "Agent-to-Agent Delegation", body: "Built on Google ADK 2.0. Orchestrator transfers tasks to specialists via structured delegation — results flow back automatically.", category: "agents", accent: "#fbbf24" },
   { icon: Shield, title: "Code Review Pipeline", body: "Verifier agent reviews every output before delivery. Security audit, style check, edge case analysis — automated.", category: "agents", accent: "#f43f5e" },
   { icon: Layers, title: "OpenCode LLM Connector", body: "Custom BaseLlm implementation lets ADK agents use any OpenAI-compatible model provider — including your own.", category: "agents", accent: "#818cf8" },
+  { icon: Terminal, title: "Team Mode CLI", body: "`omega --team` launches the full multi-agent system from your terminal. Orchestrator + 5 specialists, one-shot or interactive.", category: "agents", accent: "#34d399" },
 
   // ── Provider / API Keys ──
   { icon: Key, title: "API Key Management", body: "Generate, validate, revoke API keys programmatically. `omg_` prefixed keys with per-key rate limiting and usage tracking.", category: "provider", accent: "#34d399" },
