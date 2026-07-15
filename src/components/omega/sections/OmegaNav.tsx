@@ -24,6 +24,9 @@ const LINKS = [
 export function OmegaNav() {
   const ref = useRef<HTMLDivElement>(null);
   const [isCliOpen, setIsCliOpen] = useState(false);
+  const [isApiOpen, setIsApiOpen] = useState(false);
+  const [apiKey, setApiKey] = useState("");
+  const [copied, setCopied] = useState(false);
   const { scrollYProgress } = useScroll();
   const filament = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
   const scrollTo = useLenisScroll();
@@ -108,6 +111,15 @@ export function OmegaNav() {
             </svg>
             CLI
           </button>
+          <button
+            onClick={() => setIsApiOpen(true)}
+            className="omega-glass-thin flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-[11px] font-medium text-[var(--omega-fg)] transition-all hover:border-[var(--omega-amber)]/50 hover:text-[var(--omega-amber)] sm:px-3.5 sm:py-2"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 002 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" /><circle cx="12" cy="12" r="2" />
+            </svg>
+            API
+          </button>
         </div>
 
       {/* ── CLI Download Modal ──────────────────────────────────────── */}
@@ -168,6 +180,136 @@ export function OmegaNav() {
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" /></svg>
                 View on GitHub
               </a>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {/* ── API Credentials Modal ──────────────────────────────────────── */}
+      {isApiOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+          onClick={() => setIsApiOpen(false)}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            onClick={(e) => e.stopPropagation()}
+            className="omega-glass w-full max-w-xl rounded-2xl p-6 sm:p-8"
+          >
+            {/* Header */}
+            <div className="mb-5 flex items-center justify-between">
+              <div>
+                <h3 className="font-display text-lg font-bold text-[var(--omega-fg)]">Omega API</h3>
+                <p className="mt-1 text-[13px] text-[var(--omega-fg-dim)]">
+                  Your API credentials to use Omega models anywhere.
+                </p>
+              </div>
+              <button
+                onClick={() => setIsApiOpen(false)}
+                className="grid size-8 place-items-center rounded-full border border-[var(--omega-glass-border)] text-[var(--omega-fg-dim)] transition-colors hover:text-[var(--omega-fg)]"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
+              </button>
+            </div>
+
+            {/* Base URL */}
+            <div className="mb-4">
+              <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--omega-fg-dim)]">Base URL</label>
+              <div className="flex items-center gap-2 rounded-xl border border-[var(--omega-glass-border)] bg-[oklch(0_0_0_/_0.3)] px-3.5 py-2.5 font-mono text-[13px] text-[var(--omega-emerald)]">
+                <span className="flex-1">https://opencode.ai/zen/v1</span>
+                <button
+                  onClick={() => { navigator.clipboard.writeText("https://opencode.ai/zen/v1"); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
+                  className="shrink-0 text-[var(--omega-fg-dim)] transition-colors hover:text-[var(--omega-fg)]"
+                >
+                  {copied ? (
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--omega-emerald)" strokeWidth="2"><path d="M20 6L9 17l-5-5" /></svg>
+                  ) : (
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" /></svg>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* API Key */}
+            <div className="mb-5">
+              <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--omega-fg-dim)]">API Key</label>
+              <div className="flex items-center gap-2 rounded-xl border border-[var(--omega-glass-border)] bg-[oklch(0_0_0_/_0.3)] px-3.5 py-2.5 font-mono text-[13px]">
+                <span className="flex-1 truncate text-[var(--omega-amber)]">
+                  {apiKey || "································"}
+                </span>
+                <div className="flex shrink-0 gap-1">
+                  <button
+                    onClick={() => {
+                      const key = "omg_" + Array.from(crypto.getRandomValues(new Uint8Array(24)), b => b.toString(16).padStart(2, "0")).join("");
+                      setApiKey(key);
+                    }}
+                    className="rounded-lg border border-[var(--omega-glass-border)] px-2 py-1 text-[10px] font-medium text-[var(--omega-fg-dim)] transition-colors hover:border-[var(--omega-emerald)]/50 hover:text-[var(--omega-emerald)]"
+                  >
+                    Generate
+                  </button>
+                  {apiKey && (
+                    <button
+                      onClick={() => { navigator.clipboard.writeText(apiKey); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
+                      className="rounded-lg border border-[var(--omega-glass-border)] px-2 py-1 text-[10px] font-medium text-[var(--omega-fg-dim)] transition-colors hover:border-[var(--omega-emerald)]/50 hover:text-[var(--omega-emerald)]"
+                    >
+                      Copy
+                    </button>
+                  )}
+                </div>
+              </div>
+              <p className="mt-1.5 text-[11px] text-[var(--omega-fg-dim)]">
+                Generate a key and use it with any OpenAI-compatible client. Store it securely — it won't be shown again.
+              </p>
+            </div>
+
+            {/* Quick Start Tabs */}
+            <div className="space-y-2">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--omega-fg-dim)]">Quick Start</p>
+
+              {/* curl */}
+              <div className="rounded-xl border border-[var(--omega-glass-border)] bg-[oklch(0_0_0_/_0.3)] p-3 font-mono text-[12px]">
+                <div className="mb-1 text-[10px] text-[var(--omega-fg-dim)]">curl</div>
+                <div className="leading-relaxed text-[var(--omega-fg)]">
+                  curl https://opencode.ai/zen/v1/chat/completions \<br />
+                  <span className="text-[var(--omega-fg-dim)]">  -H "Authorization: Bearer {apiKey || '<YOUR_KEY>'}"</span> \<br />
+                  <span className="text-[var(--omega-fg-dim)]">  -H "Content-Type: application/json"</span> \<br />
+                  <span className="text-[var(--omega-fg-dim)]">  -d '{`{"model":"deepseek-v4-flash-free","messages":[{"role":"user","content":"Hello"}]}`}'</span>
+                </div>
+              </div>
+
+              {/* Python */}
+              <div className="rounded-xl border border-[var(--omega-glass-border)] bg-[oklch(0_0_0_/_0.3)] p-3 font-mono text-[12px]">
+                <div className="mb-1 text-[10px] text-[var(--omega-fg-dim)]">Python</div>
+                <div className="leading-relaxed">
+                  <span className="text-[var(--omega-fg-dim)]">from openai import OpenAI</span><br />
+                  <span className="text-[var(--omega-fg-dim)]">client = OpenAI(</span><br />
+                  <span className="text-[var(--omega-fg-dim)]">  base_url="https://opencode.ai/zen/v1",</span><br />
+                  <span className="text-[var(--omega-fg-dim)]">  api_key="{apiKey || '<YOUR_KEY>'}",</span><br />
+                  <span className="text-[var(--omega-fg-dim)]">)</span><br />
+                  <span className="text-[var(--omega-emerald)]">response = client.chat.completions.create(</span><br />
+                  <span className="text-[var(--omega-emerald)]">  model="deepseek-v4-flash-free",</span><br />
+                  <span className="text-[var(--omega-emerald)]">  messages=[{`{"role":"user","content":"Hello"}`}],</span><br />
+                  <span className="text-[var(--omega-emerald)]">)</span>
+                </div>
+              </div>
+
+              {/* JS */}
+              <div className="rounded-xl border border-[var(--omega-glass-border)] bg-[oklch(0_0_0_/_0.3)] p-3 font-mono text-[12px]">
+                <div className="mb-1 text-[10px] text-[var(--omega-fg-dim)]">JavaScript</div>
+                <div className="leading-relaxed">
+                  <span className="text-[var(--omega-fg-dim)]">import OpenAI from "openai";</span><br />
+                  <span className="text-[var(--omega-fg-dim)]">const client = new OpenAI({'{'}</span><br />
+                  <span className="text-[var(--omega-fg-dim)]">  baseURL: "https://opencode.ai/zen/v1",</span><br />
+                  <span className="text-[var(--omega-fg-dim)]">  apiKey: "{apiKey || '<YOUR_KEY>'}",</span><br />
+                  <span className="text-[var(--omega-fg-dim)]">{'}'});</span><br />
+                  <span className="text-[var(--omega-amber)]">const chat = await client.chat.completions.create({'{'}</span><br />
+                  <span className="text-[var(--omega-amber)]">  model: "deepseek-v4-flash-free",</span><br />
+                  <span className="text-[var(--omega-amber)]">  messages: [{'{"role":"user","content":"Hello"}'}],</span><br />
+                  <span className="text-[var(--omega-amber)]">{'}'});</span>
+                </div>
+              </div>
             </div>
           </motion.div>
         </div>
