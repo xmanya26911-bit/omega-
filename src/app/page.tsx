@@ -6,12 +6,16 @@ import { OmegaScene } from "@/components/omega/scene/OmegaScene";
 import { OmegaCursor } from "@/components/omega/cursor/OmegaCursor";
 import { OmegaNav } from "@/components/omega/sections/OmegaNav";
 import { OmegaHero } from "@/components/omega/sections/OmegaHero";
+import dynamic from "next/dynamic";
 import { OmegaCapabilities } from "@/components/omega/sections/OmegaCapabilities";
 import { OmegaNeural } from "@/components/omega/sections/OmegaNeural";
 import { OmegaConsole } from "@/components/omega/sections/OmegaConsole";
 import { OmegaCTA } from "@/components/omega/sections/OmegaCTA";
 import { OmegaPricing } from "@/components/omega/sections/OmegaPricing";
-import { OmegaMarketplace } from "@/components/omega/sections/OmegaMarketplace";
+const OmegaMarketplace = dynamic(
+  () => import("@/components/omega/sections/OmegaMarketplace").then((m) => m.OmegaMarketplace),
+  { ssr: false }
+);
 import { OmegaFooter } from "@/components/omega/sections/OmegaFooter";
 import { OmegaLogin } from "@/components/omega/sections/OmegaLogin";
 import { useOAuth } from "@/components/omega/hooks/use-oauth";
