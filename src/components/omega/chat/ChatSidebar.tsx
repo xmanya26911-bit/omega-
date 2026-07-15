@@ -2,11 +2,12 @@
 
 import * as React from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Cloud, CloudOff, Download, LogOut, Plus, Search, Trash2, Upload } from "lucide-react";
+import { Cloud, CloudOff, Download, LogOut, Plus, Search, Trash2, Upload, Monitor, ChevronDown } from "lucide-react";
 import { useChatStore } from "../store/chat-store";
 import { useAuthStore } from "../store/auth-store";
 import { OmegaButton } from "../ui/OmegaButton";
 import { ModelSelect } from "./ModelSelect";
+import { PCRemotePanel } from "./PCRemote";
 import { cn } from "@/lib/utils";
 
 // ── Relative time formatter ───────────────────────────────────────────
@@ -137,6 +138,7 @@ export function ChatSidebar() {
   const driveStatus = useChatStore((s) => s.driveStatus);
 
   const [query, setQuery] = React.useState("");
+  const [showPCRemote, setShowPCRemote] = React.useState(true);
 
   // Restore sessions from localStorage on mount, then auto-load from Drive.
   React.useEffect(() => {
@@ -338,6 +340,37 @@ export function ChatSidebar() {
             )}
           </span>
         </div>
+      </div>
+
+      {/* ── PC Remote ──────────────────────────────────────────── */}
+      <div className="border-t border-[var(--omega-glass-border)]">
+        <button
+          type="button"
+          onClick={() => setShowPCRemote(!showPCRemote)}
+          className="flex w-full items-center gap-2 px-3 py-2 text-left text-[10px] font-mono uppercase tracking-[0.15em] text-[var(--omega-fg-dim)] transition-colors hover:text-[var(--omega-fg)]"
+        >
+          <Monitor className="size-3" strokeWidth={2} />
+          <span className="flex-1">PC Remote</span>
+          <motion.span
+            animate={{ rotate: showPCRemote ? 180 : 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <ChevronDown className="size-3" strokeWidth={2} />
+          </motion.span>
+        </button>
+        <AnimatePresence>
+          {showPCRemote && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden"
+              style={{ height: "260px" }}
+            >
+              <PCRemotePanel />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* ── User footer ──────────────────────────────────────────── */}

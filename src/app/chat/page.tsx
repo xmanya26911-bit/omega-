@@ -4,6 +4,7 @@ import * as React from "react";
 import { Suspense } from "react";
 import { motion } from "framer-motion";
 import { useOAuth } from "@/components/omega/hooks/use-oauth";
+import { PCRemoteProvider } from "@/components/omega/hooks/use-pc-remote";
 import { ChatSidebar } from "@/components/omega/chat/ChatSidebar";
 import { ChatArea } from "@/components/omega/chat/ChatArea";
 
@@ -69,36 +70,38 @@ function ChatShell() {
   if (!user) return <ChatLoader />;
 
   return (
-    <div
-      className="relative flex h-[100dvh] w-screen overflow-hidden bg-[var(--omega-bg)] text-[var(--omega-fg)]"
-    >
-      {/* ── Static aurora background (lightweight, no canvas) ────────── */}
+    <PCRemoteProvider>
       <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+        className="relative flex h-[100dvh] w-screen overflow-hidden bg-[var(--omega-bg)] text-[var(--omega-fg)]"
       >
+        {/* ── Static aurora background (lightweight, no canvas) ────────── */}
         <div
-          className="absolute -left-40 -top-40 size-[520px] rounded-full opacity-40 blur-[120px]"
-          style={{ background: "oklch(0.82 0.17 162 / 0.16)" }}
-        />
-        <div
-          className="absolute -right-32 top-1/3 size-[440px] rounded-full opacity-30 blur-[110px]"
-          style={{ background: "oklch(0.85 0.15 82 / 0.14)" }}
-        />
-        <div
-          className="absolute bottom-[-180px] left-1/2 size-[560px] -translate-x-1/2 rounded-full opacity-25 blur-[130px]"
-          style={{ background: "oklch(0.7 0.21 14 / 0.12)" }}
-        />
-      </div>
+          aria-hidden
+          className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+        >
+          <div
+            className="absolute -left-40 -top-40 size-[520px] rounded-full opacity-40 blur-[120px]"
+            style={{ background: "oklch(0.82 0.17 162 / 0.16)" }}
+          />
+          <div
+            className="absolute -right-32 top-1/3 size-[440px] rounded-full opacity-30 blur-[110px]"
+            style={{ background: "oklch(0.85 0.15 82 / 0.14)" }}
+          />
+          <div
+            className="absolute bottom-[-180px] left-1/2 size-[560px] -translate-x-1/2 rounded-full opacity-25 blur-[130px]"
+            style={{ background: "oklch(0.7 0.21 14 / 0.12)" }}
+          />
+        </div>
 
-      {/* ── Two-column chat layout ───────────────────────────────────── */}
-      <div className="relative z-10 flex h-full w-full">
-        <ChatSidebar />
-        <main className="flex min-w-0 flex-1 flex-col">
-          <ChatArea />
-        </main>
+        {/* ── Two-column chat layout ───────────────────────────────────── */}
+        <div className="relative z-10 flex h-full w-full">
+          <ChatSidebar />
+          <main className="flex min-w-0 flex-1 flex-col">
+            <ChatArea />
+          </main>
+        </div>
       </div>
-    </div>
+    </PCRemoteProvider>
   );
 }
 
