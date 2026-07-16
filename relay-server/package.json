@@ -1,0 +1,12 @@
+{
+  "name": "omega-relay-server",
+  "version": "1.0.0",
+  "description": "WebSocket relay for Omega PC Remote Control",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "ws": "^8.16.0"
+  }
+}

@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: omega-relay-server
+    runtime: node
+    repo: https://github.com/xmanya26911-bit/omega-.git
+    branch: main
+    rootDir: relay-server
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: RELAY_TOKEN
+        generateValue: true
+    healthCheckPath: /health
