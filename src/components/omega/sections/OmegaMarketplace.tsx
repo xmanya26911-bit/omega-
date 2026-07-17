@@ -43,63 +43,19 @@ interface Connector {
 const ALL_CONNECTORS: Connector[] = [
   // ── AI Models ──
   { icon: Bot, name: "DeepSeek V4 Flash", desc: "High-speed reasoning with 128K context. Default free model.", category: "models", status: "ready", accent: "#34d399" },
-  { icon: Bot, name: "Mimo 2.5", desc: "Lightweight model optimized for rapid response.", category: "models", status: "ready", accent: "#34d399" },
-  { icon: Bot, name: "Nemotron 3 Ultra", desc: "Heavy-duty reasoning with enhanced accuracy.", category: "models", status: "ready", accent: "#34d399" },
-  { icon: Bot, name: "North Mini Code", desc: "Code-specialist model for generation & review.", category: "models", status: "ready", accent: "#34d399" },
-  { icon: Bot, name: "Hybrid-3 (Hy3)", desc: "Balanced general-purpose model.", category: "models", status: "ready", accent: "#34d399" },
-  { icon: Globe, name: "OpenAI-Compatible", desc: "Connect any OpenAI-compatible API as a custom provider.", category: "models", status: "ready", accent: "#fbbf24" },
 
   // ── MCP Servers ──
-  { icon: Cpu, name: "Time & Date", desc: "Real-time clock, timezone conversion, date arithmetic via MCP.", category: "mcp", status: "ready", accent: "#818cf8" },
-  { icon: Globe, name: "Web Fetch", desc: "Fetch and extract content from any URL. Supports markdown, PDF, JSON.", category: "mcp", status: "ready", accent: "#818cf8" },
-  { icon: Cpu, name: "Sequential Thinking", desc: "Chain-of-thought reasoning with dynamic thought management.", category: "mcp", status: "ready", accent: "#818cf8" },
-  { icon: HardDrive, name: "Filesystem", desc: "Full file system access: read, write, search, watch, edit.", category: "mcp", status: "ready", accent: "#818cf8" },
-  { icon: Database, name: "SQLite", desc: "Query and manage SQLite databases directly from chat.", category: "mcp", status: "ready", accent: "#818cf8" },
-  { icon: Code2, name: "Git", desc: "Full git operations: clone, commit, push, branch, log, diff.", category: "mcp", status: "ready", accent: "#818cf8" },
-  { icon: Puzzle, name: "Everything", desc: "Test MCP server with every resource/tool type for development.", category: "mcp", status: "ready", accent: "#818cf8" },
-  { icon: Image, name: "Playwright", desc: "Browser automation: navigate, click, type, screenshot, console.", category: "mcp", status: "beta", accent: "#f43f5e" },
-  { icon: Globe, name: "Brave Search", desc: "Web and local search via Brave Search API.", category: "mcp", status: "ready", accent: "#818cf8" },
   { icon: Bot, name: "GitHub", desc: "Repository management, issues, PRs, code review via GitHub API.", category: "mcp", status: "ready", accent: "#818cf8" },
-  { icon: Database, name: "PostgreSQL", desc: "Query PostgreSQL databases, schema inspection, data exploration.", category: "mcp", status: "ready", accent: "#818cf8" },
   { icon: Server, name: "Docker", desc: "Container lifecycle: pull, run, stop, exec, logs, compose.", category: "mcp", status: "ready", accent: "#818cf8" },
-  { icon: Server, name: "Kubernetes", desc: "Manage k8s clusters: pods, deployments, services, namespaces.", category: "mcp", status: "ready", accent: "#818cf8" },
-  { icon: MessageSquare, name: "Linear", desc: "Issue tracking, project management, sprint planning via Linear API.", category: "mcp", status: "ready", accent: "#818cf8" },
-  { icon: Search, name: "Sentry", desc: "Error tracking, performance monitoring, issue triage.", category: "mcp", status: "ready", accent: "#818cf8" },
-  { icon: Image, name: "Excalidraw", desc: "Create hand-drawn style diagrams and wireframes.", category: "mcp", status: "ready", accent: "#818cf8" },
-  { icon: FileText, name: "Memory", desc: "Persistent knowledge store — facts, notes, user preferences.", category: "mcp", status: "ready", accent: "#818cf8" },
 
   // ── Storage & Sync ──
   { icon: Cloud, name: "Google Drive", desc: "Backup and sync conversations. OAuth 2.0 secured.", category: "storage", status: "ready", accent: "#fbbf24" },
-  { icon: Database, name: "Local Storage", desc: "Automatic session persistence in browser localStorage.", category: "storage", status: "ready", accent: "#fbbf24" },
-  { icon: Cloud, name: "S3 / R2", desc: "Connect any S3-compatible object storage. (Coming soon)", category: "storage", status: "coming", accent: "#fbbf24" },
-  { icon: Lock, name: "Encrypted Secrets", desc: "AES-256 encrypted credential storage via ~/.omega/secrets.", category: "storage", status: "ready", accent: "#f43f5e" },
 
-  // ── Developer Tools ──
-  { icon: Code2, name: "Python REPL", desc: "Persistent Python execution environment with auto-pip-install.", category: "tools", status: "ready", accent: "#34d399" },
-  { icon: Terminal, name: "Shell Terminal", desc: "Full shell access via git-bash. Run scripts, build, deploy.", category: "tools", status: "ready", accent: "#34d399" },
+  // ── Dev Tools ──
   { icon: Search, name: "Web Search", desc: "DuckDuckGo + Wikipedia search integration.", category: "tools", status: "ready", accent: "#34d399" },
-  { icon: FileText, name: "PDF Extraction", desc: "Extract text from PDF files including arXiv papers.", category: "tools", status: "ready", accent: "#34d399" },
-  { icon: Image, name: "Vision Analysis", desc: "Analyze images, screenshots, diagrams with vision models.", category: "tools", status: "ready", accent: "#34d399" },
-  { icon: Mic, name: "Speech Recognition", desc: "Browser SpeechRecognition API for voice input.", category: "tools", status: "ready", accent: "#818cf8" },
-  { icon: FileText, name: "Text-to-Speech", desc: "Neural TTS via Edge and OpenAI. Convert any response to speech.", category: "tools", status: "ready", accent: "#818cf8" },
-  { icon: Camera, name: "Screen Capture", desc: "Capture full screen or window for context.", category: "tools", status: "ready", accent: "#818cf8" },
-
-  // ── Social & Communication ──
-  { icon: MessageSquare, name: "Telegram Bot", desc: "Chat with Omega via Telegram. Pull-based message delivery.", category: "social", status: "coming", accent: "#f43f5e" },
-  { icon: MessageSquare, name: "Discord Bot", desc: "Omega in your Discord server. Slash commands + threads.", category: "social", status: "coming", accent: "#f43f5e" },
-  { icon: MessageSquare, name: "WhatsApp", desc: "Send and receive messages via WhatsApp Business API.", category: "social", status: "coming", accent: "#f43f5e" },
-  { icon: Globe, name: "Webhooks", desc: "Trigger Omega workflows via HTTP webhooks. (Coming soon)", category: "social", status: "coming", accent: "#f43f5e" },
-
-  // ── Media & Content ──
-  { icon: Image, name: "Pollinations AI", desc: "Free AI image generation from text prompts.", category: "media", status: "ready", accent: "#f43f5e" },
-  { icon: Video, name: "YouTube Transcripts", desc: "Extract and summarize YouTube video transcripts.", category: "media", status: "ready", accent: "#f43f5e" },
-  { icon: FileText, name: "Music Generation", desc: "Generate songs and audio from lyrics + tags via Suno.", category: "media", status: "coming", accent: "#f43f5e" },
 
   // ── Deployment ──
   { icon: Globe, name: "Vercel", desc: "One-command deployment of web apps to Vercel Edge/Serverless.", category: "deploy", status: "ready", accent: "#34d399" },
-  { icon: Server, name: "Render", desc: "Deploy backend services with zero-config render.yaml.", category: "deploy", status: "ready", accent: "#34d399" },
-  { icon: Server, name: "Docker Compose", desc: "Deploy multi-container applications locally or on any host.", category: "deploy", status: "ready", accent: "#34d399" },
-  { icon: Globe, name: "Railway", desc: "Quick-deploy Node.js and Python services. (Coming soon)", category: "deploy", status: "coming", accent: "#34d399" },
 ];
 
 const CATEGORIES = [
@@ -108,8 +64,6 @@ const CATEGORIES = [
   { id: "mcp", label: "MCP Servers", count: ALL_CONNECTORS.filter((c) => c.category === "mcp").length },
   { id: "storage", label: "Storage", count: ALL_CONNECTORS.filter((c) => c.category === "storage").length },
   { id: "tools", label: "Dev Tools", count: ALL_CONNECTORS.filter((c) => c.category === "tools").length },
-  { id: "social", label: "Social", count: ALL_CONNECTORS.filter((c) => c.category === "social").length },
-  { id: "media", label: "Media", count: ALL_CONNECTORS.filter((c) => c.category === "media").length },
   { id: "deploy", label: "Deploy", count: ALL_CONNECTORS.filter((c) => c.category === "deploy").length },
 ];
 
