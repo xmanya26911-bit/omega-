@@ -20,7 +20,7 @@ const TIERS = [
       "Community support",
     ],
     cta: "Get Started",
-    href: "/chat",
+    href: "https://omega-chat-five.vercel.app/?needAuth=1",
     popular: false,
   },
   {
