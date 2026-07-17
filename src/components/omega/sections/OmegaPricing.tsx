@@ -39,7 +39,7 @@ const TIERS = [
       "Email support",
     ],
     cta: "Subscribe",
-    href: "https://omega-chat-five.vercel.app/?needAuth=1",
+    href: "https://omega-payments.vercel.app/?plan=pro",
     popular: true,
   },
   {
@@ -56,8 +56,8 @@ const TIERS = [
       "99.5% uptime SLA",
       "Email support",
     ],
-    cta: "Contact Sales",
-    href: "https://omega-chat-five.vercel.app/",
+    cta: "Subscribe Max",
+    href: "https://omega-payments.vercel.app/?plan=max",
     popular: false,
   },
 ];
