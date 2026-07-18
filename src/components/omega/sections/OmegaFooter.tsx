@@ -4,19 +4,42 @@ import { motion } from "framer-motion";
 import { ArrowUp, Github, Twitter, Linkedin } from "lucide-react";
 import { useLenisScroll, useMagnetic } from "../hooks/use-omega";
 
-const COLS = [
+type FooterLink = { label: string; href: string; external?: boolean };
+
+const COLS: { title: string; links: FooterLink[] }[] = [
   {
     title: "System",
-    links: ["Overview", "Capabilities", "Neural Core", "Console"],
+    links: [
+      { label: "Overview", href: "#overview" },
+      { label: "Capabilities", href: "#capabilities" },
+      { label: "Neural Core", href: "#neural" },
+      { label: "Console", href: "#console" },
+    ],
   },
   {
     title: "Developers",
-    links: ["Documentation", "Runtime API", "Agents SDK", "Changelog"],
+    links: [
+      { label: "Documentation", href: "https://github.com/xmanya26911-bit/omega-", external: true },
+      { label: "Runtime API", href: "https://omega-chat-five.vercel.app", external: true },
+      { label: "Agents SDK", href: "https://github.com/xmanya26911-bit/omega-chat", external: true },
+      { label: "Changelog", href: "https://github.com/xmanya26911-bit/omega-/commits/main", external: true },
+    ],
   },
   {
     title: "Company",
-    links: ["About", "Research", "Careers", "Contact"],
+    links: [
+      { label: "About", href: "#overview" },
+      { label: "Pricing", href: "#pricing" },
+      { label: "Marketplace", href: "#marketplace" },
+      { label: "Contact", href: "https://omega-chat-five.vercel.app", external: true },
+    ],
   },
+];
+
+const SOCIALS = [
+  { icon: Github, href: "https://github.com/xmanya26911-bit/omega-", label: "GitHub" },
+  { icon: Twitter, href: "https://twitter.com", label: "Twitter" },
+  { icon: Linkedin, href: "https://www.linkedin.com", label: "LinkedIn" },
 ];
 
 /**
@@ -50,17 +73,22 @@ export function OmegaFooter() {
               a living digital environment.
             </p>
             <div className="mt-5 flex items-center gap-2">
-              {[Github, Twitter, Linkedin].map((Icon, i) => (
-                <a
-                  key={i}
-                  href="#"
-                  data-cursor="hover"
-                  className="grid h-9 w-9 place-items-center rounded-full border border-[var(--omega-glass-border)] text-[var(--omega-fg-dim)] transition-colors hover:border-[var(--omega-emerald)]/50 hover:text-[var(--omega-emerald)]"
-                  aria-label="social link"
-                >
-                  <Icon className="h-4 w-4" />
-                </a>
-              ))}
+              {SOCIALS.map((s, i) => {
+                const Icon = s.icon;
+                return (
+                  <a
+                    key={i}
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    data-cursor="hover"
+                    className="grid h-9 w-9 place-items-center rounded-full border border-[var(--omega-glass-border)] text-[var(--omega-fg-dim)] transition-colors hover:border-[var(--omega-emerald)]/50 hover:text-[var(--omega-emerald)]"
+                    aria-label={s.label}
+                  >
+                    <Icon className="h-4 w-4" />
+                  </a>
+                );
+              })}
             </div>
           </div>
 
@@ -71,18 +99,24 @@ export function OmegaFooter() {
                 {col.title}
               </h4>
               <ul className="mt-4 space-y-2.5">
-                {col.links.map((l) => (
-                  <li key={l}>
-                    <a
-                      href="#"
-                      data-cursor="hover"
-                      className="group inline-flex items-center text-sm text-[var(--omega-fg)]/80 transition-colors hover:text-[var(--omega-emerald)]"
-                    >
-                      <span className="mr-0 h-px w-0 bg-[var(--omega-emerald)] transition-all duration-300 group-hover:mr-2 group-hover:w-3" />
-                      {l}
-                    </a>
-                  </li>
-                ))}
+                {col.links.map((l) => {
+                  const isExternal = l.href.startsWith("http");
+                  return (
+                    <li key={l.label}>
+                      <a
+                        href={l.href}
+                        {...(isExternal
+                          ? { target: "_blank", rel: "noopener noreferrer" }
+                          : {})}
+                        data-cursor="hover"
+                        className="group inline-flex items-center text-sm text-[var(--omega-fg)]/80 transition-colors hover:text-[var(--omega-emerald)]"
+                      >
+                        <span className="mr-0 h-px w-0 bg-[var(--omega-emerald)] transition-all duration-300 group-hover:mr-2 group-hover:w-3" />
+                        {l.label}
+                      </a>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           ))}

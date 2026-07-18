@@ -6,3 +6,7 @@ node_modules/
 .env.production
 .vercel
 .env*
+node_modules/
+.next/
+dev.log
+server.log

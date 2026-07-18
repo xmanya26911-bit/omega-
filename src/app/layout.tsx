@@ -24,20 +24,69 @@ const mono = JetBrains_Mono({
   display: "swap",
 });
 
+const APP_URL = "https://omega-nine-weld.vercel.app";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(APP_URL),
   title: "Ω OMEGA — THE OMEGA AI Operating System",
   description:
     "Omega is a cinematic AI operating system. Intelligence at every layer — a living digital environment engineered for depth, motion, and craft.",
-  keywords: ["Omega", "AI Operating System", "AI", "cinematic", "motion", "WebGL"],
+  keywords: [
+    "Omega",
+    "AI Operating System",
+    "AI",
+    "cinematic",
+    "motion",
+    "WebGL",
+    "AI agent",
+    "multi-agent",
+    "DeepSeek",
+    "reasoning engine",
+  ],
   authors: [{ name: "Omega" }],
+  alternates: {
+    canonical: "/",
+  },
   icons: {
-    icon:
-      "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%2333e8b0'>Ω</text></svg>",
+    icon: "/logo.svg",
+    apple: "/logo.svg",
   },
   openGraph: {
     title: "Ω OMEGA — THE OMEGA AI Operating System",
-    description: "A cinematic AI operating system. Living, deep, intelligent.",
+    description:
+      "A cinematic AI operating system. Intelligence at every layer — living, deep, intelligent.",
     type: "website",
+    url: APP_URL,
+    siteName: "OMEGA",
+    locale: "en_US",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "OMEGA — The OMEGA AI Operating System",
+        type: "image/png",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Ω OMEGA — THE OMEGA AI Operating System",
+    description:
+      "A cinematic AI operating system. Intelligence at every layer — living, deep, intelligent.",
+    images: ["/og-image.png"],
+    creator: "@omega",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
 };
 
