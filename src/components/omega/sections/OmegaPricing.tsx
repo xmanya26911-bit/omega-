@@ -7,35 +7,34 @@ import { SectionHeading } from "../ui/SectionHeading";
 
 const TIERS = [
   {
-    name: "Developer",
-    price: "Free",
-    desc: "For individuals and prototyping",
+    name: "Free",
+    price: "₹0",
+    desc: "For individuals trying it out",
     icon: Cpu,
     accent: "#34d399",
     features: [
-      "5 free models",
-      "60 req/min rate limit",
-      "OpenAI-compatible API",
-      "API key management",
-      "Community support",
+      "5 AI models",
+      "30 messages per 3 hours",
+      "DeepSeek, MiMo, Nemotron, more",
+      "Code execution",
+      "Web search",
     ],
     cta: "Get Started",
     href: "https://omega-chat-five.vercel.app/?needAuth=1",
     popular: false,
   },
   {
-    name: "Startup",
-    price: "$10",
+    name: "Pro",
+    price: "₹849",
     period: "/mo",
-    desc: "For teams building on Omega",
+    desc: "For power users",
     icon: Server,
     accent: "#fbbf24",
     features: [
       "All Free features",
-      "300 req/min rate limit",
-      "Priority API routing",
-      "Custom model fine-tuning",
-      "99.5% uptime SLA",
+      "100 messages per 5 hours",
+      "Faster response priority",
+      "Memory & context sync",
       "Email support",
     ],
     cta: "Subscribe",
@@ -43,18 +42,18 @@ const TIERS = [
     popular: true,
   },
   {
-    name: "Enterprise",
-    price: "$20",
+    name: "Max",
+    price: "₹1,699",
     period: "/mo",
-    desc: "For production at scale",
+    desc: "For unlimited usage",
     icon: Shield,
     accent: "#818cf8",
     features: [
-      "All Startup features",
-      "300 req/min rate limit",
-      "Custom model fine-tuning",
-      "99.5% uptime SLA",
-      "Email support",
+      "All Pro features",
+      "Unlimited messages",
+      "No rate limiting",
+      "Priority support",
+      "Early access to new models",
     ],
     cta: "Subscribe Max",
     href: "https://omega-payments.vercel.app/?plan=max",
@@ -71,7 +70,7 @@ export function OmegaPricing() {
       <SectionHeading
         kicker="Pricing"
         title="Omega Provider API"
-        subtitle="Deploy OpenAI-compatible model endpoints with zero setup. Free tier included — scale when you need it."
+        subtitle="Free tier includes 5 AI models with 30 messages per 3 hours. Upgrade for higher limits."
       />
 
       <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -180,8 +179,8 @@ export function OmegaPricing() {
         viewport={{ once: true }}
         className="mx-auto mt-10 max-w-2xl text-center text-xs text-[var(--omega-muted)]"
       >
-        All plans include the same core API. Upgrade unlocks higher rate limits,
-        dedicated infrastructure, and support. No hidden fees — cancel anytime.
+        All plans include the same 5 AI models. Upgrade unlocks higher rate limits
+        and priority support. No hidden fees — cancel anytime.
       </motion.p>
     </section>
   );

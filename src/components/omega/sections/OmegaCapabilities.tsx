@@ -23,7 +23,7 @@ interface Cap {
 const ALL_CAPS: Cap[] = [
   // ── Core AI ──
   { icon: Brain, title: "Reasoning Engine", body: "Multi-step planning, tool orchestration, and self-critique. Omega thinks in structured traces — visible, auditable, fast.", category: "core", accent: "#34d399" },
-  { icon: MessageSquare, title: "Multi-Provider LLMs", body: "DeepSeek V4 Flash, Mimo 2.5, Nemotron 3 Ultra, North Mini Code, Hy3 — plus custom provider support for any OpenAI-compatible API.", category: "core", accent: "#34d399" },
+  { icon: MessageSquare, title: "Multi-Provider LLMs", body: "DeepSeek V4 Flash, MiMo 2.5, Nemotron 3 Ultra, North Mini Code, Big Pickle — five free models with streaming responses.", category: "core", accent: "#34d399" },
   { icon: Code, title: "Code Execution", body: "Python REPL, shell scripts, Node.js — run code inline with full stdlib access. Auto-installs missing packages.", category: "core", accent: "#fbbf24" },
 
   // ── Multi-Agent System ──
