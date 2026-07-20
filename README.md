@@ -103,7 +103,7 @@ omega-cloud/
 ```json
 {
   "env": {
-    "GOOGLE_CLIENT_ID": "855819039877-5f4a8biid8hkf8j2hhd1jk3bj9ng2f5f.apps.googleusercontent.com",
+    "GOOGLE_CLIENT_ID": "xxxxxxxxxxxxxxxxxxxxxapps.googleusercontent.com",
     "NEXT_PUBLIC_APP_URL": "https://omega-nine-weld.vercel.app"
   }
 }
